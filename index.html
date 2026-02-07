@@ -24,9 +24,9 @@
                 </div>
             </div>
             <h2 class="lock-title">Access Required</h2>
-            <p class="lock-desc">이 포트폴리오는 비공개입니다.<br>비밀번호를 입력해주세요.</p>
+            <p class="lock-desc">GitHub Pages에 호스팅되어 있어 잠금화면을 두었습니다.<br>이력서에 기재된 연락처를 입력해주세요.</p>
             <div class="lock-form">
-                <input type="password" id="lock-password" class="lock-input" placeholder="Password" autocomplete="off">
+                <input type="tel" id="lock-password" class="lock-input" placeholder="연락처" autocomplete="off">
                 <button id="lock-submit" class="lock-btn">Enter</button>
             </div>
             <p class="lock-error" id="lock-error">비밀번호가 틀렸습니다.</p>
@@ -60,18 +60,17 @@
             <div class="hero-grid"></div>
         </div>
         <div class="hero-content">
-            <div class="hero-badge">Real-time Systems Architect</div>
+            <div class="hero-badge">Real-time Rendering & Systems Architect</div>
             <h1 class="hero-title">
                 <span class="hero-greeting">Hello, I'm</span>
                 <span class="hero-name" id="typed-name"></span>
                 <span class="hero-cursor">|</span>
             </h1>
             <p class="hero-subtitle">
-                Rendering Pipeline & Broadcast Systems Design
+                Rendering Pipeline, Broadcast Systems & Performance Engineering
             </p>
             <p class="hero-desc">
-                엔진 소스를 수정하여 렌더링 파이프라인을 설계하고,<br>
-                실시간 방송 송출 시스템의 아키텍처를 구축합니다.
+                왜 이 구조여야 하는가를 먼저 묻고, 실시간 환경에서 검증합니다.
             </p>
             <div class="hero-stats">
                 <div class="stat">
@@ -90,6 +89,11 @@
                     <div class="stat-top"><span class="stat-value-text">Edison Award</span></div>
                     <span class="stat-label">Product Recognition</span>
                 </div>
+            </div>
+            <div class="hero-specializations">
+                <span>Engine Source Modification</span>
+                <span>Live Broadcast Pipeline</span>
+                <span>XR Performance Architecture</span>
             </div>
             <div class="hero-cta">
                 <a href="#projects" class="btn btn-primary">View Projects</a>
@@ -438,8 +442,8 @@
                     </div>
                     <h3 class="insight-title">왜 Post-Process가 아닌 엔진 소스를 수정했는가</h3>
                     <div class="insight-body">
-                        <p>Post-Process Material로도 셀 셰이딩 <em>효과</em>는 낼 수 있다. 하지만 <strong>Deferred Shading의 GBuffer에 커스텀 데이터를 기록할 수 없어</strong>, 조명 모델 자체를 NPR로 전환하는 것은 불가능하다.</p>
-                        <p>엔진의 Shading Model을 직접 추가하면 Deferred Lighting 단계에서 NPR BxDF가 동작하여, 모든 라이트 소스에 대해 올바른 셀 셰이딩이 구현된다. Post-Process 방식 대비 <strong>성능 오버헤드 없이</strong> 정확한 라이팅 결과를 얻을 수 있다.</p>
+                        <p>Post-Process Material로도 셀 셰이딩 <em>효과</em>는 낼 수 있다. 하지만 <strong>Deferred Shading의 GBuffer에 커스텀 데이터를 기록할 수 없어</strong>, 조명 모델 자체를 NPR로 전환하는 것은 불가능하다고 판단했다.</p>
+                        <p>엔진의 Shading Model을 직접 추가하면 Deferred Lighting 단계에서 NPR BxDF가 동작하여, 모든 라이트 소스에 대해 올바른 셀 셰이딩이 구현되는 편이 낫다고 생각했다. Post-Process 방식 대비 <strong>성능 오버헤드 없이</strong> 정확한 라이팅 결과를 얻을 수 있을 것이라 판단했다.</p>
                         <div class="insight-comparison">
                             <div class="comparison-item con">
                                 <span class="comparison-label">Post-Process</span>
@@ -456,24 +460,20 @@
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     </div>
-                    <h3 class="insight-title">NDI vs SRT vs WebRTC — 방송 프로토콜 선택</h3>
+                    <h3 class="insight-title">프리뷰 vs 송출 — 프로토콜과 하드웨어의 역할 분리</h3>
                     <div class="insight-body">
-                        <p>실시간 방송에서 프로토콜 선택은 지연, 화질, 인프라 복잡도의 트레이드오프다.</p>
+                        <p>실시간 방송 시스템에서 <strong>"모니터링"과 "본방송 송출"은 요구사항이 다르다</strong>고 판단했다. 프리뷰는 유연성과 편의성이 중요하고, 본방송은 프레임 단위의 확실성이 필요하다.</p>
                         <div class="insight-comparison">
-                            <div class="comparison-item con">
-                                <span class="comparison-label">WebRTC</span>
-                                <span>지연 최소 (~100ms) but 화질 제어 어려움, 시그널링 서버 필요</span>
-                            </div>
                             <div class="comparison-item neutral">
-                                <span class="comparison-label">SRT</span>
-                                <span>원격 전송 최적화, 패킷 손실 복구 but 로컬 환경에서 불필요한 오버헤드</span>
+                                <span class="comparison-label">NDI</span>
+                                <span>프리뷰/모니터링 — LAN 자동 디스커버리, 멀티 소스 모자이크, 소프트웨어 기반</span>
                             </div>
                             <div class="comparison-item pro">
-                                <span class="comparison-label">NDI</span>
-                                <span>LAN 환경 제로 컨피규레이션, 고화질 저지연, mDNS 자동 디스커버리</span>
+                                <span class="comparison-label">DeckLink SDI</span>
+                                <span>본방송 송출 — 하드웨어 확실성, Genlock 프레임 동기화, 방송 표준 충족</span>
                             </div>
                         </div>
-                        <p>스튜디오 환경에서는 <strong>NDI가 최적</strong>이다. 별도 서버 없이 같은 네트워크의 모든 NDI 디바이스를 자동 발견하고, 비압축에 가까운 화질로 1프레임 이내 지연을 달성한다.</p>
+                        <p>NDI는 소프트웨어만으로 동작하여 카메라 전환, 모자이크 프리뷰 등 모니터링 용도에 적합하다고 생각했다. 반면 본방송 송출은 <strong>DeckLink SDI 하드웨어</strong>를 통해 Genlock 기반 프레임 동기화와 방송 표준을 충족하는 편이 안정적이라 판단했다. 소프트웨어(NDI)와 하드웨어(SDI)의 역할을 분리하면 각각의 강점을 살리면서 시스템 전체의 안정성을 확보할 수 있다.</p>
                     </div>
                 </div>
                 <div class="insight-card reveal">
@@ -482,8 +482,8 @@
                     </div>
                     <h3 class="insight-title">실시간 스레드 안전 — Lock vs Lock-Free 패턴</h3>
                     <div class="insight-body">
-                        <p>UE5의 GameThread와 AnimationThread는 병렬 실행된다. 5인 모캡 데이터를 공유할 때 <strong>Mutex를 사용하면 한쪽 스레드가 대기</strong>하며 프레임 드롭이 발생한다.</p>
-                        <p><code>TSharedPtr</code>의 Atomic Swap을 활용한 <strong>스냅샷 패턴</strong>으로 해결했다. 쓰기 스레드가 새 데이터 객체를 만들고 포인터만 원자적으로 교체하면, 읽기 스레드는 이전 객체를 안전하게 계속 사용한다.</p>
+                        <p>UE5의 GameThread와 AnimationThread는 병렬 실행된다. 5인 모캡 데이터를 공유할 때 <strong>Mutex를 사용하면 한쪽 스레드가 대기</strong>하며 프레임 드롭이 발생할 수 있다고 판단했다.</p>
+                        <p><code>TSharedPtr</code>의 Atomic Swap을 활용한 <strong>스냅샷 패턴</strong>이 적합하다고 생각했다. 쓰기 스레드가 새 데이터 객체를 만들고 포인터만 원자적으로 교체하면, 읽기 스레드는 이전 객체를 안전하게 계속 사용한다.</p>
                         <div class="insight-comparison">
                             <div class="comparison-item con">
                                 <span class="comparison-label">Mutex Lock</span>
@@ -822,6 +822,7 @@
         </div>
     </footer>
 
+    <script src="codeData.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
