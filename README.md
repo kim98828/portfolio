@@ -58,12 +58,5 @@ Currently Learning: AI-Powered Creative Tools
 
 </div>
 
----
-
-<div align="center">
-
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fkim98828&count_bg=%236366F1&title_bg=%23555555&icon=github.svg&icon_color=%23FFFFFF&title=Profile+Views&edge_flat=true)](https://hits.seeyoufarm.com)
-
-</div>
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:06b6d4&height=150&section=footer)
