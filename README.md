@@ -108,7 +108,7 @@ half3 Result = lerp(NPRResult, PBRResult, BlendFactor);
 
 ---
 
-### :movie_camera: BGRA → UYVY GPU Color Conversion — XROOM
+### :movie_camera: BGRA → UYVY GPU Color Conversion
 NDI 방송 송출을 위한 GPU 기반 실시간 색공간 변환 셰이더. 4:2:2 크로마 서브샘플링 처리.
 ```hlsl
 void NDIIOBGRAtoUYVYPS(float4 InPosition : SV_POSITION,
@@ -179,32 +179,37 @@ if (RemapData->bUseCurveRemap && RemapData->RemapCurve.GetRichCurveConst())
 
 ---
 
-### :mechanical_arm: Capsule Collision IK for Arm Limits — DNABLE
-캡슐-포인트 충돌 검출 기반 팔 관통 방지 IK. 로컬 좌표계 변환 후 밀어내기 벡터 계산.
+### :tv: DeckLink 4-Channel SDI Broadcast Output — DNABLE
+DeckLink SDK 직접 연동 4채널 SDI 동시 출력. 채널별 독립 RenderTarget + Genlock 프레임 동기화.
 ```cpp
-bool FAnimNode_ArmCollisionLimit::CheckCapsuleCollision(
-    const FVector& Point, const FCapsuleCollisionData& Capsule, FVector& OutPushVector) const
-{
-    FVector LocalPoint = Capsule.WorldRotation.UnrotateVector(Point - Capsule.WorldCenter);
-    float ClampedZ = FMath::Clamp(LocalPoint.Z, -Capsule.HalfHeight, Capsule.HalfHeight);
+void UBroadcastOutputManager::InitializeChannels(int32 NumChannels) {
+    for (int32 i = 0; i < NumChannels; ++i) {
+        FOutputChannel& Ch = OutputChannels.AddDefaulted_GetRef();
+        Ch.DeviceIndex = i;
 
-    FVector ToPoint = LocalPoint - FVector(0, 0, ClampedZ);
-    float DistanceToAxis = ToPoint.Size2D();
-    float TotalRadius = Capsule.Radius + PushOutDistance;
+        // 채널별 독립 RenderTarget 생성
+        Ch.RenderTarget = NewObject<UTextureRenderTarget2D>();
+        Ch.RenderTarget->InitCustomFormat(
+            Resolutions[i].X, Resolutions[i].Y,
+            EPixelFormat::PF_B8G8R8A8, false);
 
-    if (DistanceToAxis < TotalRadius) {
-        FVector PushDirection = FVector(ToPoint.X, ToPoint.Y, 0).GetSafeNormal();
-        OutPushVector = Capsule.WorldRotation.RotateVector(
-            PushDirection * (TotalRadius - DistanceToAxis));
-        return true;
+        // Genlock Reference 프레임 동기화
+        if (bUseGenlock && GenlockSource) {
+            Ch.SyncMode = EDeckLinkSync::Genlock;
+            Ch.ReferenceSource = GenlockSource;
+        }
+
+        // DeckLink SDK Output 초기화
+        Ch.DeckLinkOutput = CreateDeckLinkOutput(i);
+        Ch.DeckLinkOutput->EnableVideoOutput(
+            bmdModeHD1080p60, bmdVideoOutputFlagDefault);
     }
-    return false;
 }
 ```
 
 ---
 
-### :speaker: Intelligent Multi-Channel Audio Mixing — XROOM
+### :speaker: Intelligent Multi-Channel Audio Mixing
 NDI 수신 오디오의 채널 수가 출력과 다를 때 자동으로 다운믹스/업믹스 처리. Float32 → Int16 변환 포함.
 ```cpp
 // 다운믹스: 초과 채널을 기존 채널에 합산 후 정규화

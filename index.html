@@ -40,6 +40,7 @@
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Projects</a></li>
+                <li><a href="#insights">Insights</a></li>
                 <li><a href="#career">Career</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -237,6 +238,55 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Deep Dive: Architecture & Challenges -->
+                    <div class="project-deepdive">
+                        <button class="deepdive-toggle" data-target="dnable-deepdive">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            Problem Solving & Architecture
+                        </button>
+                        <div class="deepdive-content" id="dnable-deepdive">
+                            <div class="arch-box">
+                                <div class="arch-label">System Architecture</div>
+                                <pre class="arch-flow">[ARKit Face]  [VICON Body x5]
+     └────── LiveLink Hub ──────┘
+                   ↓
+  Facial Remap → Retarget → VRM Character
+                   ↓
+ ┌──── Custom Render Pipeline ─────┐
+ │  Toon Shading Model (BxDF)     │
+ │  SDF Face Shadow               │
+ │  3-Band Cel + Split Bloom      │
+ │  GranTurismo Tonemapper        │
+ └─────────────────────────────────┘
+                   ↓
+ NDI 1080p60 │ DeckLink 4ch SDI │ OSC</pre>
+                            </div>
+                            <div class="challenges-grid">
+                                <div class="challenge-card">
+                                    <span class="challenge-num">01</span>
+                                    <h5>PBR 파이프라인의 NPR 렌더링 한계</h5>
+                                    <p class="challenge-problem">UE5의 Deferred Shading은 PBR 전용. Post-Process Material로는 GBuffer에 커스텀 데이터를 쓸 수 없어 조명 모델 자체를 NPR로 변경 불가.</p>
+                                    <p class="challenge-solution">엔진 소스 직접 수정 — ShadingCommon.ush에 SHADINGMODELID_TOON 추가. Deferred Lighting에서 동작하는 NPR BxDF 구현. Anisotropy로 NPR↔PBR 실시간 블렌딩.</p>
+                                    <p class="challenge-impact">아티스트가 머티리얼 에디터에서 NPR/PBR 비율 즉시 조정. 8개 렌더링 모듈 독립 제어 가능.</p>
+                                </div>
+                                <div class="challenge-card">
+                                    <span class="challenge-num">02</span>
+                                    <h5>5인 동시 모캡의 스레드 경합</h5>
+                                    <p class="challenge-problem">ARKit 페이셜 데이터가 GameThread와 AnimationThread에서 동시 접근 — Mutex 사용 시 프레임 드롭 발생.</p>
+                                    <p class="challenge-solution">TSharedPtr Atomic Swap 기반 Lock-Free 스냅샷 패턴 설계. 워커 인스턴스를 원자적으로 교체하여 읽기 스레드는 항상 일관된 데이터 보장.</p>
+                                    <p class="challenge-impact">Lock 없이 60fps 실시간 페이셜 리매핑 유지. 5인 동시 캡처에서도 프레임 드롭 제로.</p>
+                                </div>
+                                <div class="challenge-card">
+                                    <span class="challenge-num">03</span>
+                                    <h5>DeckLink 4채널 SDI 동시 출력</h5>
+                                    <p class="challenge-problem">4개 독립 SDI 채널(본방송, 프리뷰, Key, Fill)로 동시 출력 필요. UE5 기본 미디어 출력은 단일 채널만 지원하며 채널 간 프레임 동기화 미보장.</p>
+                                    <p class="challenge-solution">DeckLink SDK 직접 연동하여 멀티 채널 출력 시스템 구축. 채널별 독립 RenderTarget + Genlock Reference 기반 프레임 동기화. Stream Deck OSC로 원격 채널 제어.</p>
+                                    <p class="challenge-impact">4채널 동시 SDI 출력으로 프로덕션 방송 표준 충족. 실시간 채널 전환 및 모자이크 프리뷰 운용 가능.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="project-tags">
                         <span>UE5.5</span><span>C++</span><span>HLSL</span><span>Blueprint</span>
                         <span>DirectX 12</span><span>Lumen</span><span>LiveLink</span><span>NDI</span>
@@ -259,6 +309,7 @@
                         <span class="project-badge">UE 5.3</span>
                         <span class="project-badge">Steam</span>
                         <span class="project-badge">3+ Years</span>
+                        <span class="project-badge award">Edison Awards</span>
                     </div>
                 </div>
                 <div class="project-info">
@@ -268,7 +319,7 @@
                     <p class="project-desc">
                         XR 콘텐츠 솔루션 기업의 핵심 프로덕트. 언리얼 엔진 기반 실시간 방송/콘텐츠 프로그램으로
                         3년간 개발, 관리하며 Steam 플랫폼 런칭 및 지속 업데이트를 완료.
-                        파라과이 방송국 납품, 정부지원사업 등 다수 프로젝트 수행.
+                        에디슨 어워드(Edison Awards) 수상, 파라과이 방송국 납품, GS인증, 정부지원사업 등 다수 프로젝트 수행.
                     </p>
                     <div class="project-features">
                         <div class="feature">
@@ -308,6 +359,54 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Deep Dive: Architecture & Challenges -->
+                    <div class="project-deepdive">
+                        <button class="deepdive-toggle" data-target="xroom-deepdive">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            Problem Solving & Architecture
+                        </button>
+                        <div class="deepdive-content" id="xroom-deepdive">
+                            <div class="arch-box">
+                                <div class="arch-label">System Architecture</div>
+                                <pre class="arch-flow">         [Plugin Layer]
+  NDI │ BlackMagic │ FFmpeg │ WebRTC
+                ↓
+          [Engine Core]
+  Scene Manager → Multi-Camera System
+             → Compositor → PostProcess
+                ↓
+          [Output Layer]
+  NDI Send │ Pixel Streaming │ DeckLink
+                ↓
+        [Distribution Layer]
+  Steam │ Electron Launcher │ AWS CDN</pre>
+                            </div>
+                            <div class="challenges-grid">
+                                <div class="challenge-card">
+                                    <span class="challenge-num">01</span>
+                                    <h5>NDI 송출 시 GPU→CPU 파이프라인 스톨</h5>
+                                    <p class="challenge-problem">NDI 프레임 송출 시 GPU→CPU 텍스처 리드백에서 동기 대기가 발생하여 프레임 드롭. 실시간 방송에서 치명적.</p>
+                                    <p class="challenge-solution">비동기 이중 버퍼 설계 — 한 프레임을 전송하는 동안 다음 프레임의 GPU 리드백을 동시 진행. MappedTexture[2] 핑퐁 구조.</p>
+                                    <p class="challenge-impact">1080p60 NDI 송출에서 파이프라인 지연 1프레임 이내. 안정적 실시간 방송 달성.</p>
+                                </div>
+                                <div class="challenge-card">
+                                    <span class="challenge-num">02</span>
+                                    <h5>NDI 오디오 채널 포맷 불일치</h5>
+                                    <p class="challenge-problem">NDI 소스마다 오디오 채널 수가 다름 (예: 8ch 수신 → 2ch 출력). 채널 미스매치 시 무음 또는 왜곡 발생.</p>
+                                    <p class="challenge-solution">자동 다운믹스/업믹스 알고리즘 구현. 초과 채널은 합산 후 정규화, 부족 채널은 평균으로 생성. Float32→Int16 변환 포함.</p>
+                                    <p class="challenge-impact">어떤 NDI 소스든 자동으로 출력 포맷에 맞춰 재생. 별도 오디오 설정 불필요.</p>
+                                </div>
+                                <div class="challenge-card">
+                                    <span class="challenge-num">03</span>
+                                    <h5>3채널 동시 배포 및 버전 동기화</h5>
+                                    <p class="challenge-problem">Steam, Electron 런처, AWS 서버 3개 채널의 버전이 각각 관리되어 업데이트 시 동기화 실패 빈번.</p>
+                                    <p class="challenge-solution">중앙 Version API 서버 구축 + Electron 런처 자동 업데이트 + SteamPipe 브랜치 관리 파이프라인 통합. 델타 패칭 적용.</p>
+                                    <p class="challenge-impact">원클릭 배포로 3개 채널 동시 업데이트. 델타 패칭으로 업데이트 크기 80% 감소.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="project-tags">
                         <span>UE5.3</span><span>C++</span><span>Blueprint</span><span>NDI</span>
                         <span>BlackMagic</span><span>FFmpeg</span><span>Steam</span>
@@ -322,11 +421,88 @@
         </div>
     </section>
 
-    <!-- Career Section -->
-    <section class="section" id="career">
+    <!-- Technical Insights Section -->
+    <section class="section" id="insights">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">03</span>
+                <h2 class="section-title">Technical Insights</h2>
+                <p class="section-desc">기술 선택의 이유와 설계 철학</p>
+            </div>
+            <div class="insights-grid">
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <h3 class="insight-title">왜 Post-Process가 아닌 엔진 소스를 수정했는가</h3>
+                    <div class="insight-body">
+                        <p>Post-Process Material로도 셀 셰이딩 <em>효과</em>는 낼 수 있다. 하지만 <strong>Deferred Shading의 GBuffer에 커스텀 데이터를 기록할 수 없어</strong>, 조명 모델 자체를 NPR로 전환하는 것은 불가능하다.</p>
+                        <p>엔진의 Shading Model을 직접 추가하면 Deferred Lighting 단계에서 NPR BxDF가 동작하여, 모든 라이트 소스에 대해 올바른 셀 셰이딩이 구현된다. Post-Process 방식 대비 <strong>성능 오버헤드 없이</strong> 정확한 라이팅 결과를 얻을 수 있다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">Post-Process</span>
+                                <span>화면 공간 기반 → 조명 정보 접근 불가 → 가짜 셀 셰이딩</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">Engine Source Mod</span>
+                                <span>GBuffer 커스텀 → BxDF 레벨 NPR → 정확한 조명 반응</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    </div>
+                    <h3 class="insight-title">NDI vs SRT vs WebRTC — 방송 프로토콜 선택</h3>
+                    <div class="insight-body">
+                        <p>실시간 방송에서 프로토콜 선택은 지연, 화질, 인프라 복잡도의 트레이드오프다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">WebRTC</span>
+                                <span>지연 최소 (~100ms) but 화질 제어 어려움, 시그널링 서버 필요</span>
+                            </div>
+                            <div class="comparison-item neutral">
+                                <span class="comparison-label">SRT</span>
+                                <span>원격 전송 최적화, 패킷 손실 복구 but 로컬 환경에서 불필요한 오버헤드</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">NDI</span>
+                                <span>LAN 환경 제로 컨피규레이션, 고화질 저지연, mDNS 자동 디스커버리</span>
+                            </div>
+                        </div>
+                        <p>스튜디오 환경에서는 <strong>NDI가 최적</strong>이다. 별도 서버 없이 같은 네트워크의 모든 NDI 디바이스를 자동 발견하고, 비압축에 가까운 화질로 1프레임 이내 지연을 달성한다.</p>
+                    </div>
+                </div>
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                    </div>
+                    <h3 class="insight-title">실시간 스레드 안전 — Lock vs Lock-Free 패턴</h3>
+                    <div class="insight-body">
+                        <p>UE5의 GameThread와 AnimationThread는 병렬 실행된다. 5인 모캡 데이터를 공유할 때 <strong>Mutex를 사용하면 한쪽 스레드가 대기</strong>하며 프레임 드롭이 발생한다.</p>
+                        <p><code>TSharedPtr</code>의 Atomic Swap을 활용한 <strong>스냅샷 패턴</strong>으로 해결했다. 쓰기 스레드가 새 데이터 객체를 만들고 포인터만 원자적으로 교체하면, 읽기 스레드는 이전 객체를 안전하게 계속 사용한다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">Mutex Lock</span>
+                                <span>스레드 대기 → 16.6ms 예산 초과 → 프레임 드롭</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">Atomic Swap</span>
+                                <span>Lock-Free → 대기 없음 → 60fps 안정 유지</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Section -->
+    <section class="section section-dark" id="career">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">04</span>
                 <h2 class="section-title">Career</h2>
             </div>
             <div class="timeline">
@@ -440,10 +616,10 @@
     </section>
 
     <!-- Skills Section -->
-    <section class="section section-dark" id="skills">
+    <section class="section" id="skills">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">04</span>
+                <span class="section-tag">05</span>
                 <h2 class="section-title">Tech Stack</h2>
             </div>
             <div class="skills-grid">
@@ -580,10 +756,10 @@
     </section>
 
     <!-- Contact Section -->
-    <section class="section" id="contact">
+    <section class="section section-dark" id="contact">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">05</span>
+                <span class="section-tag">06</span>
                 <h2 class="section-title">Contact</h2>
             </div>
             <div class="contact-grid reveal">

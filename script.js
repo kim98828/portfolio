@@ -610,15 +610,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================
     const codeData = {
         ue5: {
-            label: 'DNABLE / XROOM — Project Architecture',
+            label: 'UE5 Project Architecture',
             lang: 'Workflow',
-            desc: 'UE5.3~5.5 기반 버추얼 아이돌 + 실시간 방송 플랫폼 개발. 엔진 소스 수정 포함',
-            code: `<span class="code-comment">// DNABLE — 버추얼 아이돌 프로덕션 (UE 5.5)</span>
+            desc: 'UE5.3~5.5 기반 버추얼 프로덕션 + 실시간 방송 플랫폼 개발. 엔진 소스 수정 포함',
+            code: `<span class="code-comment">// 버추얼 프로덕션 (UE 5.5)</span>
 Engine Source Mod → Custom Toon Shading Model
                  → SDF Face Shadow Pipeline
                  → GranTurismo Tonemapper
 
-<span class="code-comment">// XROOM — 실시간 방송 플랫폼 (UE 5.3)</span>
+<span class="code-comment">// 실시간 방송 플랫폼 (UE 5.3)</span>
 NDI Send/Receive → Multi-Camera Compositor
 LiveLink MoCap   → VRM Avatar Retarget
 SceneCapture     → HDR + Ray Tracing Output
@@ -729,7 +729,7 @@ GranTurismo Tonemapper (GT Tonemap)
 <span class="code-comment">// 결과: 영화적 톤 + 셀 셰이딩 공존</span>`
         },
         lumen: {
-            label: 'XROOM — Virtual Production Lighting',
+            label: 'Virtual Production Lighting',
             lang: 'Workflow',
             desc: 'Lumen GI + Hardware Ray Tracing 조합으로 실시간 가상 프로덕션 라이팅 구현',
             code: `<span class="code-comment">// Lumen Global Illumination Setup</span>
@@ -749,10 +749,10 @@ SceneCapture → RenderTarget (1920x1080)
            → NDI Output (실시간 방송)`
         },
         rt: {
-            label: 'XROOM — Ray Traced Scene Capture',
+            label: 'Ray Traced Scene Capture',
             lang: 'C++',
             desc: 'Ray Tracing이 적용된 SceneCapture 컴포넌트. DOF, HDR 톤매핑, 블룸 포함',
-            code: `<span class="code-type">UXROOMSceneCaptureComponent</span>::<span class="code-fn">UXROOMSceneCaptureComponent</span>() {
+            code: `<span class="code-type">URTSceneCaptureComponent</span>::<span class="code-fn">URTSceneCaptureComponent</span>() {
     CaptureSource = <span class="code-type">ESceneCaptureSource</span>::SCS_FinalToneCurveHDR;
 
     PostProcessSettings.bOverride_DepthOfFieldFstop = <span class="code-key">true</span>;
@@ -818,10 +818,10 @@ SceneCapture → RenderTarget (1920x1080)
     Full Body + Face Animation`
         },
         livelink: {
-            label: 'XROOM — LiveLink Camera Control',
+            label: 'LiveLink Camera Control',
             lang: 'C++',
             desc: 'LiveLink 데이터를 CineCamera에 실시간 적용. Mars Mode로 가상 카메라 제어',
-            code: `<span class="code-type">void</span> <span class="code-type">UXROOMLiveLinkComponentController</span>::<span class="code-fn">SetMarsMode</span>(
+            code: `<span class="code-type">void</span> <span class="code-type">ULiveLinkCameraController</span>::<span class="code-fn">SetMarsMode</span>(
     <span class="code-type">bool</span> MarsModeOn,
     <span class="code-type">AA_MarsPoint</span>* InMarsPoint,
     <span class="code-type">TSubclassOf</span>&lt;<span class="code-type">ULiveLinkRole</span>&gt; InRoleClass,
@@ -838,7 +838,7 @@ SceneCapture → RenderTarget (1920x1080)
 }`
         },
         bmd: {
-            label: 'XROOM — BlackMagic Video I/O',
+            label: 'BlackMagic Video I/O',
             lang: 'Workflow',
             desc: 'BlackMagic DeckLink을 통한 외부 비디오 입출력. SDI/HDMI 캡처 및 키/필 출력',
             code: `<span class="code-comment">// BlackMagic DeckLink Integration</span>
@@ -965,7 +965,7 @@ Cron (09:00 KST)
     <span class="code-key">const</span> [locale, setLocale] = <span class="code-fn">useState</span>&lt;<span class="code-str">'ko'</span>|<span class="code-str">'en'</span>|<span class="code-str">'ja'</span>&gt;(<span class="code-str">'ko'</span>);
     <span class="code-key">const</span> sections = <span class="code-fn">useMemo</span>(() =&gt; [
         { id: <span class="code-str">'hero'</span>,     component: &lt;<span class="code-type">Hero</span> /&gt; },
-        { id: <span class="code-str">'product'</span>,  component: &lt;<span class="code-type">ProductXROOM</span> /&gt; },
+        { id: <span class="code-str">'product'</span>,  component: &lt;<span class="code-type">ProductShowcase</span> /&gt; },
         { id: <span class="code-str">'tech'</span>,     component: &lt;<span class="code-type">TechStack</span> /&gt; },
         { id: <span class="code-str">'team'</span>,     component: &lt;<span class="code-type">TeamMembers</span> /&gt; },
         { id: <span class="code-str">'contact'</span>,  component: &lt;<span class="code-type">ContactForm</span> /&gt; },
@@ -982,25 +982,25 @@ Cron (09:00 KST)
 };`
         },
         redux: {
-            label: 'XROOM Launcher — State Management',
+            label: 'App Launcher — State Management',
             lang: 'TypeScript',
             desc: 'Redux 기반 앱 상태 관리. 다운로드 진행률, 설치 상태, 사용자 설정 관리',
-            code: `<span class="code-key">interface</span> <span class="code-type">XROOMState</span> {
-    type: <span class="code-type">SyncXROOM</span>;  <span class="code-comment">// downloading | installing | done</span>
+            code: `<span class="code-key">interface</span> <span class="code-type">AppState</span> {
+    type: <span class="code-type">SyncStatus</span>;  <span class="code-comment">// downloading | installing | done</span>
     isInstalled: <span class="code-type">boolean</span>;
     installPath: <span class="code-type">string</span>;
     progress: { downloaded: <span class="code-type">number</span>; total: <span class="code-type">number</span> };
     programSize: { downloadSize: <span class="code-type">string</span>; installSize: <span class="code-type">string</span> };
 }
 
-<span class="code-key">const</span> xroomReducer = (<span class="code-key">state</span>, action) =&gt; {
+<span class="code-key">const</span> appReducer = (<span class="code-key">state</span>, action) =&gt; {
     <span class="code-key">switch</span> (action.type) {
         <span class="code-key">case</span> <span class="code-str">'SET_CONFIGS'</span>:
             <span class="code-key">return</span> { ...state, ...action.payload };
         <span class="code-key">case</span> <span class="code-str">'UPDATE_PROGRESS'</span>:
             <span class="code-key">return</span> { ...state, progress: action.payload };
         <span class="code-key">case</span> <span class="code-str">'INSTALL_COMPLETE'</span>:
-            <span class="code-key">return</span> { ...state, type: SyncXROOM.done,
+            <span class="code-key">return</span> { ...state, type: SyncStatus.done,
                      isInstalled: <span class="code-key">true</span> };
     }
 };`
@@ -1032,15 +1032,15 @@ Cron (09:00 KST)
 };`
         },
         aws: {
-            label: 'XROOM — Cloud Infrastructure',
+            label: 'Cloud Infrastructure',
             lang: 'Workflow',
-            desc: 'AWS 기반 XROOM 서비스 인프라. EC2 + S3 + CloudFront 구성',
+            desc: 'AWS 기반 서비스 인프라. EC2 + S3 + CloudFront 구성',
             code: `<span class="code-comment">// AWS Infrastructure</span>
 
 [CloudFront CDN]
       │
   [S3 Bucket]
-   ├─ XROOM Installer (.zip)
+   ├─ App Installer (.zip)
    ├─ Patch Files (delta)
    └─ Static Assets
 
@@ -1103,9 +1103,9 @@ main ─────────────────────────
 *.uasset → Advisory Lock`
         },
         steam: {
-            label: 'XROOM — Steam Distribution',
+            label: 'Steam Distribution',
             lang: 'Workflow',
-            desc: 'XROOM의 Steam 빌드 및 배포 파이프라인. Steamworks SDK 연동',
+            desc: 'Steam 빌드 및 배포 파이프라인. Steamworks SDK 연동',
             code: `<span class="code-comment">// Steam Build & Deploy Pipeline</span>
 
 [UE5 Package]
@@ -1154,32 +1154,36 @@ steamcmd +login +run_app_build
 }`
         },
         cpp: {
-            label: 'DNABLE — Arm Collision IK',
+            label: 'DNABLE — DeckLink Multi-Channel Output',
             lang: 'C++',
-            desc: '캡슐-포인트 충돌 검출 기반 팔 관통 방지 IK. 로컬 좌표 변환 후 밀어내기 벡터 계산',
-            code: `<span class="code-type">bool</span> <span class="code-fn">CheckCapsuleCollision</span>(<span class="code-key">const</span> <span class="code-type">FVector</span>&amp; Point,
-    <span class="code-key">const</span> <span class="code-type">FCapsuleCollisionData</span>&amp; Capsule, <span class="code-type">FVector</span>&amp; OutPush) {
+            desc: 'DeckLink SDK 직접 연동 4채널 SDI 동시 출력. 채널별 독립 RenderTarget + Genlock 프레임 동기화',
+            code: `<span class="code-type">void</span> <span class="code-type">UBroadcastOutputManager</span>::<span class="code-fn">InitializeChannels</span>(
+    <span class="code-type">int32</span> NumChannels) {
+    <span class="code-key">for</span> (<span class="code-type">int32</span> i = <span class="code-num">0</span>; i &lt; NumChannels; ++i) {
+        <span class="code-type">FOutputChannel</span>&amp; Ch = OutputChannels.<span class="code-fn">AddDefaulted_GetRef</span>();
+        Ch.DeviceIndex = i;
 
-    <span class="code-comment">// 월드 → 캡슐 로컬 좌표 변환</span>
-    <span class="code-type">FVector</span> Local = Capsule.WorldRotation.<span class="code-fn">UnrotateVector</span>(
-        Point - Capsule.WorldCenter);
-    <span class="code-type">float</span> ClampedZ = <span class="code-fn">FMath::Clamp</span>(Local.Z,
-        -Capsule.HalfHeight, Capsule.HalfHeight);
+        <span class="code-comment">// 채널별 독립 RenderTarget 생성</span>
+        Ch.RenderTarget = <span class="code-fn">NewObject</span>&lt;<span class="code-type">UTextureRenderTarget2D</span>&gt;();
+        Ch.RenderTarget-&gt;<span class="code-fn">InitCustomFormat</span>(
+            Resolutions[i].X, Resolutions[i].Y,
+            <span class="code-type">EPixelFormat</span>::PF_B8G8R8A8, <span class="code-key">false</span>);
 
-    <span class="code-type">FVector</span> ToPoint = Local - <span class="code-type">FVector</span>(<span class="code-num">0</span>, <span class="code-num">0</span>, ClampedZ);
-    <span class="code-type">float</span> Dist = ToPoint.<span class="code-fn">Size2D</span>();
+        <span class="code-comment">// Genlock Reference 프레임 동기화</span>
+        <span class="code-key">if</span> (bUseGenlock &amp;&amp; GenlockSource) {
+            Ch.SyncMode = <span class="code-type">EDeckLinkSync</span>::Genlock;
+            Ch.ReferenceSource = GenlockSource;
+        }
 
-    <span class="code-key">if</span> (Dist &lt; Capsule.Radius + PushOutDistance) {
-        <span class="code-comment">// 밀어내기 벡터 → 월드 좌표로 복원</span>
-        <span class="code-type">FVector</span> Dir = <span class="code-type">FVector</span>(ToPoint.X, ToPoint.Y, <span class="code-num">0</span>).<span class="code-fn">GetSafeNormal</span>();
-        OutPush = Capsule.WorldRotation.<span class="code-fn">RotateVector</span>(Dir * (Radius - Dist));
-        <span class="code-key">return true</span>;
+        <span class="code-comment">// DeckLink SDK Output 초기화</span>
+        Ch.DeckLinkOutput = <span class="code-fn">CreateDeckLinkOutput</span>(i);
+        Ch.DeckLinkOutput-&gt;<span class="code-fn">EnableVideoOutput</span>(
+            bmdModeHD1080p60, bmdVideoOutputFlagDefault);
     }
-    <span class="code-key">return false</span>;
 }`
         },
         shading: {
-            label: 'XROOM — GPU Color Conversion',
+            label: 'GPU Color Conversion',
             lang: 'HLSL',
             desc: 'NDI 방송 송출을 위한 BGRA → UYVY 실시간 GPU 색공간 변환 (4:2:2 크로마 서브샘플링)',
             code: `<span class="code-type">void</span> <span class="code-fn">NDIIOBGRAtoUYVYPS</span>(<span class="code-type">float4</span> InPosition : SV_POSITION,
@@ -1246,7 +1250,7 @@ Value = <span class="code-fn">FMath::Clamp</span>(Value, MinLimit, MaxLimit);
     NewSize.Y = <span class="code-fn">FMath::RoundToInt</span>(FrameSize.X / TargetRatio);`
         },
         audio: {
-            label: 'XROOM — Audio Channel Mixing',
+            label: 'NDI Audio Channel Mixing',
             lang: 'C++',
             desc: 'NDI 수신 오디오 채널 자동 다운믹스/업믹스. Float32 → Int16 변환 포함',
             code: `<span class="code-type">int32</span> <span class="code-fn">GeneratePCMData</span>(<span class="code-type">uint8</span>* PCMData, <span class="code-type">int32</span> SamplesNeeded) {
@@ -1268,10 +1272,10 @@ Value = <span class="code-fn">FMath::Clamp</span>(Value, MinLimit, MaxLimit);
 }`
         },
         electron: {
-            label: 'XROOM — Electron App Launcher',
+            label: 'Electron App Launcher',
             lang: 'TypeScript',
             desc: 'IPC 기반 다운로드 → ZIP 압축해제 → 설치 파이프라인. 진행률 실시간 전송',
-            code: `<span class="code-fn">ipcMain</span>.<span class="code-fn">handle</span>(<span class="code-str">'install-XROOM'</span>, (event, configs) =&gt; {
+            code: `<span class="code-fn">ipcMain</span>.<span class="code-fn">handle</span>(<span class="code-str">'install-app'</span>, (event, configs) =&gt; {
     <span class="code-type">http</span>.<span class="code-fn">get</span>(<span class="code-str">'http://127.0.0.1:4000/download'</span>, res =&gt; {
         <span class="code-key">const</span> fileName = res.headers[<span class="code-str">'filename'</span>].<span class="code-fn">toString</span>();
         <span class="code-key">const</span> file = <span class="code-type">fs</span>.<span class="code-fn">createWriteStream</span>(fileName);
@@ -1281,7 +1285,7 @@ Value = <span class="code-fn">FMath::Clamp</span>(Value, MinLimit, MaxLimit);
         <span class="code-comment">// 다운로드 진행률 → Renderer IPC 전송</span>
         res.<span class="code-fn">on</span>(<span class="code-str">'data'</span>, chunk =&gt; {
             configs.progress.downloaded += chunk.length;
-            event.sender.<span class="code-fn">send</span>(<span class="code-str">'set-XROOM-configs'</span>, configs);
+            event.sender.<span class="code-fn">send</span>(<span class="code-str">'set-app-configs'</span>, configs);
         });
 
         file.<span class="code-fn">on</span>(<span class="code-str">'finish'</span>, () =&gt; {
@@ -1390,6 +1394,20 @@ Value = <span class="code-fn">FMath::Clamp</span>(Value, MinLimit, MaxLimit);
         if (!popup.contains(e.target) && !e.target.closest('.skill-item[data-code]')) {
             hidePopup();
         }
+    });
+
+    // ============================================
+    // Deep Dive Toggle
+    // ============================================
+    document.querySelectorAll('.deepdive-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.dataset.target;
+            const content = document.getElementById(targetId);
+            if (!content) return;
+
+            btn.classList.toggle('active');
+            content.classList.toggle('open');
+        });
     });
 
     // ============================================
