@@ -606,6 +606,223 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================
+    // Code Popup on Skill Hover
+    // ============================================
+    const codeData = {
+        hlsl: {
+            label: 'DNABLE — Custom Toon Shader',
+            lang: 'HLSL',
+            desc: 'Anisotropy 값으로 NPR(셀 셰이딩)과 PBR(물리 기반 렌더링)을 실시간 블렌딩하는 커스텀 BxDF',
+            code: `<span class="code-type">FDirectLighting</span> <span class="code-fn">SelShaderBxDF</span>(<span class="code-type">FGBufferData</span> GBuffer, <span class="code-type">half3</span> N, V, L,
+                              <span class="code-type">float</span> Falloff, <span class="code-type">half</span> NoL) {
+    <span class="code-type">BxDFContext</span> Context;
+    Init(Context, N, V, L);
+    Context.NoV = <span class="code-fn">saturate</span>(<span class="code-fn">abs</span>(Context.NoV) + <span class="code-num">1e-5</span>);
+
+    <span class="code-comment">// NPR: Raw NoL for cel shading</span>
+    Lighting.Diffuse = Falloff * NoL;
+
+    <span class="code-comment">// PBR: DiffuseColor/PI + GGX Specular</span>
+    <span class="code-type">float3</span> PBRDiffuse = FalloffColor * GBuffer.DiffuseColor * TOON_INV_PI;
+    <span class="code-type">float3</span> PBRSpecular = FalloffColor * <span class="code-fn">CalculatePBRSpecular</span>(
+        GBuffer.Roughness, GBuffer.Metallic, GBuffer.BaseColor, N, V, L);
+
+    <span class="code-comment">// Anisotropy 기반 NPR ↔ PBR 블렌드</span>
+    <span class="code-type">half</span> Blend = <span class="code-fn">saturate</span>(GBuffer.Anisotropy);
+    <span class="code-key">return</span> <span class="code-fn">lerp</span>(NPRResult, PBRResult, Blend);
+}`
+        },
+        cpp: {
+            label: 'DNABLE — Arm Collision IK',
+            lang: 'C++',
+            desc: '캡슐-포인트 충돌 검출 기반 팔 관통 방지 IK. 로컬 좌표 변환 후 밀어내기 벡터 계산',
+            code: `<span class="code-type">bool</span> <span class="code-fn">CheckCapsuleCollision</span>(<span class="code-key">const</span> <span class="code-type">FVector</span>&amp; Point,
+    <span class="code-key">const</span> <span class="code-type">FCapsuleCollisionData</span>&amp; Capsule, <span class="code-type">FVector</span>&amp; OutPush) {
+
+    <span class="code-comment">// 월드 → 캡슐 로컬 좌표 변환</span>
+    <span class="code-type">FVector</span> Local = Capsule.WorldRotation.<span class="code-fn">UnrotateVector</span>(
+        Point - Capsule.WorldCenter);
+    <span class="code-type">float</span> ClampedZ = <span class="code-fn">FMath::Clamp</span>(Local.Z,
+        -Capsule.HalfHeight, Capsule.HalfHeight);
+
+    <span class="code-type">FVector</span> ToPoint = Local - <span class="code-type">FVector</span>(<span class="code-num">0</span>, <span class="code-num">0</span>, ClampedZ);
+    <span class="code-type">float</span> Dist = ToPoint.<span class="code-fn">Size2D</span>();
+
+    <span class="code-key">if</span> (Dist &lt; Capsule.Radius + PushOutDistance) {
+        <span class="code-comment">// 밀어내기 벡터 → 월드 좌표로 복원</span>
+        <span class="code-type">FVector</span> Dir = <span class="code-type">FVector</span>(ToPoint.X, ToPoint.Y, <span class="code-num">0</span>).<span class="code-fn">GetSafeNormal</span>();
+        OutPush = Capsule.WorldRotation.<span class="code-fn">RotateVector</span>(Dir * (Radius - Dist));
+        <span class="code-key">return true</span>;
+    }
+    <span class="code-key">return false</span>;
+}`
+        },
+        shading: {
+            label: 'XROOM — GPU Color Conversion',
+            lang: 'HLSL',
+            desc: 'NDI 방송 송출을 위한 BGRA → UYVY 실시간 GPU 색공간 변환 (4:2:2 크로마 서브샘플링)',
+            code: `<span class="code-type">void</span> <span class="code-fn">NDIIOBGRAtoUYVYPS</span>(<span class="code-type">float4</span> InPosition : SV_POSITION,
+                       <span class="code-type">float2</span> InUV : TEXCOORD0,
+                       <span class="code-key">out</span> <span class="code-type">float4</span> OutColor : SV_Target0) {
+    <span class="code-type">float3x3</span> RGBToYCbCrMat = {
+        <span class="code-num">0.183</span>,  <span class="code-num">0.614</span>,  <span class="code-num">0.062</span>,
+       <span class="code-num">-0.101</span>, <span class="code-num">-0.339</span>,  <span class="code-num">0.439</span>,
+        <span class="code-num">0.439</span>, <span class="code-num">-0.399</span>, <span class="code-num">-0.040</span>  };
+
+    <span class="code-comment">// 인접 2픽셀 샘플링 → YCbCr 변환</span>
+    <span class="code-type">float3</span> YUV0 = <span class="code-fn">mul</span>(RGBToYCbCrMat, RGB0) + RGBToYCbCrVec;
+    <span class="code-type">float3</span> YUV1 = <span class="code-fn">mul</span>(RGBToYCbCrMat, RGB1) + RGBToYCbCrVec;
+
+    OutColor.xz = (YUV0.zy + YUV1.zy) / <span class="code-num">2.0</span>;  <span class="code-comment">// Cb, Cr 평균</span>
+    OutColor.y  = YUV0.x;   <span class="code-comment">// Y0</span>
+    OutColor.w  = YUV1.x;   <span class="code-comment">// Y1</span>
+}`
+        },
+        arkit: {
+            label: 'DNABLE — ARKit Facial MoCap',
+            lang: 'C++',
+            desc: '52개 ARKit Blend Shape 실시간 리매핑. 스레드 안전 스냅샷 패턴으로 데이터 경합 방지',
+            code: `<span class="code-type">void</span> <span class="code-type">UARKitFacialPreProcessor</span>::<span class="code-fn">UpdateWorkerSnapshot</span>() {
+    <span class="code-comment">// Atomic swap — 이전 워커는 기존 데이터로 계속 동작</span>
+    <span class="code-type">TSharedPtr</span>&lt;<span class="code-type">FWorker</span>, <span class="code-type">ESPMode</span>::ThreadSafe&gt; NewWorker =
+        <span class="code-fn">MakeShared</span>&lt;<span class="code-type">FWorker</span>, <span class="code-type">ESPMode</span>::ThreadSafe&gt;();
+
+    <span class="code-key">for</span> (<span class="code-key">const</span> <span class="code-type">FName</span>&amp; Name : <span class="code-fn">GetARKitBlendShapeNames</span>()) {
+        <span class="code-key">const</span> <span class="code-type">FRemap</span>* Data = RemapSettings-&gt;<span class="code-fn">GetBlendShapeRemap</span>(Name);
+        <span class="code-key">if</span> (Data) NewWorker-&gt;Snapshot.<span class="code-fn">Add</span>(Name, *Data);
+    }
+    WorkerInstance = NewWorker;  <span class="code-comment">// 원자적 교체</span>
+}
+
+<span class="code-comment">// 커브 기반 리매핑 파이프라인</span>
+Value *= RemapData-&gt;Multiplier;
+Value += RemapData-&gt;Offset;
+Value = <span class="code-fn">FMath::Clamp</span>(Value, MinLimit, MaxLimit);
+<span class="code-key">if</span> (RemapData-&gt;bUseCurveRemap)
+    Value = RemapData-&gt;RemapCurve.<span class="code-fn">Eval</span>(Value);`
+        },
+        ndi: {
+            label: 'DNABLE — NDI Double-Buffer',
+            lang: 'C++',
+            desc: 'GPU→CPU 비동기 텍스처 리드백 이중 버퍼. 파이프라인 지연 최소화',
+            code: `<span class="code-key">class</span> <span class="code-type">MappedTextureASyncSender</span> {
+    <span class="code-type">MappedTexture</span> MappedTextures[<span class="code-num">2</span>];  <span class="code-comment">// 이중 버퍼</span>
+    <span class="code-type">int32</span> CurrentIndex = <span class="code-num">0</span>;
+<span class="code-key">public</span>:
+    <span class="code-type">void</span> <span class="code-fn">Resolve</span>(<span class="code-type">FRHICommandListImmediate</span>&amp; RHICmdList,
+                 <span class="code-type">FRHITexture</span>* Source, <span class="code-key">const</span> <span class="code-type">FResolveRect</span>&amp; Rect);
+    <span class="code-type">void</span> <span class="code-fn">Map</span>(<span class="code-type">FRHICommandListImmediate</span>&amp; RHICmdList,
+             <span class="code-type">int32</span>&amp; W, <span class="code-type">int32</span>&amp; H, <span class="code-type">int32</span>&amp; Stride);
+    <span class="code-type">void</span> <span class="code-fn">Send</span>(<span class="code-type">FRHICommandListImmediate</span>&amp; RHICmdList,
+              <span class="code-type">NDIlib_send_instance_t</span> p_send,
+              <span class="code-type">NDIlib_video_frame_v2_t</span>&amp; frame);
+};
+
+<span class="code-comment">// Letterbox / Pillarbox 비율 보정</span>
+<span class="code-type">float</span> FrameRatio  = FrameSize.X / (<span class="code-type">float</span>)FrameSize.Y;
+<span class="code-type">float</span> TargetRatio = TargetSize.X / (<span class="code-type">float</span>)TargetSize.Y;
+<span class="code-key">if</span> (TargetRatio &gt; FrameRatio)
+    NewSize.Y = <span class="code-fn">FMath::RoundToInt</span>(FrameSize.X / TargetRatio);`
+        },
+        audio: {
+            label: 'XROOM — Audio Channel Mixing',
+            lang: 'C++',
+            desc: 'NDI 수신 오디오 채널 자동 다운믹스/업믹스. Float32 → Int16 변환 포함',
+            code: `<span class="code-type">int32</span> <span class="code-fn">GeneratePCMData</span>(<span class="code-type">uint8</span>* PCMData, <span class="code-type">int32</span> SamplesNeeded) {
+    <span class="code-fn">NDIlib_framesync_capture_audio</span>(p_framesync, &amp;audio_frame,
+        requested_rate, <span class="code-num">0</span>, <span class="code-fn">FMath::Min</span>(available, requested));
+
+    <span class="code-key">if</span> (req_ch &lt; audio_frame.no_channels) {
+        <span class="code-comment">// 다운믹스: 초과 채널 → 기존 채널에 합산</span>
+        <span class="code-key">for</span> (<span class="code-type">int32</span> src = req_ch; src &lt; no_ch; ++src)
+            <span class="code-key">for</span> (<span class="code-type">int32</span> dst = <span class="code-num">0</span>; dst &lt; req_ch; ++dst)
+                <span class="code-key">for</span> (<span class="code-type">int32</span> i = <span class="code-num">0</span>; i &lt; no_samples; ++i)
+                    dst_data[i] += src_data[i];
+    } <span class="code-key">else if</span> (req_ch &gt; audio_frame.no_channels) {
+        <span class="code-comment">// 업믹스: 소스 채널 평균으로 빈 채널 채우기</span>
+        sample_value /= audio_frame.no_channels;
+        <span class="code-type">int16</span> sample = <span class="code-fn">FMath::Clamp</span>(
+            <span class="code-fn">FMath::RoundToInt</span>(value * <span class="code-num">32767.0f</span>), INT16_MIN, INT16_MAX);
+    }
+}`
+        }
+    };
+
+    const popup = document.getElementById('code-popup');
+    const popupLabel = document.getElementById('code-popup-label');
+    const popupLang = document.getElementById('code-popup-lang');
+    const popupDesc = document.getElementById('code-popup-desc');
+    const popupCode = document.getElementById('code-popup-code');
+    const popupClose = document.getElementById('code-popup-close');
+    let activeSkill = null;
+    let hideTimeout = null;
+
+    function showPopup(el, key) {
+        const data = codeData[key];
+        if (!data) return;
+        popupLabel.textContent = data.label;
+        popupLang.textContent = data.lang;
+        popupDesc.textContent = data.desc;
+        popupCode.innerHTML = data.code;
+
+        const rect = el.getBoundingClientRect();
+        const isMobile = window.innerWidth <= 768;
+
+        popup.classList.add('active');
+
+        if (!isMobile) {
+            const popupRect = popup.getBoundingClientRect();
+            let top = rect.bottom + 10;
+            let left = rect.left;
+
+            if (left + popupRect.width > window.innerWidth - 20) {
+                left = window.innerWidth - popupRect.width - 20;
+            }
+            if (left < 10) left = 10;
+            if (top + popupRect.height > window.innerHeight - 20) {
+                top = rect.top - popupRect.height - 10;
+            }
+
+            popup.style.top = top + 'px';
+            popup.style.left = left + 'px';
+        }
+
+        activeSkill = el;
+    }
+
+    function hidePopup() {
+        popup.classList.remove('active');
+        activeSkill = null;
+    }
+
+    document.querySelectorAll('.skill-item[data-code]').forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+            showPopup(item, item.dataset.code);
+        });
+        item.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(hidePopup, 200);
+        });
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (activeSkill === item) {
+                hidePopup();
+            } else {
+                showPopup(item, item.dataset.code);
+            }
+        });
+    });
+
+    popup.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    popup.addEventListener('mouseleave', () => { hideTimeout = setTimeout(hidePopup, 200); });
+    popupClose.addEventListener('click', hidePopup);
+    document.addEventListener('click', (e) => {
+        if (!popup.contains(e.target) && !e.target.closest('.skill-item[data-code]')) {
+            hidePopup();
+        }
+    });
+
+    // ============================================
     // Backend Integration
     // ============================================
 
