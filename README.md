@@ -1,8 +1,8 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:06b6d4&height=250&section=header&text=SUB&fontSize=50&fontColor=ffffff&fontAlignY=35&desc=Unreal%20Engine%20|%20AI%20|%20Web%20|%20Mobile%20Developer&descSize=20&descAlignY=55&animation=fadeIn)
+![header](https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:06b6d4&height=250&section=header&text=Kim&fontSize=50&fontColor=ffffff&fontAlignY=35&desc=Unreal%20Engine%20|%20AI%20|%20Web%20|%20Mobile%20Developer&descSize=20&descAlignY=55&animation=fadeIn)
 
 <div align="center">
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=28&duration=3000&pause=1000&color=6366F1&center=true&vCenter=true&multiline=true&repeat=true&width=600&height=100&lines=%F0%9F%8E%AE+Game+Dev+%7C+%F0%9F%A4%96+AI+%7C+%F0%9F%8C%90+Web+%7C+%F0%9F%93%B1+Mobile;Building+Ideas+Into+Reality)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=28&duration=3000&pause=1000&color=6366F1&center=true&vCenter=true&multiline=true&repeat=true&width=600&height=100&lines=%F0%9F%8E%AE+Game+Dev+%7C+%F0%9F%A4%96+AI+%7C+%F0%9F%8C%90+Web+%7C+%F0%9F%93%B1+Mobile;Building+Ideas+Into+Reality)](https://github.com/kim98828)
 
 </div>
 
@@ -11,7 +11,7 @@
 ## :bust_in_silhouette: About Me
 
 ```yaml
-Name: kimminsub
+Name: kim min sub
 Role: Full-Stack Developer & Game Developer
 Interests:
   - Unreal Engine Game Development
@@ -64,8 +64,8 @@ Currently Learning: AI-Powered Creative Tools
 
 <div align="center">
 
-<img src="https://github-readme-stats.vercel.app/api?username=kim98828&show_icons=true&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=kim98828&theme=tokyonight&hide_border=true&background=00000000" width="49%" />
+<img src="https://github-readme-stats.vercel.app/api?username=kim98828&show_icons=true&theme=tokyonight&hide_border=true&bg_color=00000000&include_all_commits=true&count_private=true" width="49%" />
+<img src="https://streak-stats.demolab.com/?user=kim98828&theme=tokyonight&hide_border=true&background=00000000" width="49%" />
 
 <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=kim98828&layout=compact&theme=tokyonight&hide_border=true&bg_color=00000000&langs_count=8" width="50%" />
 
