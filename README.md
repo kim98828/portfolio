@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:06b6d4&height=250&section=header&text=Kim&fontSize=50&fontColor=ffffff&fontAlignY=35&desc=Unreal%20Engine%20|%20AI%20|%20Web%20|%20Mobile%20Developer&descSize=20&descAlignY=55&animation=fadeIn)
+![header](https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:06b6d4&height=250&section=header&text=kim98828&fontSize=50&fontColor=ffffff&fontAlignY=35&desc=Unreal%20Engine%20|%20AI%20|%20Web%20|%20Mobile%20Developer&descSize=20&descAlignY=55&animation=fadeIn)
 
 <div align="center">
 
