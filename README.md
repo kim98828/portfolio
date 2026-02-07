@@ -53,6 +53,7 @@ Currently Learning: AI-Powered Creative Tools
 ### :wrench: Tools
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![Sublime Text](https://img.shields.io/badge/Sublime%20Text-FF9800?style=for-the-badge&logo=sublimetext&logoColor=white)
 ![Visual Studio](https://img.shields.io/badge/Visual%20Studio-5C2D91?style=for-the-badge&logo=visualstudio&logoColor=white)
 ![VS Code](https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
 
@@ -77,17 +78,11 @@ Currently Learning: AI-Powered Creative Tools
 
 <div align="center">
 
-<a href="https://github.com/kim98828/SOULX">
-  <img src="https://github-readme-stats.vercel.app/api/pin/?username=kim98828&repo=SOULX&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
+<a href="https://github.com/DnableCorp/BGRITZProject">
+  <img src="https://github-readme-stats.vercel.app/api/pin/?username=DnableCorp&repo=BGRITZProject&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
 </a>
-<a href="https://github.com/kim98828/ComfyUI">
-  <img src="https://github-readme-stats.vercel.app/api/pin/?username=kim98828&repo=ComfyUI&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
-</a>
-<a href="https://github.com/kim98828/VRoom">
-  <img src="https://github-readme-stats.vercel.app/api/pin/?username=kim98828&repo=VRoom&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
-</a>
-<a href="https://github.com/kim98828/PixelStreamingInfrastructure">
-  <img src="https://github-readme-stats.vercel.app/api/pin/?username=kim98828&repo=PixelStreamingInfrastructure&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
+<a href="https://github.com/SoulXProject/XROOMLite">
+  <img src="https://github-readme-stats.vercel.app/api/pin/?username=SoulXProject&repo=XROOMLite&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
 </a>
 
 </div>
