@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:06b6d4&height=250&section=header&text=Kim%20Min%20Seop&fontSize=50&fontColor=ffffff&fontAlignY=35&desc=Unreal%20Engine%20|%20AI%20|%20Web%20|%20Mobile%20Developer&descSize=20&descAlignY=55&animation=fadeIn)
+![header](https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:06b6d4&height=250&section=header&text=SUB&fontSize=50&fontColor=ffffff&fontAlignY=35&desc=Unreal%20Engine%20|%20AI%20|%20Web%20|%20Mobile%20Developer&descSize=20&descAlignY=55&animation=fadeIn)
 
 <div align="center">
 
@@ -11,7 +11,7 @@
 ## :bust_in_silhouette: About Me
 
 ```yaml
-Name: Kim Min Seop
+Name: SUB (Kim Min Seop)
 Role: Full-Stack Developer & Game Developer
 Interests:
   - Unreal Engine Game Development
@@ -53,7 +53,6 @@ Currently Learning: AI-Powered Creative Tools
 ### :wrench: Tools
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-![Sublime Text](https://img.shields.io/badge/Sublime%20Text-FF9800?style=for-the-badge&logo=sublimetext&logoColor=white)
 ![Visual Studio](https://img.shields.io/badge/Visual%20Studio-5C2D91?style=for-the-badge&logo=visualstudio&logoColor=white)
 ![VS Code](https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
 
@@ -69,21 +68,6 @@ Currently Learning: AI-Powered Creative Tools
 <img src="https://github-readme-streak-stats.herokuapp.com/?user=kim98828&theme=tokyonight&hide_border=true&background=00000000" width="49%" />
 
 <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=kim98828&layout=compact&theme=tokyonight&hide_border=true&bg_color=00000000&langs_count=8" width="50%" />
-
-</div>
-
----
-
-## :star2: Featured Projects
-
-<div align="center">
-
-<a href="https://github.com/DnableCorp/BGRITZProject">
-  <img src="https://github-readme-stats.vercel.app/api/pin/?username=DnableCorp&repo=BGRITZProject&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
-</a>
-<a href="https://github.com/SoulXProject/XROOMLite">
-  <img src="https://github-readme-stats.vercel.app/api/pin/?username=SoulXProject&repo=XROOMLite&theme=tokyonight&hide_border=true&bg_color=00000000" width="49%" />
-</a>
 
 </div>
 
