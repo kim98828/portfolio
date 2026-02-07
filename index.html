@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kim98828 | Unreal Engine Developer</title>
+    <meta name="description" content="Unreal Engine 전문 개발자 kim98828의 포트폴리오. 버추얼 프로덕션, 렌더링 엔지니어링, AI 자동화.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Password Lock Screen -->
+    <div class="lock-screen" id="lock-screen">
+        <canvas id="lock-canvas"></canvas>
+        <div class="lock-container">
+            <div class="lock-icon-wrap">
+                <div class="lock-ring"></div>
+                <div class="lock-ring lock-ring-2"></div>
+                <div class="lock-icon">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+            </div>
+            <h2 class="lock-title">Access Required</h2>
+            <p class="lock-desc">이 포트폴리오는 비공개입니다.<br>비밀번호를 입력해주세요.</p>
+            <div class="lock-form">
+                <input type="password" id="lock-password" class="lock-input" placeholder="Password" autocomplete="off">
+                <button id="lock-submit" class="lock-btn">Enter</button>
+            </div>
+            <p class="lock-error" id="lock-error">비밀번호가 틀렸습니다.</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">KMS</a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#career">Career</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-bg">
+            <div class="hero-grid"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">Unreal Engine Developer</div>
+            <h1 class="hero-title">
+                <span class="hero-greeting">Hello, I'm</span>
+                <span class="hero-name" id="typed-name"></span>
+                <span class="hero-cursor">|</span>
+            </h1>
+            <p class="hero-subtitle">
+                Virtual Production & Rendering Engineer
+            </p>
+            <p class="hero-desc">
+                6년차 언리얼 엔진 개발자. 엔진 소스 레벨의 커스텀 렌더링 파이프라인부터<br>
+                실시간 방송 송출, 모션캡처, AI 자동화까지 — 기술을 현실로 만듭니다.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-top"><span class="stat-number" data-target="6">0</span><span class="stat-suffix">+</span></div>
+                    <span class="stat-label">Years Experience</span>
+                </div>
+                <div class="stat">
+                    <div class="stat-top"><span class="stat-value-text">C++ / HLSL</span></div>
+                    <span class="stat-label">Core Language</span>
+                </div>
+                <div class="stat">
+                    <div class="stat-top"><span class="stat-value-text">UE5</span></div>
+                    <span class="stat-label">Main Engine</span>
+                </div>
+                <div class="stat">
+                    <div class="stat-top"><span class="stat-value-text">Rendering</span></div>
+                    <span class="stat-label">Specialization</span>
+                </div>
+            </div>
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-primary">View Projects</a>
+                <a href="https://github.com/kim98828" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">01</span>
+                <h2 class="section-title">About Me</h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <p class="about-lead">
+                        UE5 엔진 소스를 직접 수정하여 <strong>NPR/PBR 하이브리드 렌더링 파이프라인</strong>을 구축하고,
+                        실시간 버추얼 방송 시스템부터 AI 개발 자동화까지 — 풀스택 언리얼 개발자입니다.
+                    </p>
+                    <p>
+                        현재 주식회사 디네이블에서 버추얼 아이돌 프로젝트의 렌더링 엔지니어 겸 테크니컬 리드로 근무하고 있습니다.
+                        커스텀 3-Band 툰 셰이더 플러그인, 2종 톤매퍼, Split Bloom/Color Grading 등 8개 렌더링 모듈을 C++/HLSL로 개발했으며,
+                        DeckLink Pro 4채널 SDI 방송 송출 시스템과 VICON/LiveLink 기반 최대 5인 동시 모캡 환경을 구축했습니다.
+                    </p>
+                    <p>
+                        이전 직장에서는 3년간 XR 콘텐츠 솔루션의 메인 프로덕트를 개발하여 Steam 플랫폼 런칭을 완료했고,
+                        Claude Code 기반 AI 어시스턴트에 18개 커스텀 스킬을 제작하여 개발 워크플로우를 자동화하는 등
+                        항상 새로운 기술을 실무에 빠르게 반영하는 것을 강점으로 삼고 있습니다.
+                    </p>
+                </div>
+                <div class="about-info reveal">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Name</span>
+                            <span class="info-value">kim98828</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Role</span>
+                            <span class="info-value">UE5 Developer & Rendering Engineer</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/></svg>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Education</span>
+                            <span class="info-value">동원대학교 게임콘텐츠과 (GPA 4.0/4.5)</span>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Certificate</span>
+                            <span class="info-value">정보처리산업기사</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section section-dark" id="projects">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">02</span>
+                <h2 class="section-title">Featured Projects</h2>
+            </div>
+
+            <!-- DNABLE Project -->
+            <div class="project-card reveal">
+                <div class="project-visual">
+                    <div class="project-image-wrap">
+                        <img src="https://cdn.prod.website-files.com/6808b101a54828061a77e046/6895572b2ce457bf59c744af_%EB%B9%84%EA%B7%B8%EB%A6%BF%EC%B8%A0%20%EC%8B%A4%EB%A3%A8%EC%97%A3%2001.jpg" alt="DNABLE 버추얼 아이돌" class="project-image" loading="lazy">
+                    </div>
+                    <div class="project-badge-container">
+                        <span class="project-badge">UE 5.5</span>
+                        <span class="project-badge">C++ / HLSL</span>
+                        <span class="project-badge">75+ Classes</span>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-company">@ DNABLE (2025.07 ~ Present)</div>
+                    <h3 class="project-title">DNABLE</h3>
+                    <p class="project-subtitle">버추얼 아이돌</p>
+                    <p class="project-desc">
+                        버추얼 아이돌 프로젝트를 위한 UE5.5 기반 풀 프로덕션 엔진.
+                        엔진 소스를 직접 수정하여 NPR/PBR 하이브리드 렌더링을 구현하고,
+                        실시간 방송 송출부터 모션캡처, AI 자동화까지 통합한 올인원 시스템.
+                    </p>
+                    <div class="project-features">
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            </div>
+                            <div>
+                                <strong>Custom Toon Rendering</strong>
+                                <span>3-Band Cel Shading, 2종 Tonemapper, Split Bloom/CG</span>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            </div>
+                            <div>
+                                <strong>Broadcast System</strong>
+                                <span>DeckLink 4ch SDI, NDI Mosaic, Stream Deck OSC</span>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <div>
+                                <strong>Motion Capture</strong>
+                                <span>VICON/LiveLink, ARKit Facial Remap, 5-person Capture</span>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            </div>
+                            <div>
+                                <strong>LookDev System</strong>
+                                <span>9 Modular Components, Undo/Redo, 8-Tab Editor UI</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span>UE5.5</span><span>C++</span><span>HLSL</span><span>Blueprint</span>
+                        <span>DirectX 12</span><span>Lumen</span><span>LiveLink</span><span>NDI</span>
+                        <span>ARKit</span><span>DeckLink</span><span>OSC</span>
+                    </div>
+                    <a href="https://www.dnable.xyz/" target="_blank" rel="noopener noreferrer" class="project-link">
+                        Visit Website
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- XROOM Project -->
+            <div class="project-card project-card-reverse reveal">
+                <div class="project-visual">
+                    <div class="project-image-wrap">
+                        <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2616930/header.jpg?t=1736242917" alt="XROOM - Real-time Broadcast Platform" class="project-image" loading="lazy">
+                    </div>
+                    <div class="project-badge-container">
+                        <span class="project-badge">UE 5.3</span>
+                        <span class="project-badge">Steam</span>
+                        <span class="project-badge">3+ Years</span>
+                    </div>
+                </div>
+                <div class="project-info">
+                    <div class="project-company">@ SoulX (2022.05 ~ 2025.08)</div>
+                    <h3 class="project-title">XROOM</h3>
+                    <p class="project-subtitle">Real-time Broadcast & Content Platform</p>
+                    <p class="project-desc">
+                        XR 콘텐츠 솔루션 기업의 핵심 프로덕트. 언리얼 엔진 기반 실시간 방송/콘텐츠 프로그램으로
+                        3년간 개발, 관리하며 Steam 플랫폼 런칭 및 지속 업데이트를 완료.
+                        파라과이 방송국 납품, 정부지원사업 등 다수 프로젝트 수행.
+                    </p>
+                    <div class="project-features">
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            </div>
+                            <div>
+                                <strong>Real-time Broadcasting</strong>
+                                <span>NDI, BlackMagic, FFmpeg, Pixel Streaming</span>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                            </div>
+                            <div>
+                                <strong>Plugin Integration</strong>
+                                <span>NDI, FFMPEG, MediaPipe, WebRTC, BlackMagic</span>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/></svg>
+                            </div>
+                            <div>
+                                <strong>Steam Launch</strong>
+                                <span>Product launch, updates, GS certification</span>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            </div>
+                            <div>
+                                <strong>Global Delivery</strong>
+                                <span>Paraguay broadcast program, VR porting, Education</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-tags">
+                        <span>UE5.3</span><span>C++</span><span>Blueprint</span><span>NDI</span>
+                        <span>BlackMagic</span><span>FFmpeg</span><span>Steam</span>
+                        <span>Electron</span><span>React</span><span>Firebase</span>
+                    </div>
+                    <a href="https://store.steampowered.com/app/2616930/XROOM/?l=koreana" target="_blank" rel="noopener noreferrer" class="project-link">
+                        View on Steam
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Section -->
+    <section class="section" id="career">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">03</span>
+                <h2 class="section-title">Career</h2>
+            </div>
+            <div class="timeline">
+                <!-- DNABLE -->
+                <div class="timeline-item reveal">
+                    <div class="timeline-marker current"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="timeline-company">주식회사 디네이블 (DNABLE)</h3>
+                                <span class="timeline-role">제작실 사원 | 버추얼 아이돌 프로젝트 엔진 개발</span>
+                            </div>
+                            <span class="timeline-date">2025.07 ~ Present</span>
+                        </div>
+                        <div class="timeline-details">
+                            <div class="timeline-task">
+                                <h4>커스텀 NPR 렌더링 파이프라인 구축</h4>
+                                <p>엔진 소스 수정을 통한 Clear Coat → Toon Shading Model 커스터마이징. 8개 렌더링 모듈 C++/HLSL 개발.</p>
+                            </div>
+                            <div class="timeline-task">
+                                <h4>방송 송출 시스템 구축</h4>
+                                <p>DeckLink Pro 4채널 SDI 출력, NDI 모자이크 프리뷰, Stream Deck OSC 원격 제어.</p>
+                            </div>
+                            <div class="timeline-task">
+                                <h4>모션캡처 시스템 개발 및 촬영 운용</h4>
+                                <p>VICON/LiveLink 기반 최대 5인 동시 캡처. MotionBuilder 자동 리타겟 스크립트 개발.</p>
+                            </div>
+                            <div class="timeline-task">
+                                <h4>AI 업무 자동화 시스템</h4>
+                                <p>Claude Code 18개 커스텀 스킬, n8n 자동화 서버, Notion 자동 기록.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SoulX -->
+                <div class="timeline-item reveal">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="timeline-company">주식회사 소울엑스 (SoulX)</h3>
+                                <span class="timeline-role">기술개발팀 팀장 | 메인 프로덕트 개발, 관리, 기획</span>
+                            </div>
+                            <span class="timeline-date">2022.05 ~ 2025.08<br><small>3년 4개월</small></span>
+                        </div>
+                        <div class="timeline-details">
+                            <div class="timeline-task">
+                                <h4>XROOM 메인 프로덕트 개발</h4>
+                                <p>C++/Blueprint 기반 실시간 방송/콘텐츠 프로그램 개발. NDI, FFmpeg, BlackMagic 등 플러그인 제작 및 연동. Steam 런칭.</p>
+                            </div>
+                            <div class="timeline-task">
+                                <h4>글로벌 프로젝트</h4>
+                                <p>파라과이 방송용 프로그램 납품, 안전보건공단 VR 포팅, GS인증, 정부지원사업 R&D.</p>
+                            </div>
+                            <div class="timeline-task">
+                                <h4>Electron 런처 & 웹 개발</h4>
+                                <p>Electron/React/Redux 기반 런처 개발, Three.js 활용 홈페이지, WebGL 포토부스.</p>
+                            </div>
+                            <div class="timeline-task">
+                                <h4>팀 인프라 & 교육</h4>
+                                <p>AWS/GitHub/SVN CI/CD 구축, XR 교육 메인 강사 (대구, 제주).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hanyoung -->
+                <div class="timeline-item reveal">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="timeline-company">한영시스텍주식회사</h3>
+                                <span class="timeline-role">네트워크 관리</span>
+                            </div>
+                            <span class="timeline-date">2020.11 ~ 2021.12<br><small>1년 2개월</small></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Humming -->
+                <div class="timeline-item reveal">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="timeline-company">허밍컴퍼니</h3>
+                                <span class="timeline-role">GUI, 반응형 웹, 인터페이스</span>
+                            </div>
+                            <span class="timeline-date">2018.01 ~ 2018.12<br><small>1년</small></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="timeline-item reveal">
+                    <div class="timeline-marker edu"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div>
+                                <h3 class="timeline-company">동원대학교</h3>
+                                <span class="timeline-role">게임콘텐츠과 | 학점 4.0 / 4.5</span>
+                            </div>
+                            <span class="timeline-date">2013.03 ~ 2020.02</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="section section-dark" id="skills">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">04</span>
+                <h2 class="section-title">Tech Stack</h2>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-category reveal">
+                    <div class="skill-category-header">
+                        <div class="skill-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
+                        </div>
+                        <h3>Game Engine</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item primary">Unreal Engine 5</div>
+                        <div class="skill-item">Unity</div>
+                        <div class="skill-item">Blueprint</div>
+                    </div>
+                </div>
+
+                <div class="skill-category reveal">
+                    <div class="skill-category-header">
+                        <div class="skill-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        </div>
+                        <h3>Languages</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item primary">C++</div>
+                        <div class="skill-item primary">HLSL</div>
+                        <div class="skill-item">C#</div>
+                        <div class="skill-item">Python</div>
+                        <div class="skill-item">JavaScript</div>
+                    </div>
+                </div>
+
+                <div class="skill-category reveal">
+                    <div class="skill-category-header">
+                        <div class="skill-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                        <h3>Graphics / Rendering</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item primary">DirectX 12</div>
+                        <div class="skill-item primary">Lumen</div>
+                        <div class="skill-item">Ray Tracing</div>
+                        <div class="skill-item">Custom Shading</div>
+                    </div>
+                </div>
+
+                <div class="skill-category reveal">
+                    <div class="skill-category-header">
+                        <div class="skill-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                        </div>
+                        <h3>Motion Capture / Broadcast</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item">MotionBuilder</div>
+                        <div class="skill-item">VICON</div>
+                        <div class="skill-item">LiveLink</div>
+                        <div class="skill-item">ARKit</div>
+                        <div class="skill-item">NDI</div>
+                        <div class="skill-item">BlackMagic</div>
+                        <div class="skill-item">FFmpeg</div>
+                    </div>
+                </div>
+
+                <div class="skill-category reveal">
+                    <div class="skill-category-header">
+                        <div class="skill-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                        </div>
+                        <h3>AI / Automation</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item">Claude Code</div>
+                        <div class="skill-item">ComfyUI</div>
+                        <div class="skill-item">Stable Diffusion</div>
+                        <div class="skill-item">n8n</div>
+                    </div>
+                </div>
+
+                <div class="skill-category reveal">
+                    <div class="skill-category-header">
+                        <div class="skill-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <h3>Web / Infra</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item">React</div>
+                        <div class="skill-item">Redux</div>
+                        <div class="skill-item">Three.js</div>
+                        <div class="skill-item">Electron</div>
+                        <div class="skill-item">AWS</div>
+                        <div class="skill-item">Git</div>
+                        <div class="skill-item">SVN</div>
+                        <div class="skill-item">Steam</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GitHub Profile -->
+            <div class="github-profile reveal">
+                <a href="https://github.com/kim98828" target="_blank" rel="noopener noreferrer" class="github-card">
+                    <div class="github-card-left">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" class="github-card-icon"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        <div>
+                            <span class="github-card-name">kim98828</span>
+                            <span class="github-card-desc">15 Repositories</span>
+                        </div>
+                    </div>
+                    <div class="github-card-right">
+                        <span class="github-card-link">View Profile
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">05</span>
+                <h2 class="section-title">Contact</h2>
+            </div>
+            <div class="contact-grid reveal">
+                <!-- Message Form -->
+                <div class="message-form-wrap">
+                    <h3 class="message-form-title">Send a Message</h3>
+                    <p class="message-form-desc">메시지를 보내시면 Telegram으로 바로 전달됩니다.</p>
+                    <form id="contact-form" class="message-form">
+                        <div class="form-row">
+                            <input type="text" id="msg-name" class="form-input" placeholder="Name" required>
+                            <input type="email" id="msg-email" class="form-input" placeholder="Email" required>
+                        </div>
+                        <textarea id="msg-text" class="form-input form-textarea" placeholder="Message" rows="4" required></textarea>
+                        <button type="submit" id="msg-submit" class="lock-btn msg-btn">
+                            <span id="msg-btn-text">Send Message</span>
+                            <span id="msg-btn-loading" class="msg-loading" style="display:none;">Sending...</span>
+                        </button>
+                        <p class="msg-status" id="msg-status"></p>
+                    </form>
+                </div>
+                <!-- Contact Links -->
+                <div class="contact-side">
+                    <div class="contact-links-vertical">
+                        <a href="https://github.com/kim98828" target="_blank" rel="noopener noreferrer" class="contact-card-h">
+                            <div class="contact-icon-sm">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </div>
+                            <div>
+                                <span class="contact-h-label">GitHub</span>
+                                <span class="contact-h-value">kim98828</span>
+                            </div>
+                        </a>
+                        <a href="mailto:kim98828@gmail.com" class="contact-card-h">
+                            <div class="contact-icon-sm">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </div>
+                            <div>
+                                <span class="contact-h-label">Email</span>
+                                <span class="contact-h-value">kim98828@gmail.com</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="visitor-count-wrap">
+                        <div class="visitor-dot"></div>
+                        <span>Total Visitors: <strong id="visitor-count">-</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <span>&copy; 2026 kim98828. Built with passion.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
