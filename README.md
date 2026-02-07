@@ -76,5 +76,147 @@ Currently Learning: AI-Powered Creative Tools
 
 </div>
 
+---
+
+## :fire: Code Highlights from Projects
+
+### :art: Custom NPR/PBR Blend Toon Shader — DNABLE
+Anisotropy 값으로 NPR(셀 셰이딩)과 PBR(물리 기반 렌더링)을 실시간 블렌딩하는 커스텀 셰이더. SDF 기반 얼굴 그림자 포함.
+```hlsl
+FDirectLighting SelShaderBxDF(FGBufferData GBuffer, half3 N, half3 V, half3 L,
+                              float Falloff, half NoL, FAreaLight AreaLight, FShadowTerms Shadow)
+{
+    BxDFContext Context;
+    Init(Context, N, V, L);
+    Context.NoV = saturate(abs(Context.NoV) + 1e-5);
+
+    FDirectLighting Lighting;
+    Lighting.Diffuse = Falloff * NoL;
+
+    float3 FalloffColor = AreaLight.FalloffColor * (Falloff * NoL);
+    float3 PBRDiffuse = FalloffColor * GBuffer.DiffuseColor * TOON_INV_PI;
+    float3 PBRSpecular = FalloffColor * CalculatePBRSpecular(
+        GBuffer.Roughness, GBuffer.Metallic, GBuffer.BaseColor, N, V, L);
+    Lighting.Specular = PBRDiffuse + PBRSpecular;
+    return Lighting;
+}
+
+// Anisotropy로 NPR ↔ PBR 블렌드
+half BlendFactor = saturate(GBuffer.Anisotropy);
+half3 Result = lerp(NPRResult, PBRResult, BlendFactor);
+```
+
+---
+
+### :movie_camera: BGRA → UYVY GPU Color Conversion — XROOM
+NDI 방송 송출을 위한 GPU 기반 실시간 색공간 변환 셰이더. 4:2:2 크로마 서브샘플링 처리.
+```hlsl
+void NDIIOBGRAtoUYVYPS(float4 InPosition : SV_POSITION,
+                       float2 InUV : TEXCOORD0,
+                       out float4 OutColor : SV_Target0)
+{
+    float3x3 RGBToYCbCrMat = {
+        0.18300, 0.61398, 0.06201,
+       -0.10101,-0.33899, 0.43900,
+        0.43902,-0.39900,-0.04001
+    };
+    float3 RGBToYCbCrVec = { 0.06302, 0.50198, 0.50203 };
+
+    // 인접 2픽셀 샘플링 → 크로마 평균
+    float3 YUV0 = mul(RGBToYCbCrMat, RGB0) + RGBToYCbCrVec;
+    float3 YUV1 = mul(RGBToYCbCrMat, RGB1) + RGBToYCbCrVec;
+
+    OutColor.xz = (YUV0.zy + YUV1.zy) / 2.f;  // Cb, Cr 평균
+    OutColor.y  = YUV0.x;                        // Y0
+    OutColor.w  = YUV1.x;                        // Y1
+}
+```
+
+---
+
+### :arrows_counterclockwise: NDI Async Double-Buffer Streaming — DNABLE
+GPU → CPU 비동기 텍스처 리드백을 이중 버퍼로 처리. 한 프레임이 전송되는 동안 다음 프레임을 준비하여 파이프라인 지연 최소화.
+```cpp
+class MappedTextureASyncSender {
+    MappedTexture MappedTextures[2];
+    int32 CurrentIndex = 0;
+public:
+    void Resolve(FRHICommandListImmediate& RHICmdList, FRHITexture* SourceTextureRHI,
+                 const FResolveRect& Rect, const FResolveRect& DestRect);
+    void Map(FRHICommandListImmediate& RHICmdList, int32& OutWidth, int32& OutHeight, int32& OutLineStride);
+    void Send(FRHICommandListImmediate& RHICmdList, NDIlib_send_instance_t p_send_instance,
+              NDIlib_video_frame_v2_t& p_video_data);
+};
+```
+
+---
+
+### :performing_arts: ARKit Facial MoCap Thread-Safe Preprocessing — DNABLE
+52개 ARKit Blend Shape의 실시간 리매핑. 스레드 안전한 스냅샷 패턴으로 게임 스레드와 애니메이션 스레드 간 데이터 경합 방지.
+```cpp
+void UARKitFacialPreProcessor::UpdateWorkerSnapshot()
+{
+    // Atomic swap — 이전 워커는 기존 데이터로 계속 동작
+    TSharedPtr<FARKitFacialPreProcessorWorker, ESPMode::ThreadSafe> NewWorker =
+        MakeShared<FARKitFacialPreProcessorWorker, ESPMode::ThreadSafe>();
+
+    for (const FName& BlendShapeName : FARKitBlendShapeHelper::GetARKitBlendShapeNames()) {
+        const FFacialBlendShapeRemap* RemapData = RemapSettings->GetBlendShapeRemap(BlendShapeName);
+        if (RemapData)
+            NewWorker->RemapSettingsSnapshot.Add(BlendShapeName, *RemapData);
+    }
+
+    WorkerInstance = NewWorker;  // 원자적 교체
+}
+
+// 커브 기반 리매핑
+Value *= RemapData->Multiplier;
+Value += RemapData->Offset;
+Value = FMath::Clamp(Value, RemapData->MinLimit, RemapData->MaxLimit);
+if (RemapData->bUseCurveRemap && RemapData->RemapCurve.GetRichCurveConst())
+    Value = RemapData->RemapCurve.GetRichCurveConst()->Eval(Value);
+```
+
+---
+
+### :mechanical_arm: Capsule Collision IK for Arm Limits — DNABLE
+캡슐-포인트 충돌 검출 기반 팔 관통 방지 IK. 로컬 좌표계 변환 후 밀어내기 벡터 계산.
+```cpp
+bool FAnimNode_ArmCollisionLimit::CheckCapsuleCollision(
+    const FVector& Point, const FCapsuleCollisionData& Capsule, FVector& OutPushVector) const
+{
+    FVector LocalPoint = Capsule.WorldRotation.UnrotateVector(Point - Capsule.WorldCenter);
+    float ClampedZ = FMath::Clamp(LocalPoint.Z, -Capsule.HalfHeight, Capsule.HalfHeight);
+
+    FVector ToPoint = LocalPoint - FVector(0, 0, ClampedZ);
+    float DistanceToAxis = ToPoint.Size2D();
+    float TotalRadius = Capsule.Radius + PushOutDistance;
+
+    if (DistanceToAxis < TotalRadius) {
+        FVector PushDirection = FVector(ToPoint.X, ToPoint.Y, 0).GetSafeNormal();
+        OutPushVector = Capsule.WorldRotation.RotateVector(
+            PushDirection * (TotalRadius - DistanceToAxis));
+        return true;
+    }
+    return false;
+}
+```
+
+---
+
+### :speaker: Intelligent Multi-Channel Audio Mixing — XROOM
+NDI 수신 오디오의 채널 수가 출력과 다를 때 자동으로 다운믹스/업믹스 처리. Float32 → Int16 변환 포함.
+```cpp
+// 다운믹스: 초과 채널을 기존 채널에 합산 후 정규화
+for (int32 src = requested_no_channels; src < audio_frame.no_channels; ++src) {
+    for (int32 dst = 0; dst < requested_no_channels; ++dst) {
+        for (int32 i = 0; i < audio_frame.no_samples; ++i)
+            dst_data[i] += src_data[i];
+    }
+}
+// 업믹스: 소스 채널 평균으로 빈 채널 채우기
+sample_value /= audio_frame.no_channels;
+int16 sample = FMath::Clamp(FMath::RoundToInt(sample_value * 32767.0f), INT16_MIN, INT16_MAX);
+```
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:06b6d4&height=150&section=footer)
