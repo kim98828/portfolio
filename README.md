@@ -11,7 +11,7 @@
 ## :bust_in_silhouette: About Me
 
 ```yaml
-Name: SUB (Kim Min Seop)
+Name: kimminsub
 Role: Full-Stack Developer & Game Developer
 Interests:
   - Unreal Engine Game Development
