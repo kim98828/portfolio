@@ -11,7 +11,7 @@
 ## :bust_in_silhouette: About Me
 
 ```yaml
-Name: kim min sub
+Name: kim98828
 Role: Full-Stack Developer & Game Developer
 Interests:
   - Unreal Engine Game Development
