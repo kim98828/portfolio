@@ -60,29 +60,6 @@ Currently Learning: AI-Powered Creative Tools
 
 ---
 
-## :bar_chart: GitHub Stats
-
-<div align="center">
-
-<img src="https://github-readme-stats.vercel.app/api?username=kim98828&show_icons=true&theme=tokyonight&hide_border=true&bg_color=00000000&include_all_commits=true&count_private=true" width="49%" />
-<img src="https://streak-stats.demolab.com/?user=kim98828&theme=tokyonight&hide_border=true&background=00000000" width="49%" />
-
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=kim98828&layout=compact&theme=tokyonight&hide_border=true&bg_color=00000000&langs_count=8" width="50%" />
-
-</div>
-
----
-
-## :chart_with_upwards_trend: Activity Graph
-
-<div align="center">
-
-[![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=kim98828&theme=tokyo-night&hide_border=true&bg_color=00000000&color=6366f1&line=06b6d4&point=ffffff)](https://github.com/kim98828)
-
-</div>
-
----
-
 <div align="center">
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fkim98828&count_bg=%236366F1&title_bg=%23555555&icon=github.svg&icon_color=%23FFFFFF&title=Profile+Views&edge_flat=true)](https://hits.seeyoufarm.com)
