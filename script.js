@@ -745,6 +745,55 @@ Value = <span class="code-fn">FMath::Clamp</span>(Value, MinLimit, MaxLimit);
             <span class="code-fn">FMath::RoundToInt</span>(value * <span class="code-num">32767.0f</span>), INT16_MIN, INT16_MAX);
     }
 }`
+        },
+        electron: {
+            label: 'XROOM — Electron App Launcher',
+            lang: 'TypeScript',
+            desc: 'IPC 기반 다운로드 → ZIP 압축해제 → 설치 파이프라인. 진행률 실시간 전송',
+            code: `<span class="code-fn">ipcMain</span>.<span class="code-fn">handle</span>(<span class="code-str">'install-XROOM'</span>, (event, configs) =&gt; {
+    <span class="code-type">http</span>.<span class="code-fn">get</span>(<span class="code-str">'http://127.0.0.1:4000/download'</span>, res =&gt; {
+        <span class="code-key">const</span> fileName = res.headers[<span class="code-str">'filename'</span>].<span class="code-fn">toString</span>();
+        <span class="code-key">const</span> file = <span class="code-type">fs</span>.<span class="code-fn">createWriteStream</span>(fileName);
+        configs.progress.total = <span class="code-fn">parseInt</span>(res.headers[<span class="code-str">'content-length'</span>]);
+        res.<span class="code-fn">pipe</span>(file);
+
+        <span class="code-comment">// 다운로드 진행률 → Renderer IPC 전송</span>
+        res.<span class="code-fn">on</span>(<span class="code-str">'data'</span>, chunk =&gt; {
+            configs.progress.downloaded += chunk.length;
+            event.sender.<span class="code-fn">send</span>(<span class="code-str">'set-XROOM-configs'</span>, configs);
+        });
+
+        file.<span class="code-fn">on</span>(<span class="code-str">'finish'</span>, () =&gt; {
+            file.<span class="code-fn">close</span>();
+            <span class="code-comment">// ZIP 압축해제 → 설치</span>
+            <span class="code-key">let</span> zip = <span class="code-key">new</span> <span class="code-type">AdmZip</span>(fileName);
+            zip.<span class="code-fn">extractAllToAsync</span>(installPath, <span class="code-key">true</span>);
+            configs.isInstalled = <span class="code-key">true</span>;
+            <span class="code-type">fs</span>.<span class="code-fn">unlink</span>(fileName, err =&gt; {});
+        });
+    });
+});`
+        },
+        python: {
+            label: 'DNABLE — Face Shadow SDF Generator',
+            lang: 'Python',
+            desc: 'Euclidean Distance Transform 기반 SDF 생성. 바이너리 마스크 → 부호 거리장 → 텍스처 변환',
+            code: `<span class="code-key">from</span> scipy <span class="code-key">import</span> ndimage
+<span class="code-key">import</span> numpy <span class="code-key">as</span> np
+
+<span class="code-key">def</span> <span class="code-fn">generate_sdf</span>(binary, max_dist):
+    <span class="code-comment"># Euclidean Distance Transform</span>
+    dist_outside = ndimage.<span class="code-fn">distance_transform_edt</span>(~binary)
+    dist_inside  = ndimage.<span class="code-fn">distance_transform_edt</span>(binary)
+
+    <span class="code-comment"># SDF: positive outside, negative inside</span>
+    sdf = dist_outside - dist_inside
+
+    <span class="code-comment"># Normalize to 0-255 grayscale texture</span>
+    sdf_norm = (sdf / max_dist) * <span class="code-num">127.5</span> + <span class="code-num">127.5</span>
+    sdf_norm = np.<span class="code-fn">clip</span>(sdf_norm, <span class="code-num">0</span>, <span class="code-num">255</span>).<span class="code-fn">astype</span>(np.uint8)
+
+    <span class="code-key">return</span> Image.<span class="code-fn">fromarray</span>(sdf_norm)`
         }
     };
 
