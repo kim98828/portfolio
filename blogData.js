@@ -276,5 +276,168 @@ Viewer     : 00A→10→05→06s (read-only)`
         solution: 'ABGRITZ_v01GameModeBase가 BeginPlay에서 GetAllActorsOfClass로 모든 VirtualIdolCharacter를 자동 등록. 첫 번째가 Primary Idol. BlueprintImplementableEvent로 공연 시작/종료 시 음악/조명/UI 반응.',
         insight: 'BeginPlay에서 GetAllActorsOfClass로 자동 탐색하면, 새 캐릭터를 레벨에 놓기만 해도 시스템이 자동으로 인식한다 — 설정 제로.',
         arch: null
+    },
+    // ══════════════════════════════════════
+    // XROOM (SoulXProject) — 960+ commits
+    // ══════════════════════════════════════
+    // ── SaveLoad ──
+    {
+        id: 'xroom-saveload',
+        tag: 'SaveLoad',
+        title: '3D 씬 전체를 직렬화하는 Save/Load 시스템 — 수십 번의 아키텍처 전환',
+        problem: 'XROOM의 3D 씬에는 액터, 컴포넌트, MediaPlane 텍스처, Composure 설정, PPT 슬롯, 카메라 트랜스폼이 혼재. 단순 문자열 직렬화로는 오브젝트 간 참조와 고유 ID 충돌을 해결할 수 없었다.',
+        solution: '문자열 → 오브젝트 기반 → 오브젝트 그래프 전체 영속화로 아키텍처를 수차례 전환. DragDrop 오브젝트의 UniqueID 중복 문제를 해결하고, Undo/Redo 시스템까지 Save/Load 위에 재구축.',
+        insight: 'Save 시스템이 충분히 완전하면 Undo/Redo를 별도로 구현할 필요가 없다 — 스냅샷 저장/복원이 곧 Undo/Redo다. 이 발견으로 코드를 절반으로 줄였다.',
+        arch: `Save/Load Architecture
+├── Actor Serializer   — Transform, Properties, UniqueID
+├── Component State    — Media, Composure, PPT, Camera
+├── Object Graph       — Reference tracking, ID dedup
+├── Undo/Redo          — Built on Save/Load snapshots
+└── File I/O           — Async write, versioned format`
+    },
+    // ── Compositing ──
+    {
+        id: 'xroom-composure',
+        tag: 'Compositing',
+        title: 'Composure 크로마키 + Save/Load = 크래시 — 실시간 합성의 상태 관리',
+        problem: 'UE5 Composure 플러그인으로 실시간 크로마키 합성을 구현했으나, Save/Load 시 Composure 상태 복원에서 크래시 발생. ColorResistance 토글 후 뷰포트에 잔상 아티팩트도 남았다.',
+        solution: 'Composure 컴포넌트의 초기화 순서를 제어하는 예외 처리 레이어 추가. 복원 시 Composure를 먼저 해제 → 씬 로드 → 재초기화하는 3단계 프로세스. 잔상 문제는 렌더 타겟 강제 클리어로 해결.',
+        insight: '실시간 합성 시스템은 "현재 프레임"에 최적화되어 있어 상태 저장/복원을 고려하지 않는다. Save/Load와 결합하려면 초기화 순서를 명시적으로 제어하는 중간 레이어가 필수다.',
+        arch: `Load Sequence
+1. Composure Release  — 기존 합성 파이프라인 해제
+2. Scene Restore      — 액터, 미디어, 카메라 복원
+3. Composure Reinit   — 크로마키 설정 재적용
+4. RenderTarget Clear — 잔상 방지 강제 클리어`
+    },
+    // ── Streaming ──
+    {
+        id: 'xroom-ndi',
+        tag: 'Streaming',
+        title: 'NDI 비동기 이중 버퍼 — GPU→CPU 스톨 없는 1080p60 송출',
+        problem: 'NDI 프레임 송출 시 GPU→CPU 텍스처 리드백에서 동기 대기가 발생하여 프레임 드롭. 실시간 방송에서 매 프레임 16.6ms 예산을 초과하면 시청자에게 끊김이 보인다.',
+        solution: 'MappedTexture[2] 핑퐁 구조의 비동기 이중 버퍼 설계. 한 프레임을 NDI로 전송하는 동안 다음 프레임의 GPU 리드백을 동시 진행. 파이프라인 지연을 1프레임 이내로 억제.',
+        insight: 'GPU→CPU 리드백은 본질적으로 느리다. 동기 방식으로는 해결 불가능하며, 1프레임 지연을 수용하는 비동기 핑퐁이 실시간 방송에서 유일한 실용적 해법이다.',
+        arch: `Frame N:   GPU Render → Buffer[0] → NDI Send
+Frame N+1: GPU Render → Buffer[1] → (waiting)
+Frame N+2: GPU Render → Buffer[0] → NDI Send (Buffer[1])
+                         ↑ ping-pong ↑`
+    },
+    {
+        id: 'xroom-ndi-audio',
+        tag: 'Streaming',
+        title: 'NDI 오디오 채널 자동 다운믹스/업믹스',
+        problem: 'NDI 소스마다 오디오 채널 수가 다름(예: 8ch 수신 → 2ch 출력). 채널 미스매치 시 무음 또는 왜곡 발생. 사용자가 매번 오디오 설정을 수동으로 맞추는 것은 비현실적.',
+        solution: '자동 다운믹스/업믹스 알고리즘 구현. 초과 채널은 합산 후 정규화, 부족 채널은 평균으로 생성. Float32→Int16 변환 포함. 어떤 NDI 소스든 자동으로 출력 포맷에 맞춰 재생.',
+        insight: '오디오 채널 불일치는 방송 현장에서 가장 흔한 문제다. "항상 자동으로 맞추기"가 "옵션으로 선택하기"보다 현장 안정성이 높다 — 방송 중에는 설정을 건드릴 시간이 없다.',
+        arch: null
+    },
+    {
+        id: 'xroom-ffmpeg',
+        tag: 'Streaming',
+        title: 'FFmpeg를 UE5 안에서 — 인프로세스에서 프로세스 분리로',
+        problem: 'UE5 내부에서 FFmpeg 라이브러리를 직접 링크하면 인코딩 크래시가 에디터 전체를 죽인다. 연속 녹화 시 메모리 누수도 발생.',
+        solution: '초기 인프로세스 방식에서 별도 프로세스 스폰 방식으로 전환. UE5는 파이프로 프레임을 전달하고 FFmpeg 프로세스가 독립적으로 인코딩. 오디오 녹음, 타임코드 표시, 파일 관리까지 모듈 분리.',
+        insight: '서드파티 네이티브 라이브러리가 호스트 앱을 크래시시킬 수 있다면 프로세스를 분리하라. 파이프 통신의 오버헤드는 크래시 복구 비용보다 항상 저렴하다.',
+        arch: `v1: UE5 ←link→ FFmpeg.dll  (crash = editor dead)
+v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
+         ├── Video pipe (raw frames)
+         ├── Audio pipe (PCM)
+         └── Control pipe (start/stop/config)`
+    },
+    // ── PPT ──
+    {
+        id: 'xroom-ppt',
+        tag: 'Tool',
+        title: '3D 엔진 안의 PPT — 79커밋으로 만든 프레젠테이션 시퀀서',
+        problem: '3D 가상 공간에서 프레젠테이션을 하려면 카메라 이동, 오브젝트 표시/숨김, 미디어 전환, 이펙트를 시간 기반으로 제어해야 한다. PowerPoint와 같은 UX를 3D 엔진에서 구현해야 했다.',
+        solution: '슬롯 기반 시퀀서 설계 — 각 슬롯이 카메라 트랜스폼, 오브젝트 가시성, 미디어 상태, 전환 효과(Fade/Dissolve/Shake)를 소유. 자동 재생, 루프, 페이지 업/다운, 멀티카메라를 지원.',
+        insight: '시퀀서의 각 슬롯이 "상태 스냅샷"이라고 정의하면, 전환은 두 스냅샷 간 보간이 된다. 이 추상화가 카메라, 오브젝트, 미디어를 단일 인터페이스로 통합한다.',
+        arch: `PPT Sequencer
+├── Slot[N]  — Camera, Visibility, Media, Effects
+├── Transition — Fade, Dissolve, Camera Shake
+├── Playback  — Auto/Manual, Loop, Duration
+└── Integration — Save/Load, Multi-Camera, MediaPlane`
+    },
+    // ── MediaPlane ──
+    {
+        id: 'xroom-mediaplane',
+        tag: 'Tool',
+        title: 'GC가 라이브 미디어를 죽인다 — MediaPlane과 가비지 컬렉션 전쟁',
+        problem: 'UE5의 가비지 컬렉션이 라이브 비디오/웹캠 텍스처를 사용 중인데도 회수. MediaPlane에서 라이브 피드가 갑자기 검은 화면으로 바뀌는 현상이 간헐적으로 발생.',
+        solution: '미디어 리소스의 소유권을 MediaPlane 컴포넌트가 명시적으로 AddToRoot 또는 강한 참조로 보유하도록 재설계. JPG 임포트 에러, 잔상 제거, 멀티 임포트 등 미디어 생명주기 전반을 재구축.',
+        insight: 'UE5 GC는 "현재 사용 중"인지가 아니라 "참조 체인이 있는지"를 본다. 동적으로 생성된 미디어 리소스는 반드시 명시적 소유권을 설정해야 GC에서 보호된다.',
+        arch: null
+    },
+    // ── Networking ──
+    {
+        id: 'xroom-multiplayer',
+        tag: 'Networking',
+        title: 'Command 패턴으로 멀티플레이어 상태 동기화',
+        problem: 'XROOM의 멀티플레이어에서 오브젝트 선택, 이동, 삭제를 서버 권위(Server-Authoritative)로 처리해야 했다. 직접 RPC 호출 방식은 명령어 종류가 늘어날수록 스파게티 코드화.',
+        solution: 'Command 패턴을 도입하여 모든 사용자 액션을 직렬화 가능한 Command 객체로 캡슐화. 서버에서 실행 후 결과를 클라이언트에 리플리케이트. DOREPLIFETIME으로 PlayerController 상태 동기화.',
+        insight: 'Command 패턴은 네트워크 동기화와 Undo/Redo를 동시에 해결한다 — Command를 서버에 보내면 동기화, 스택에 쌓으면 Undo다.',
+        arch: `Client → Command Object → Server Execute → Replicate
+         ├── SelectCmd   — Object selection sync
+         ├── MoveCmd     — Transform replication
+         ├── DeleteCmd   — Server-authoritative removal
+         └── UndoStack   — Command history for Undo/Redo`
+    },
+    // ── Auth ──
+    {
+        id: 'xroom-jwt',
+        tag: 'Networking',
+        title: 'C++에서 JWT 검증 — 크로스 플랫폼 타입 호환성 문제',
+        problem: 'UE5의 C++ 환경에서 JWT 토큰을 검증할 때 inttypes.h 호환성 문제 발생. 검증 실패 시 재시도 로직이 없어 일시적 네트워크 오류에도 로그인 실패.',
+        solution: 'inttypes 전용 빌드로 크로스 플랫폼 호환성 확보. HTTPManager를 GameInstance로 이동하여 인증 상태를 앱 생명주기와 동기화. JWT 디코더를 패치 브랜칭에 통합하여 인증된 업데이트만 허용.',
+        insight: 'C++ 게임 엔진에서 웹 표준(JWT)을 사용할 때는 타입 시스템의 차이가 가장 큰 장벽이다. 라이브러리를 "있는 그대로" 링크하지 말고 엔진의 타입 체계에 맞게 래핑해야 한다.',
+        arch: null
+    },
+    // ── Delivery ──
+    {
+        id: 'xroom-launcher',
+        tag: 'Delivery',
+        title: 'Electron 런처 CI/CD — 멀티 아키텍처 빌드와 코드사인 벽',
+        problem: 'XROOM의 Electron 런처를 x86/x64/ARM에서 빌드하고 자동 업데이트를 지원해야 했다. Windows 코드사인이 없으면 자동 업데이트가 차단되는 문제 발견.',
+        solution: 'GitHub Actions로 멀티 아키텍처 CI/CD 구축(183커밋). 코드사인 미적용 환경에서는 홈페이지 리다이렉트로 우회. Firebase 연동, API 엔드포인트 관리, 토큰 환경변수를 자동화.',
+        insight: 'Electron 자동 업데이트는 코드사인을 사실상 필수로 요구한다. 코드사인 인프라가 없다면 웹 기반 업데이트 안내가 현실적인 대안이다.',
+        arch: `GitHub Actions CI/CD
+├── Build    — x86 / x64 / ARM
+├── Sign     — (skipped → web redirect fallback)
+├── Release  — GitHub Releases auto-publish
+└── Update   — Electron autoUpdater → Homepage redirect`
+    },
+    {
+        id: 'xroom-patch',
+        tag: 'Delivery',
+        title: 'SharedPointer 충돌 — 비동기 청크 다운로드 후 메모리 크래시',
+        problem: 'XROOM의 CDN 기반 청크 패치 시스템에서 비동기 다운로드 완료 후 SharedPointer 충돌로 크래시 발생. 데이터테이블 청크 분리 후 더 빈번해짐.',
+        solution: '비동기 다운로드 콜백에서 SharedPointer 소유권이 불명확했던 문제 발견. 다운로드 완료 시점에 원본 포인터가 이미 해제된 경우가 원인. Weak → Shared 승격 패턴으로 콜백 안전성 확보. 재연결 시도 로직 추가.',
+        insight: '비동기 콜백에서 SharedPointer를 직접 캡처하면 수명이 예측 불가능해진다. WeakPtr로 캡처 후 콜백 진입 시 Shared로 승격하는 패턴이 비동기 C++ 코드의 정석이다.',
+        arch: null
+    },
+    {
+        id: 'xroom-3ch-deploy',
+        tag: 'Delivery',
+        title: '3채널 동시 배포 — Steam + Electron + AWS 버전 동기화',
+        problem: 'Steam, Electron 런처, AWS 서버 3개 배포 채널의 버전이 각각 관리되어 업데이트 시 동기화 실패 빈번. 사용자마다 다른 버전을 사용하는 파편화 발생.',
+        solution: '중앙 Version API 서버 구축. Electron 런처 자동 업데이트 + SteamPipe 브랜치 관리 + AWS CDN을 통합. 델타 패칭으로 업데이트 크기 80% 감소.',
+        insight: '멀티채널 배포에서 "각 채널이 독립적으로 버전을 관리"하면 반드시 파편화된다. 단일 Version API가 진실의 원천(Source of Truth)이 되어야 한다.',
+        arch: `Version API (Source of Truth)
+├── Steam      — SteamPipe branch management
+├── Electron   — autoUpdater + GitHub Releases
+└── AWS CDN    — Chunked delta patching (80% smaller)`
+    },
+    // ── Event ──
+    {
+        id: 'xroom-event-branch',
+        tag: 'DevOps',
+        title: 'CES부터 두바이까지 — 이벤트 드리븐 브랜치 아키텍처',
+        problem: 'XROOM은 CES, 두바이, WIS, NextRise, 대구 등 10개 이상의 글로벌 이벤트에 커스텀 빌드를 납품. 각 이벤트마다 다른 기능 조합이 필요하지만 메인라인 제품과 동기화도 유지해야 했다.',
+        solution: '이벤트별 브랜치(v2.0.0_CES, v2.5.0_Dubai, v3.0.0_Daegu_Composure 등)를 메인라인에서 분기 → 커스터마이징 → 이벤트 종료 후 유용한 기능만 메인에 체리픽. 27개 버전 릴리스를 2년간 관리.',
+        insight: '이벤트 브랜치는 "쓰고 버리는 것"이 아니라 "실전 테스트 환경"이다. 이벤트에서 검증된 기능만 메인라인에 머지하면 제품 안정성이 자연스럽게 올라간다.',
+        arch: `main ─── v1.0 ─── v2.0 ─── v2.5 ─── v3.0
+              ↓         ↓         ↓         ↓
+            CES    Dubai/WIS  NextRise   Daegu
+              └── cherry-pick useful features back ──→ main`
     }
 ];
