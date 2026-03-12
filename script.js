@@ -683,6 +683,69 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================
+    // Blog Cards — Render & Filter
+    // ============================================
+    const blogGrid = document.getElementById('blog-grid');
+    if (blogGrid && typeof blogData !== 'undefined') {
+        // Render cards
+        function renderBlogCards(data) {
+            blogGrid.innerHTML = data.map(card => `
+                <div class="blog-card reveal" data-tag="${card.tag}" data-id="${card.id}">
+                    <div class="blog-card-header">
+                        <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
+                        <h4 class="blog-card-title">${card.title}</h4>
+                    </div>
+                    <p class="blog-card-problem">${card.problem}</p>
+                    <div class="blog-card-expand">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        <span>Detail</span>
+                    </div>
+                    <div class="blog-card-detail">
+                        <div class="blog-detail-label">Solution</div>
+                        <p class="blog-detail-text">${card.solution}</p>
+                        <div class="blog-detail-label">Key Insight</div>
+                        <div class="blog-detail-insight">${card.insight}</div>
+                        ${card.arch ? `<div class="blog-detail-label">Architecture</div><pre class="blog-detail-arch">${card.arch}</pre>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            // Re-observe for scroll reveal
+            blogGrid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        renderBlogCards(blogData);
+
+        // Update "All" count
+        const allBtn = document.querySelector('.blog-filter[data-filter="all"] .blog-filter-count');
+        if (allBtn) allBtn.textContent = `(${blogData.length})`;
+
+        // Filter click
+        document.querySelectorAll('.blog-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.blog-filter').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+                blogGrid.querySelectorAll('.blog-card').forEach(card => {
+                    if (filter === 'all' || card.dataset.tag === filter) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Card expand/collapse
+        blogGrid.addEventListener('click', (e) => {
+            const card = e.target.closest('.blog-card');
+            if (!card) return;
+            card.classList.toggle('expanded');
+        });
+    }
+
+    // ============================================
     // Deep Dive Toggle
     // ============================================
     document.querySelectorAll('.deepdive-toggle').forEach(btn => {

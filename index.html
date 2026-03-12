@@ -7,6 +7,7 @@
     <meta name="description" content="실시간 렌더링 파이프라인 설계, 방송 시스템 아키텍처 구축. UE5 엔진 소스 레벨 엔지니어링.">
     <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="style.css">
+    <script src="blogData.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
@@ -41,6 +42,7 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#insights">Insights</a></li>
+                <li><a href="#blog">Blog</a></li>
                 <li><a href="#career">Career</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -578,11 +580,38 @@ BGRITZProject ← SVN Content (아티스트)
         </div>
     </section>
 
-    <!-- Career Section -->
-    <section class="section section-dark" id="career">
+    <!-- Problem Solving Blog Section -->
+    <section class="section section-dark" id="blog">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">04</span>
+                <h2 class="section-title">Problem Solving</h2>
+                <p class="section-desc">BGRITZ 프로젝트에서 마주한 문제들과 해결 과정</p>
+            </div>
+            <div class="blog-filters">
+                <button class="blog-filter active" data-filter="all">All <span class="blog-filter-count"></span></button>
+                <button class="blog-filter" data-filter="Rendering">Rendering</button>
+                <button class="blog-filter" data-filter="Broadcast">Broadcast</button>
+                <button class="blog-filter" data-filter="Camera">Camera</button>
+                <button class="blog-filter" data-filter="MoCap">MoCap</button>
+                <button class="blog-filter" data-filter="Animation">Animation</button>
+                <button class="blog-filter" data-filter="Character">Character</button>
+                <button class="blog-filter" data-filter="Tool">Tool</button>
+                <button class="blog-filter" data-filter="Pipeline">Pipeline</button>
+                <button class="blog-filter" data-filter="DevOps">DevOps</button>
+                <button class="blog-filter" data-filter="Optimization">Optimization</button>
+            </div>
+            <div class="blog-grid" id="blog-grid">
+                <!-- Cards rendered by JS from blogData.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Section -->
+    <section class="section" id="career">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">05</span>
                 <h2 class="section-title">Career</h2>
             </div>
             <div class="timeline">
@@ -703,7 +732,7 @@ BGRITZProject ← SVN Content (아티스트)
     <section class="section" id="skills">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">05</span>
+                <span class="section-tag">06</span>
                 <h2 class="section-title">Tech Stack</h2>
             </div>
             <div class="skills-grid">
@@ -859,7 +888,7 @@ BGRITZProject ← SVN Content (아티스트)
     <section class="section section-dark" id="contact">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">06</span>
+                <span class="section-tag">07</span>
                 <h2 class="section-title">Contact</h2>
             </div>
             <div class="contact-grid reveal">
