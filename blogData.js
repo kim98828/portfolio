@@ -18,13 +18,17 @@ const blogData = [
 └── GT7 CVM Tonemapper — ICtCp chroma-preserving`
     },
     {
-        id: 'clear-coat-hijack',
+        id: 'custom-gbuffer',
         tag: 'Rendering',
-        title: 'Clear Coat 셰이딩 모델을 하이재킹한 톤 셰이딩',
-        problem: 'MSM_Toon이 엔진에 등록되기 전, 기존 PBR 채널의 시멘틱으로는 톤 아트디렉션에 필요한 파라미터를 전달할 수 없었다.',
-        solution: 'Clear Coat 모델의 채널을 완전히 재정의 — Clear Coat→ShadowTint, Clear Coat Roughness→셀 셰이딩 범위, Specular→하이라이트 마스크, Anisotropy→NPR/PBR 블렌드 비율.',
-        insight: 'Anisotropy를 -1(SDF 페이스)~0(순수 톤)~1(순수 PBR DefaultLit)로 사용하면, 하나의 머티리얼에서 셀 셰이딩과 GGX 스펙큘러가 원활하게 전환된다.',
-        arch: null
+        title: 'GBufferT — 9번째 MRT로 톤 전용 채널 완전 분리',
+        problem: 'PBR 채널의 시멘틱으로는 톤 아트디렉션에 필요한 파라미터를 전달할 수 없었다. 초기에는 Clear Coat 채널 하이재킹으로 우회했으나, 그림자 분리·하이라이트 제어 등 요구가 늘며 채널이 부족해졌다.',
+        solution: '엔진 소스에 9번째 MRT인 GBufferT(SV_Target8)를 할당하여 Toon 전용 파라미터를 독립 저장. CustomData와 완전 분리하여 NPR/PBR 픽셀 간 데이터 오염 방지. 그림자 채널을 개별 분리하여 아티스트가 각각 독립 제어 가능.',
+        insight: 'Clear Coat 하이재킹은 빠른 프로토타이핑에 유효하지만, 프로덕션에서는 전용 버퍼를 할당하는 편이 채널 충돌 없이 확장 가능하다 — MRT 1개 추가의 GPU 비용은 미미하지만 설계 자유도는 비약적으로 늘어난다.',
+        arch: `GBufferT (SV_Target8) — 9th MRT
+├── Shadow Tint (R)     — 그림자 색상
+├── Cel Range (G)       — 셀 셰이딩 범위
+├── Highlight Mask (B)  — 하이라이트 영역
+└── NPR/PBR Blend (A)  — Anisotropy(-1~+1)`
     },
     {
         id: 'fov-outline',
