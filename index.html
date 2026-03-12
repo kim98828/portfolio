@@ -243,6 +243,15 @@
                                 <span>9 Modular Components, Undo/Redo, 8-Tab Editor UI</span>
                             </div>
                         </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            </div>
+                            <div>
+                                <strong>Studio DevOps Pipeline</strong>
+                                <span>Gitflow, 28 Claude Commands, Role-based Setup, Prebuilt Engine Distribution</span>
+                            </div>
+                        </div>
                     </div>
                     <!-- Deep Dive: Architecture & Challenges -->
                     <div class="project-deepdive">
@@ -289,6 +298,34 @@
                                     <p class="challenge-solution">DeckLink SDK 직접 연동하여 멀티 채널 출력 시스템 구축. 채널별 독립 RenderTarget + Genlock Reference 기반 프레임 동기화. Stream Deck OSC로 원격 채널 제어.</p>
                                     <p class="challenge-impact">4채널 동시 SDI 출력으로 프로덕션 방송 표준 충족. 실시간 채널 전환 및 모자이크 프리뷰 운용 가능.</p>
                                 </div>
+                                <div class="challenge-card">
+                                    <span class="challenge-num">04</span>
+                                    <h5>5인 팀의 이종 도구 환경 통합</h5>
+                                    <p class="challenge-problem">개발자는 Git + 소스 빌드, 아티스트는 SVN + 프리빌드 엔진. 역할별 필요 도구와 설정이 달라 환경 구축에 1~2일 소요. 엔진 업데이트 시 전체 팀 동기화 실패 빈번.</p>
+                                    <p class="challenge-solution">Python 기반 통합 파이프라인(BGRITZSetup) 구축. 역할별 셋업 자동화(Developer/Character/Level/Viewer), Gitflow 전략 수립, 28개 Claude 슬래시 커맨드로 AI 자동화, FastAPI 대시보드로 팀 상태 관리. 엔진 바이너리 SVN 배포로 아티스트에게 프리컴파일 엔진 자동 전달.</p>
+                                    <p class="challenge-impact">환경 구축 1~2일 → 원클릭 30분. Notion 일일/주간 보고 자동화. 엔진 업데이트 → NAS 배포 → 아티스트 자동 동기화 파이프라인 확립.</p>
+                                </div>
+                            </div>
+                            <div class="arch-box" style="margin-top: 1.5rem;">
+                                <div class="arch-label">DevOps Pipeline Architecture</div>
+                                <pre class="arch-flow">EpicGames/UnrealEngine (upstream)
+        ↓ fork
+VanillaUnrealEngine (branch: 5.5)
+        ↓ merge + // BGRITZ Engine Start/End 마커
+BGRITZ_Engine (branch: bgritz-main → dev → feature/*)
+        ↓ prebuilt binaries
+        ↓ upload-engine → SVN NAS
+BGRITZProject ← SVN Content (아티스트)
+        ↓
+[Role-based Setup]
+  Developer : Git clone → Source Build → Register
+  Character : SVN + Prebuilt Engine (no maps)
+  Level     : SVN + Prebuilt Engine + Maps
+  Viewer    : SVN + Prebuilt Engine (read-only)
+
+[AI Automation — 28 Claude Commands]
+  /engine-modify → /build → /commit → /done
+  /done = docs update + commit-all + Notion report</pre>
                             </div>
                         </div>
                     </div>
@@ -496,6 +533,47 @@
                         </div>
                     </div>
                 </div>
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    </div>
+                    <h3 class="insight-title">왜 프리컴파일 엔진 배포 전략을 설계했는가</h3>
+                    <div class="insight-body">
+                        <p>UE5 엔진 소스 빌드는 <strong>고사양 PC에서도 40분 이상</strong> 소요된다. 캐릭터 모델러, 애니메이터 등 아티스트가 엔진을 직접 빌드하는 것은 비현실적이었다.</p>
+                        <p>해결책으로 <strong>역할 기반 배포 전략</strong>을 설계했다. 개발자가 커스텀 엔진을 소스에서 빌드하면, 프리컴파일된 바이너리가 SVN NAS로 자동 업로드된다. 아티스트는 <code>SyncPrebuiltEngine</code> 한 번이면 최신 엔진을 받는다.</p>
+                        <p>엔진 소스 수정부에는 <code>// BGRITZ Engine Start YYYY-MM-DD</code> 마커를 의무화하여 <strong>커스텀 변경 사항을 추적 가능하게</strong> 만들었다. Epic 업스트림 병합 시 충돌 지점을 즉시 파악할 수 있다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">전원 소스 빌드</span>
+                                <span>40분+ 빌드 → 환경 차이 → 빌드 실패 → 아티스트 업무 중단</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">프리컴파일 배포</span>
+                                <span>개발자 빌드 → NAS 자동 업로드 → 아티스트 원클릭 동기화</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    </div>
+                    <h3 class="insight-title">AI 코딩 자동화 — Claude Code를 팀 워크플로우에 통합한 이유</h3>
+                    <div class="insight-body">
+                        <p>3개 레포(Engine/Setup/Project)에 걸친 작업을 혼자서 관리하려면 <strong>반복 작업을 극도로 줄여야 했다</strong>. CLAUDE.md로 각 레포의 코딩 규칙을 정의하고, 28개 슬래시 커맨드로 반복 워크플로우를 자동화했다.</p>
+                        <p><code>/engine-modify</code>는 마커 삽입 + 문서 업데이트를 보장하고, <code>/done</code>은 하루의 마무리(문서 정리 → 전체 커밋 → Notion 일일보고)를 원커맨드로 처리한다. 결과적으로 <strong>200커밋을 1인이 3개 레포에 걸쳐 일관된 품질로</strong> 유지할 수 있었다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">수동 관리</span>
+                                <span>3개 레포 × 코딩 규칙 + 커밋 컨벤션 + 문서 + 보고 = 컨텍스트 스위칭 과부하</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">AI 자동화</span>
+                                <span>CLAUDE.md 규칙 + /commands → 일관된 품질 + 자동 문서화 + 자동 보고</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -515,7 +593,7 @@
                         <div class="timeline-header">
                             <div>
                                 <h3 class="timeline-company">주식회사 디네이블 (DNABLE)</h3>
-                                <span class="timeline-role">제작실 사원 | 버추얼 아이돌 프로젝트 엔진 개발</span>
+                                <span class="timeline-role">리드 개발자 | 렌더링 엔진 · DevOps 파이프라인 · AI 자동화 설계</span>
                             </div>
                             <span class="timeline-date">2025.07 ~ Present</span>
                         </div>
@@ -533,8 +611,12 @@
                                 <p>VICON/LiveLink 기반 최대 5인 동시 캡처. MotionBuilder 자동 리타겟 스크립트 개발.</p>
                             </div>
                             <div class="timeline-task">
-                                <h4>AI 업무 자동화 시스템</h4>
-                                <p>Claude Code 18개 커스텀 스킬, n8n 자동화 서버, Notion 자동 기록.</p>
+                                <h4>스튜디오 DevOps 파이프라인 구축</h4>
+                                <p>Gitflow 전략 수립(bgritz-main/dev/feature/*), Python 기반 통합 파이프라인(BGRITZSetup v2.0) 설계·구현. 역할별 자동 셋업(Developer/Character/Level/Viewer), 프리컴파일 엔진 SVN NAS 배포, GitHub Actions 릴리스 자동화, FastAPI 대시보드.</p>
+                            </div>
+                            <div class="timeline-task">
+                                <h4>AI 자동화 & 팀 워크플로우</h4>
+                                <p>3개 레포에 CLAUDE.md + 28개 슬래시 커맨드 구축. /done(문서→커밋→Notion보고) 원커맨드 마무리. Notion 일일/주간 자동 보고, n8n 자동화 서버.</p>
                             </div>
                         </div>
                     </div>
@@ -700,6 +782,22 @@
                         <div class="skill-item" data-code="comfyui">ComfyUI</div>
                         <div class="skill-item" data-code="sd">Stable Diffusion</div>
                         <div class="skill-item" data-code="n8n">n8n</div>
+                    </div>
+                </div>
+
+                <div class="skill-category reveal">
+                    <div class="skill-category-header">
+                        <div class="skill-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        </div>
+                        <h3>DevOps / Pipeline</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item primary" data-code="pipeline">Pipeline Design</div>
+                        <div class="skill-item primary" data-code="gitflow">Gitflow Strategy</div>
+                        <div class="skill-item" data-code="ghactions">GitHub Actions</div>
+                        <div class="skill-item" data-code="docker">Docker</div>
+                        <div class="skill-item" data-code="fastapi">FastAPI</div>
                     </div>
                 </div>
 

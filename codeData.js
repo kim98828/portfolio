@@ -712,5 +712,132 @@ Value = <span class="code-fn">FMath::Clamp</span>(Value, MinLimit, MaxLimit);
     sdf_norm = np.<span class="code-fn">clip</span>(sdf_norm, <span class="code-num">0</span>, <span class="code-num">255</span>).<span class="code-fn">astype</span>(np.uint8)
 
     <span class="code-key">return</span> Image.<span class="code-fn">fromarray</span>(sdf_norm)`
+    },
+    pipeline: {
+        label: 'BGRITZSetup — Studio Pipeline',
+        lang: 'Python / YAML',
+        desc: 'UE5 커스텀 엔진 빌드 → 프리컴파일 배포까지 자동화하는 스튜디오 파이프라인 설계',
+        code: `<span class="code-comment"># config.toml — 통합 설정</span>
+<span class="code-key">[git]</span>
+vanilla_repo = <span class="code-str">"DnableCorp/VanillaUnrealEngine"</span>  <span class="code-comment"># branch: 5.5</span>
+engine_repo  = <span class="code-str">"DnableCorp/BGRITZ_Engine"</span>       <span class="code-comment"># branch: bgritz-main</span>
+project_repo = <span class="code-str">"DnableCorp/BGRITZProject"</span>       <span class="code-comment"># branch: main</span>
+
+<span class="code-key">[pipeline]</span>
+<span class="code-comment"># Role-based Setup Automation</span>
+setup-developer  = [00, 01, 02, 03, 04, 05, 06, 09]
+setup-character  = [00A, 10, 05, 06s]  <span class="code-comment"># no maps</span>
+setup-level      = [00A, 10, 05, 06s, 08]
+setup-viewer     = [00A, 10, 05, 06s]
+
+<span class="code-comment"># Step 04: Build Engine</span>
+<span class="code-comment"># Step 09: Push to GitHub</span>
+<span class="code-comment"># Step 10: Sync Prebuilt from SVN NAS</span>
+
+<span class="code-comment"># release.yml — Tag-triggered Release</span>
+<span class="code-key">on:</span> push: tags: [<span class="code-str">'v*'</span>]
+  → Create ZIP → GitHub Release → NAS deploy`
+    },
+    gitflow: {
+        label: 'BGRITZ Gitflow Strategy',
+        lang: 'Git',
+        desc: '3개 레포에 걸친 Gitflow 브랜치 전략 및 엔진 업스트림 병합 워크플로우',
+        code: `<span class="code-comment">// Engine Branch Model</span>
+bgritz-main ← 안정 빌드 (프리컴파일 배포 대상)
+    ↑ merge
+  dev ← 통합 개발 브랜치
+    ↑ merge
+  feature/hun, feature/sub ← 개발자별 피처 브랜치
+
+<span class="code-comment">// Upstream Merge Workflow</span>
+VanillaUnrealEngine (5.5) → vanilla-sync
+    → vanilla-merge → BGRITZ_Engine (bgritz-main)
+    → 충돌 해결: // BGRITZ Engine Start 마커 기준
+
+<span class="code-comment">// Commit Convention (Korean Tags)</span>
+[기능]  새 기능 추가
+[수정]  버그 수정
+[문서]  문서 업데이트
+[리팩터] 구조 개선
+[렌더링] 셰이더/파이프라인 변경
+
+<span class="code-comment">// Engine Source Modification Marker</span>
+<span class="code-key">// ----BGRITZ Engine Start 2026-03-10----</span>
+  modified code here...
+<span class="code-key">// ----BGRITZ Engine End----</span>`
+    },
+    ghactions: {
+        label: 'GitHub Actions CI/CD',
+        lang: 'YAML',
+        desc: 'Tag 기반 릴리스 자동화 및 배포 파이프라인',
+        code: `<span class="code-comment"># BGRITZSetup release.yml</span>
+<span class="code-key">name:</span> Release
+<span class="code-key">on:</span>
+  push:
+    tags: [<span class="code-str">'v*'</span>]
+
+<span class="code-key">jobs:</span>
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - <span class="code-key">uses:</span> actions/checkout@v4
+      - <span class="code-key">run:</span> |
+          VERSION=\${GITHUB_REF#refs/tags/v}
+          <span class="code-comment"># Bundle pipeline package</span>
+          mkdir -p release &amp;&amp; cp -r src/ release/
+          cp pyproject.toml config.toml release/
+          zip -r BGRITZSetup-v\$VERSION.zip release/
+      - <span class="code-key">uses:</span> softprops/action-gh-release@v2
+        with:
+          files: BGRITZSetup-*.zip
+          generate_release_notes: <span class="code-num">true</span>`
+    },
+    docker: {
+        label: 'Docker & Container Deployment',
+        lang: 'Docker / Shell',
+        desc: 'NAS TeamServer Docker 배포 및 AWS ECR/ECS 컨테이너 배포 경험',
+        code: `<span class="code-comment"># TeamServer — NAS Docker Deployment</span>
+<span class="code-key">FROM</span> php:8.2-apache
+<span class="code-key">COPY</span> api.php /var/www/html/
+<span class="code-key">RUN</span> a2enmod rewrite
+<span class="code-key">EXPOSE</span> 80
+
+<span class="code-comment"># docker-compose.yml</span>
+<span class="code-key">services:</span>
+  teamserver:
+    build: .
+    ports: [<span class="code-str">"8080:80"</span>]
+    volumes:
+      - ./passwd:/etc/svn/passwd
+    logging:
+      options:
+        max-size: <span class="code-str">"10m"</span>
+        max-file: <span class="code-str">"3"</span>
+
+<span class="code-comment"># Deploy to Synology NAS</span>
+deploy-to-nas.ps1 → docker build → docker push
+  → ssh nas "docker-compose up -d"`
+    },
+    fastapi: {
+        label: 'BGRITZSetup Dashboard',
+        lang: 'Python',
+        desc: 'FastAPI 기반 팀 대시보드 — 파이프라인 실행, 인증, 상태 관리',
+        code: `<span class="code-comment"># bgritz/dashboard/main.py</span>
+<span class="code-key">from</span> fastapi <span class="code-key">import</span> FastAPI, Depends
+<span class="code-key">from</span> bgritz.core <span class="code-key">import</span> git_ops, svn_ops
+
+app = FastAPI(title=<span class="code-str">"BGRITZ Dashboard"</span>)
+
+<span class="code-key">@app.post</span>(<span class="code-str">"/api/auth/login"</span>)
+<span class="code-key">async def</span> <span class="code-fn">login</span>(creds: LoginRequest):
+    <span class="code-comment"># SVN passwd 검증 via TeamServer API</span>
+    verified = <span class="code-key">await</span> teamserver.<span class="code-fn">verify</span>(creds)
+    <span class="code-key">return</span> {<span class="code-str">"token"</span>: create_session(verified)}
+
+<span class="code-key">@app.post</span>(<span class="code-str">"/api/pipeline/{step}"</span>)
+<span class="code-key">async def</span> <span class="code-fn">run_step</span>(step: str, user=Depends(auth)):
+    <span class="code-comment"># Execute pipeline step (00~10)</span>
+    result = <span class="code-key">await</span> pipeline.<span class="code-fn">execute</span>(step, user)
+    <span class="code-key">return</span> {<span class="code-str">"status"</span>: <span class="code-str">"ok"</span>, <span class="code-str">"log"</span>: result}`
     }
 };
