@@ -724,7 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const allBtn = document.querySelector('.blog-filter[data-filter="all"] .blog-filter-count');
         if (allBtn) allBtn.textContent = `(${blogData.length})`;
 
-        // Apply 3-card limit + CTA overlay
+        // Apply 3-card limit + compact preview list + CTA overlay
         function applyBlogLimit() {
             if (blogUnlocked) return;
             const cards = blogGrid.querySelectorAll('.blog-card:not(.hidden)');
@@ -732,21 +732,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (i >= VISIBLE_LIMIT) card.classList.add('blog-locked');
                 else card.classList.remove('blog-locked');
             });
-            // Add/update CTA overlay
-            let cta = blogGrid.parentElement.querySelector('.blog-cta-overlay');
-            if (!cta && cards.length > VISIBLE_LIMIT) {
-                cta = document.createElement('div');
-                cta.className = 'blog-cta-overlay';
-                cta.innerHTML = `
-                    <div class="blog-cta-content">
-                        <p class="blog-cta-count">${blogData.length}개의 Problem Solving 카드</p>
-                        <p class="blog-cta-text">나머지 카드를 보려면 연락해주세요</p>
-                        <a href="#contact" class="btn btn-primary blog-cta-btn">Contact Me</a>
-                    </div>
-                `;
-                blogGrid.parentElement.appendChild(cta);
-            }
-            if (cta) cta.style.display = cards.length > VISIBLE_LIMIT ? '' : 'none';
+
+            // Remove previous preview + CTA
+            const prevPreview = blogGrid.parentElement.querySelector('.blog-preview-list');
+            const prevCta = blogGrid.parentElement.querySelector('.blog-cta-overlay');
+            if (prevPreview) prevPreview.remove();
+            if (prevCta) prevCta.remove();
+
+            const lockedCards = Array.from(cards).slice(VISIBLE_LIMIT);
+            if (lockedCards.length === 0) return;
+
+            // Build compact preview list from locked cards
+            const preview = document.createElement('div');
+            preview.className = 'blog-preview-list';
+            preview.innerHTML = `
+                <div class="blog-preview-header">
+                    <span class="blog-preview-plus">+${lockedCards.length}</span>
+                    <span>more Problem Solving cards</span>
+                </div>
+                <div class="blog-preview-grid">
+                    ${lockedCards.map(c => {
+                        const tag = c.dataset.tag;
+                        const title = c.querySelector('.blog-card-title').textContent;
+                        return `<div class="blog-preview-item">
+                            <span class="blog-tag" data-tag="${tag}">${tag}</span>
+                            <span class="blog-preview-title">${title}</span>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
+            blogGrid.parentElement.appendChild(preview);
+
+            // CTA
+            const cta = document.createElement('div');
+            cta.className = 'blog-cta-overlay';
+            cta.innerHTML = `
+                <div class="blog-cta-content">
+                    <p class="blog-cta-count">총 ${blogData.length}개의 Problem Solving 카드</p>
+                    <p class="blog-cta-text">상세 내용이 궁금하시면 연락해주세요</p>
+                    <a href="#contact" class="btn btn-primary blog-cta-btn">Contact Me</a>
+                </div>
+            `;
+            blogGrid.parentElement.appendChild(cta);
         }
 
         // Filter click
