@@ -633,7 +633,7 @@ BGRITZProject ← SVN Content (아티스트)
                     <h3 class="insight-title">DNABLE — Clear Coat 하이잭에서 커스텀 엔진까지</h3>
                     <div class="insight-body">
                         <p>시간 제약 속에서 <strong>Clear Coat 채널을 하이잭하여 Toon 렌더링을 먼저 구현</strong>하고, 동시에 엔진 소스를 공부하며 배포 전략을 수립했다. 이후 커스텀 엔진으로 전환하여 필요한 버퍼들을 통합하고 우리만의 셰이딩 파이프라인을 완성했다.</p>
-                        <p>상용 커스텀 엔진들의 장점을 분석하여 <strong>반음영, 섀도우 채널 분리, 섀도우 블러, 다중 광원, GI, Fake GI</strong>를 구현했다. 모든 기능을 성능 저하 없이 매핑하여 <strong>실제 송출 테스트까지 완전히 마쳤다</strong>.</p>
+                        <p>상용·오픈소스 커스텀 엔진들을 분석하여 <strong>반음영, 섀도우 채널 분리, 섀도우 블러, 다중 광원, GI, Fake GI</strong>를 구현하고, 추가로 <strong>아웃라인, 림라이트, 반투명</strong>까지 확장했다. 모든 기능을 성능 저하 없이 매핑하여 <strong>실제 송출 테스트까지 완전히 마쳤다</strong>.</p>
                         <div class="insight-comparison">
                             <div class="comparison-item neutral">
                                 <span class="comparison-label">Phase 1</span>
@@ -641,7 +641,7 @@ BGRITZProject ← SVN Content (아티스트)
                             </div>
                             <div class="comparison-item pro">
                                 <span class="comparison-label">Phase 2</span>
-                                <span>커스텀 엔진 → GBufferT + 반음영 + Shadow 채널 + GI → 송출 검증 완료</span>
+                                <span>커스텀 엔진 → GBufferT + 반음영 + Shadow 채널 + GI + 아웃라인 + 림라이트 + 반투명 → 송출 검증 완료</span>
                             </div>
                         </div>
                     </div>
