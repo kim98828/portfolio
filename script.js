@@ -683,89 +683,62 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================
-    // Blog Cards — Render & Filter
+    // Blog Cards — Featured 3 + Title List
     // ============================================
     const blogGrid = document.getElementById('blog-grid');
     if (blogGrid && typeof blogData !== 'undefined') {
-        // Render cards
-        function renderBlogCards(data) {
-            blogGrid.innerHTML = data.map(card => `
-                <div class="blog-card reveal" data-tag="${card.tag}" data-id="${card.id}">
-                    <div class="blog-card-header">
-                        <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
-                        <h4 class="blog-card-title">${card.title}</h4>
-                    </div>
-                    <p class="blog-card-problem">${card.problem}</p>
-                    <div class="blog-card-expand">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                        <span>Detail</span>
-                    </div>
-                    <div class="blog-card-detail">
-                        <div class="blog-detail-label">Solution</div>
-                        <p class="blog-detail-text">${card.solution}</p>
-                        <div class="blog-detail-label">Key Insight</div>
-                        <div class="blog-detail-insight">${card.insight}</div>
-                        ${card.arch ? `<div class="blog-detail-label">Architecture</div><pre class="blog-detail-arch">${card.arch}</pre>` : ''}
-                    </div>
+        const FEATURED_COUNT = 3;
+        const featured = blogData.slice(0, FEATURED_COUNT);
+        const rest = blogData.slice(FEATURED_COUNT);
+
+        // Render featured 3 as full cards
+        blogGrid.innerHTML = featured.map(card => `
+            <div class="blog-card reveal" data-tag="${card.tag}" data-id="${card.id}">
+                <div class="blog-card-header">
+                    <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
+                    <h4 class="blog-card-title">${card.title}</h4>
                 </div>
-            `).join('');
+                <p class="blog-card-problem">${card.problem}</p>
+                <div class="blog-card-expand">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    <span>Detail</span>
+                </div>
+                <div class="blog-card-detail">
+                    <div class="blog-detail-label">Solution</div>
+                    <p class="blog-detail-text">${card.solution}</p>
+                    <div class="blog-detail-label">Key Insight</div>
+                    <div class="blog-detail-insight">${card.insight}</div>
+                    ${card.arch ? `<div class="blog-detail-label">Architecture</div><pre class="blog-detail-arch">${card.arch}</pre>` : ''}
+                </div>
+            </div>
+        `).join('');
 
-            // Re-observe for scroll reveal
-            blogGrid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-        }
+        blogGrid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        const VISIBLE_LIMIT = 3;
-        let blogUnlocked = false;
-
-        renderBlogCards(blogData);
-        applyBlogLimit();
-
-        // Update "All" count
-        const allBtn = document.querySelector('.blog-filter[data-filter="all"] .blog-filter-count');
-        if (allBtn) allBtn.textContent = `(${blogData.length})`;
-
-        // Apply 3-card limit + compact preview list + CTA overlay
-        function applyBlogLimit() {
-            if (blogUnlocked) return;
-            const cards = blogGrid.querySelectorAll('.blog-card:not(.hidden)');
-            cards.forEach((card, i) => {
-                if (i >= VISIBLE_LIMIT) card.classList.add('blog-locked');
-                else card.classList.remove('blog-locked');
-            });
-
-            // Remove previous preview + CTA
-            const prevPreview = blogGrid.parentElement.querySelector('.blog-preview-list');
-            const prevCta = blogGrid.parentElement.querySelector('.blog-cta-overlay');
-            if (prevPreview) prevPreview.remove();
-            if (prevCta) prevCta.remove();
-
-            const lockedCards = Array.from(cards).slice(VISIBLE_LIMIT);
-            if (lockedCards.length === 0) return;
-
-            // Build compact preview list from locked cards
-            const preview = document.createElement('div');
-            preview.className = 'blog-preview-list';
-            preview.innerHTML = `
+        // Render rest as compact title list
+        if (rest.length > 0) {
+            const listEl = document.createElement('div');
+            listEl.className = 'blog-preview-list reveal';
+            listEl.innerHTML = `
                 <div class="blog-preview-header">
-                    <span class="blog-preview-plus">+${lockedCards.length}</span>
+                    <span class="blog-preview-plus">+${rest.length}</span>
                     <span>more Problem Solving cards</span>
                 </div>
                 <div class="blog-preview-grid">
-                    ${lockedCards.map(c => {
-                        const tag = c.dataset.tag;
-                        const title = c.querySelector('.blog-card-title').textContent;
-                        return `<div class="blog-preview-item">
-                            <span class="blog-tag" data-tag="${tag}">${tag}</span>
-                            <span class="blog-preview-title">${title}</span>
-                        </div>`;
-                    }).join('')}
+                    ${rest.map(card => `
+                        <div class="blog-preview-item">
+                            <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
+                            <span class="blog-preview-title">${card.title}</span>
+                        </div>
+                    `).join('')}
                 </div>
             `;
-            blogGrid.parentElement.appendChild(preview);
+            blogGrid.parentElement.appendChild(listEl);
+            observer.observe(listEl);
 
             // CTA
             const cta = document.createElement('div');
-            cta.className = 'blog-cta-overlay';
+            cta.className = 'blog-cta-overlay reveal';
             cta.innerHTML = `
                 <div class="blog-cta-content">
                     <p class="blog-cta-count">총 ${blogData.length}개의 Problem Solving 카드</p>
@@ -774,30 +747,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             blogGrid.parentElement.appendChild(cta);
+            observer.observe(cta);
         }
 
-        // Filter click
-        document.querySelectorAll('.blog-filter').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.blog-filter').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const filter = btn.dataset.filter;
-                blogGrid.querySelectorAll('.blog-card').forEach(card => {
-                    if (filter === 'all' || card.dataset.tag === filter) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
-                applyBlogLimit();
-            });
-        });
-
-        // Card expand/collapse
+        // Card expand/collapse (featured only)
         blogGrid.addEventListener('click', (e) => {
             const card = e.target.closest('.blog-card');
-            if (!card || card.classList.contains('blog-locked')) return;
+            if (!card) return;
             card.classList.toggle('expanded');
         });
     }
