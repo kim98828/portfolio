@@ -934,7 +934,7 @@ body.locked {
     opacity: 0.6;
 }
 
-.challenge-card h5 {
+.challenge-card h4 {
     font-size: 0.85rem;
     font-weight: 700;
     margin-bottom: 10px;

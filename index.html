@@ -6,6 +6,7 @@
     <title>kim98828 | Real-time Systems Architect</title>
     <meta name="description" content="실시간 렌더링 파이프라인 설계, 방송 시스템 아키텍처 구축. UE5 엔진 소스 레벨 엔지니어링.">
     <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>K</text></svg>">
     <link rel="stylesheet" href="style.css">
     <script src="blogData.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -280,28 +281,28 @@
                             <div class="challenges-grid">
                                 <div class="challenge-card">
                                     <span class="challenge-num">01</span>
-                                    <h5>PBR 파이프라인의 NPR 렌더링 한계</h5>
+                                    <h4>PBR 파이프라인의 NPR 렌더링 한계</h4>
                                     <p class="challenge-problem">UE5의 Deferred Shading은 PBR 전용. Post-Process Material로는 GBuffer에 커스텀 데이터를 쓸 수 없어 조명 모델 자체를 NPR로 변경 불가.</p>
                                     <p class="challenge-solution">엔진 소스 직접 수정 — ShadingCommon.ush에 SHADINGMODELID_TOON 추가. Deferred Lighting에서 동작하는 NPR BxDF 구현. Anisotropy로 NPR↔PBR 실시간 블렌딩.</p>
                                     <p class="challenge-impact">아티스트가 머티리얼 에디터에서 NPR/PBR 비율 즉시 조정. 8개 렌더링 모듈 독립 제어 가능.</p>
                                 </div>
                                 <div class="challenge-card">
                                     <span class="challenge-num">02</span>
-                                    <h5>5인 동시 모캡의 스레드 경합</h5>
+                                    <h4>5인 동시 모캡의 스레드 경합</h4>
                                     <p class="challenge-problem">ARKit 페이셜 데이터가 GameThread와 AnimationThread에서 동시 접근 — Mutex 사용 시 프레임 드롭 발생.</p>
                                     <p class="challenge-solution">TSharedPtr Atomic Swap 기반 Lock-Free 스냅샷 패턴 설계. 워커 인스턴스를 원자적으로 교체하여 읽기 스레드는 항상 일관된 데이터 보장.</p>
                                     <p class="challenge-impact">Lock 없이 60fps 실시간 페이셜 리매핑 유지. 5인 동시 캡처에서도 프레임 드롭 제로.</p>
                                 </div>
                                 <div class="challenge-card">
                                     <span class="challenge-num">03</span>
-                                    <h5>DeckLink 4채널 SDI 동시 출력</h5>
+                                    <h4>DeckLink 4채널 SDI 동시 출력</h4>
                                     <p class="challenge-problem">4개 독립 SDI 채널(본방송, 프리뷰, Key, Fill)로 동시 출력 필요. UE5 기본 미디어 출력은 단일 채널만 지원하며 채널 간 프레임 동기화 미보장.</p>
                                     <p class="challenge-solution">DeckLink SDK 직접 연동하여 멀티 채널 출력 시스템 구축. 채널별 독립 RenderTarget + Genlock Reference 기반 프레임 동기화. Stream Deck OSC로 원격 채널 제어.</p>
                                     <p class="challenge-impact">4채널 동시 SDI 출력으로 프로덕션 방송 표준 충족. 실시간 채널 전환 및 모자이크 프리뷰 운용 가능.</p>
                                 </div>
                                 <div class="challenge-card">
                                     <span class="challenge-num">04</span>
-                                    <h5>30인 조직의 이종 도구 환경 통합</h5>
+                                    <h4>30인 조직의 이종 도구 환경 통합</h4>
                                     <p class="challenge-problem">개발자 2인은 Git + 소스 빌드, 아티스트 15인 이상은 SVN + 프리빌드 엔진. 역할별 필요 도구와 설정이 달라 환경 구축에 1~2일 소요. 엔진 업데이트 시 전체 팀 동기화 실패 빈번.</p>
                                     <p class="challenge-solution">Python 기반 통합 파이프라인(BGRITZSetup) 구축. 역할별 셋업 자동화(Developer/Character/Level/Viewer), Gitflow 전략 수립, 28개 Claude 슬래시 커맨드로 AI 자동화, FastAPI 대시보드로 팀 상태 관리. SVN 훅을 통한 15인 이상 동시 배포 제어, 프리컴파일 엔진 NAS 자동 전달.</p>
                                     <p class="challenge-impact">환경 구축 1~2일 → 원클릭 30분. SVN 훅 기반 배포 컨트롤로 아티스트가 빌드 시스템을 절대 만지지 않는 구조 확립. Notion 일일/주간 보고 자동화.</p>
@@ -429,21 +430,21 @@ BGRITZProject ← SVN Content (아티스트)
                             <div class="challenges-grid">
                                 <div class="challenge-card">
                                     <span class="challenge-num">01</span>
-                                    <h5>NDI 송출 시 GPU→CPU 파이프라인 스톨</h5>
+                                    <h4>NDI 송출 시 GPU→CPU 파이프라인 스톨</h4>
                                     <p class="challenge-problem">NDI 프레임 송출 시 GPU→CPU 텍스처 리드백에서 동기 대기가 발생하여 프레임 드롭. 실시간 방송에서 치명적.</p>
                                     <p class="challenge-solution">비동기 이중 버퍼 설계 — 한 프레임을 전송하는 동안 다음 프레임의 GPU 리드백을 동시 진행. MappedTexture[2] 핑퐁 구조.</p>
                                     <p class="challenge-impact">1080p60 NDI 송출에서 파이프라인 지연 1프레임 이내. 안정적 실시간 방송 달성.</p>
                                 </div>
                                 <div class="challenge-card">
                                     <span class="challenge-num">02</span>
-                                    <h5>NDI 오디오 채널 포맷 불일치</h5>
+                                    <h4>NDI 오디오 채널 포맷 불일치</h4>
                                     <p class="challenge-problem">NDI 소스마다 오디오 채널 수가 다름 (예: 8ch 수신 → 2ch 출력). 채널 미스매치 시 무음 또는 왜곡 발생.</p>
                                     <p class="challenge-solution">자동 다운믹스/업믹스 알고리즘 구현. 초과 채널은 합산 후 정규화, 부족 채널은 평균으로 생성. Float32→Int16 변환 포함.</p>
                                     <p class="challenge-impact">어떤 NDI 소스든 자동으로 출력 포맷에 맞춰 재생. 별도 오디오 설정 불필요.</p>
                                 </div>
                                 <div class="challenge-card">
                                     <span class="challenge-num">03</span>
-                                    <h5>3채널 동시 배포 및 버전 동기화</h5>
+                                    <h4>3채널 동시 배포 및 버전 동기화</h4>
                                     <p class="challenge-problem">Steam, Electron 런처, AWS 서버 3개 채널의 버전이 각각 관리되어 업데이트 시 동기화 실패 빈번.</p>
                                     <p class="challenge-solution">중앙 Version API 서버 구축 + Electron 런처 자동 업데이트 + SteamPipe 브랜치 관리 파이프라인 통합. 델타 패칭 적용.</p>
                                     <p class="challenge-impact">원클릭 배포로 3개 채널 동시 업데이트. 델타 패칭으로 업데이트 크기 80% 감소.</p>
