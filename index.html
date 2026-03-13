@@ -596,6 +596,78 @@ BGRITZProject ← SVN Content (아티스트)
                     </div>
                 </div>
             </div>
+
+            <!-- 3대 킬링 피처 -->
+            <div class="section-header" style="margin-top: 80px;">
+                <h3 class="section-title" style="font-size: 1.6rem;">Core Killing Features</h3>
+                <p class="section-desc">XROOM · DNABLE · 공통 — 실전에서 증명한 3가지 핵심 역량</p>
+            </div>
+            <div class="insights-grid">
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <h3 class="insight-title">XROOM — Viewport 오버로드 기반 실시간 컴포지팅</h3>
+                    <div class="insight-body">
+                        <p>실시간 합성(Compositing)을 위해 <strong>Viewport를 오버로드하여 전경·렌더·후경을 레이어별로 분리 렌더링</strong>했다. 핵심 문제는 3D Plane에 머티리얼을 매핑하면 해상도 저하가 발생한다는 점이었다.</p>
+                        <p>Plane 크기와 정확히 일치하는 위치에 <strong>2D로 직접 드로잉</strong>하여 3D 경유 없이 원본 화질을 유지하는 방식으로 해결했다. 이 경험을 DNABLE에 그대로 적용하여, 후경의 연기·움직이는 배경을 <strong>화질 저하 없이 2D로 렌더링</strong>하면서 3D 리소스 비용을 절감했다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">3D Plane 매핑</span>
+                                <span>텍스처 리샘플링 → 화질 저하 → 해상도 의존적</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">2D Direct Draw</span>
+                                <span>Plane 위치 기반 2D 렌더 → 원본 화질 유지 → 3D 비용 제거</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </div>
+                    <h3 class="insight-title">DNABLE — Clear Coat 하이잭에서 커스텀 엔진까지</h3>
+                    <div class="insight-body">
+                        <p>시간 제약 속에서 <strong>Clear Coat 채널을 하이잭하여 Toon 렌더링을 먼저 구현</strong>하고, 동시에 엔진 소스를 공부하며 배포 전략을 수립했다. 이후 커스텀 엔진으로 전환하여 필요한 버퍼들을 통합하고 우리만의 셰이딩 파이프라인을 완성했다.</p>
+                        <p>상용 커스텀 엔진들의 장점을 분석하여 <strong>반음영, 섀도우 채널 분리, 섀도우 블러, 다중 광원, GI, Fake GI</strong>를 구현했다. 모든 기능을 성능 저하 없이 매핑하여 <strong>실제 송출 테스트까지 완전히 마쳤다</strong>.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item neutral">
+                                <span class="comparison-label">Phase 1</span>
+                                <span>Clear Coat 하이잭 → 빠른 Toon 프로토타입 + 엔진 학습 병행</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">Phase 2</span>
+                                <span>커스텀 엔진 → GBufferT + 반음영 + Shadow 채널 + GI → 송출 검증 완료</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    </div>
+                    <h3 class="insight-title">공통 — 다중 프로토콜 출력과 XR 스튜디오 경험</h3>
+                    <div class="insight-body">
+                        <p>XROOM과 DNABLE 모두에서 최종 출력을 <strong>SDI · NDI · SRT · OSC · WebRTC</strong> 등 다양한 포맷으로 동시에 내보내는 시스템을 구현했다. 각 프로토콜의 특성(지연시간, 대역폭, 동기화 방식)을 이해하고 용도에 맞게 라우팅하는 것이 핵심이었다.</p>
+                        <p>이 역량은 XR 스튜디오에서의 실무 경험에서 시작되었다. 가상·실사 합성 환경에서 <strong>카메라 트래킹, 타임코드 동기화, 멀티 채널 송출</strong>을 직접 운용한 경험이 두 프로젝트 모두에서 프로토콜 설계의 기반이 되었다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item neutral">
+                                <span class="comparison-label">SDI / NDI</span>
+                                <span>방송 표준 송출 + LAN 모니터링 이중화</span>
+                            </div>
+                            <div class="comparison-item neutral">
+                                <span class="comparison-label">SRT / WebRTC</span>
+                                <span>인터넷 스트리밍 + 브라우저 실시간 접근</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">OSC</span>
+                                <span>장비·소프트웨어 간 제어 통합 (카메라, 조명, 모캡)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
