@@ -439,5 +439,168 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
               ↓         ↓         ↓         ↓
             CES    Dubai/WIS  NextRise   Daegu
               └── cherry-pick useful features back ──→ main`
+    },
+    // ══════════════════════════════════════
+    // Notion 주간보고/기술문서 기반 카드
+    // ══════════════════════════════════════
+    // ── Broadcast ──
+    {
+        id: 'notion-timecode',
+        tag: 'Broadcast',
+        title: '5대 장비의 타임코드를 1ms 이내로 맞추는 동기화 아키텍처',
+        problem: 'Vicon 모캡 PC, MotionBuilder PC, UE5 PC, iPhone(ARKit), ATEM 스위처 — 5종 장비가 각자의 시계를 사용. 방송 중 립싱크가 3~4프레임(~130ms) 어긋나고, 모캡-영상 간 동기화도 불안정.',
+        solution: 'NAS를 NTP 서버로 지정하여 전체 장비의 시계를 중앙 동기화. ATEM REF OUT으로 DeckLink/HyperDeck에 Genlock 공급. iPhone은 NTP 수동 설정 + LiveLink Time Offset 보정. ATEM Fairlight Audio Delay ~100ms로 립싱크 보정. 방송 전 박수 테스트로 캘리브레이션.',
+        insight: 'NTP(소프트웨어 동기화)와 Genlock(하드웨어 동기화)은 역할이 다르다. NTP는 ms 단위 시계 통일, Genlock은 프레임 정확(frame-accurate) 동기화. 두 계층을 조합해야 모캡-영상-오디오가 완전히 일치한다.',
+        arch: `NAS (NTP Server) ─── 로컬 네트워크 타임 마스터
+├── NTP → Vicon Tracker PC
+├── NTP → MotionBuilder PC
+├── NTP → UE5 PC (DeckLink)
+├── NTP → iPhone (LiveLink Face)
+└── 수동시계 → ATEM Constellation
+                  ├── REF OUT → DeckLink (Genlock)
+                  ├── REF OUT → HyperDeck (Genlock)
+                  └── Fairlight Delay ~100ms (립싱크)`
+    },
+    {
+        id: 'notion-osc',
+        tag: 'Broadcast',
+        title: 'Stream Deck 하나로 멀티 PC 동시 제어 — OSC 원격 방송 시스템',
+        problem: '라이브 방송 중 카메라 전환과 캐릭터 의상 변경을 여러 대의 PC(메인/백업)에서 동시에 실행해야 한다. 각 PC에 직접 접근하면 지연이 발생하고, 한 대만 명령이 빠지면 화면이 불일치.',
+        solution: 'UE5에 OSC 서버(포트 8000)를 구현하고 Stream Deck에서 버튼 하나로 여러 PC에 동시 명령 전송. 채널별 카메라 소스 전환(/bgritz/channel/{1-4}/source)과 캐릭터별 의상 세트 변경(/bgritz/costume/{name}/set)을 OSC 경로로 매핑.',
+        insight: '방송 현장에서는 "1개 버튼 = 1개 동작"이 철칙이다. OSC의 멀티캐스트 특성을 이용하면 메인/백업 서버를 동시에 제어할 수 있어 화면 불일치 사고를 원천 차단한다.',
+        arch: `Stream Deck → OSC Multicast
+├── UE5 Main Server (port 8000)
+│     ├── /bgritz/channel/1/source 2  → Camera Switch
+│     └── /bgritz/costume/all/set 3   → Costume Change
+└── UE5 Backup Server (port 8000)
+      └── (동일 명령 동시 수신)`
+    },
+    // ── Rendering ──
+    {
+        id: 'notion-cvm',
+        tag: 'Rendering',
+        title: 'GT7 CVM 톤매퍼 — 밝은 빨강이 노란색으로 변하는 문제 해결',
+        problem: 'UE5 기본 Film 톤매퍼는 밝은 빨강 하이라이트에서 Hue Shift가 발생하여 노란색으로 변한다. 버추얼 아이돌의 빨간 의상이나 조명에서 의도하지 않은 색상 변화가 나타남.',
+        solution: 'Gran Turismo 7의 Color Volume Mapping(CVM) 톤매퍼를 엔진에 구현. ICtCp 색공간에서 Chroma를 보존하는 톤매핑으로 Hue Shift 방지. LUT 생성 시에만 연산하여 per-pixel 추가 비용 제로. BlendRatio CVar로 Film↔CVM 블렌딩 가능.',
+        insight: 'Film 톤매퍼의 Hue Shift는 RGB 공간에서 채도를 보존하려다 발생한다. 지각적 색공간(ICtCp)에서 처리하면 밝기가 올라가도 색상이 유지된다 — 연산 위치를 LUT로 한정하면 런타임 비용은 0이다.',
+        arch: `Film Tonemapper (기본)
+  RGB → Filmic Curve → Hue Shift 발생
+
+GT7 CVM Tonemapper (구현)
+  RGB → ICtCp 변환 → Chroma 보존 톤매핑
+      → ChromaFade(Start/End) → Hue 안정
+      → LUT 생성 시에만 연산 (per-pixel 비용 0)`
+    },
+    {
+        id: 'notion-rt-shadow',
+        tag: 'Rendering',
+        title: 'RT Shadow 채널 분리 — 얼굴에 머리카락 그림자가 지지 않게',
+        problem: '캐릭터 얼굴에 머리카락 그림자가 레이트레이싱으로 드리워지면 셀 셰이딩 미감이 깨진다. Raster Shadow뿐 아니라 RT Shadow 경로에서도 선택적으로 그림자를 필터링해야 했다.',
+        solution: 'ShadowReceiveChannel 기반 채널 필터링을 Raster와 RT Shadow 양쪽에 구현. RT 경로에서는 AnyHitShader에 ShadowCastChannel/ReceiveChannel 비트 AND 비교 로직 추가. 얼굴(Channel=0)은 모든 그림자 무시, 바디(Channel=1)는 머리카락 그림자 정상 수신.',
+        insight: 'NPR에서 그림자는 "물리적 정확성"이 아니라 "미적 제어"가 목적이다. 채널 기반 필터링으로 아티스트가 어떤 오브젝트가 어디에 그림자를 드리울지 완전히 제어할 수 있어야 한다.',
+        arch: `Shadow Channel Filtering
+Face  (Receive=0): Shadow = 1.0 (항상 밝음)
+Body  (Receive=1): Hair Shadow 정상 수신
+Hair  (Cast=1):    Face에는 그림자 안 드리움
+
+RT Path: AnyHitShader → CastChannel & ReceiveChannel 비트 비교
+Raster:  DeferredLight → SurfaceShadow/TransmissionShadow = 1.0`
+    },
+    {
+        id: 'notion-mrt-limit',
+        tag: 'Rendering',
+        title: 'D3D12 MRT 8장 제한 vs Toon 전용 버퍼 3개 — 아키텍처 선택',
+        problem: 'D3D12에서 MRT(Multiple Render Targets)는 최대 8개. Toon 전용 데이터를 위해 MRT8(ToonDataA) + MRT9(ToonDataC)를 추가하면 UE5의 Substrate 머티리얼 시스템과 렌더타겟이 충돌.',
+        solution: 'Substrate와 Toon은 동시 사용 불가함을 확인하고, Substrate 미사용 조건에서만 MRT8/9를 활성화하도록 분기. 별도 ToonBufferPass를 시도했으나 풀 머티리얼 재평가 비용이 너무 높아 롤백 → 베이스패스 MRT 출력에 ToonDataA/C를 통합.',
+        insight: 'MRT를 추가하는 것보다 "기존 패스에서 데이터를 함께 출력"하는 것이 거의 항상 효율적이다. 별도 패스 = 머티리얼 재평가 비용. 같은 패스에 MRT 추가 = 대역폭 비용만. 후자가 압도적으로 싸다.',
+        arch: `시도 1: ToonBufferPass (별도 패스)
+  → 머티리얼 전체 재평가 필요 → 비용 과다 → 롤백
+
+시도 2: BasePass MRT 확장 (채택)
+  MRT0-7: 기존 GBuffer (Substrate 미사용 시)
+  MRT8:   ToonDataA (Cast/Receive/ToonModel/SCF/HairOffset)
+  MRT9:   ToonDataC (RGBA 4채널 자유 사용)
+  CustomData: ToonDataB (Specular Smooth/Offset + Outline)`
+    },
+    // ── Pipeline ──
+    {
+        id: 'notion-dashboard',
+        tag: 'Pipeline',
+        title: 'WPF 런처의 한계를 넘어 — 웹 기반 파이프라인 대시보드',
+        problem: 'PowerShell WPF 런처의 비동기 처리가 불안정하고, 한글 인코딩 충돌(CP949 vs UTF-8), 실시간 상태 확인이 불가능. 30인 조직에 배포하기엔 안정성이 부족.',
+        solution: 'HTML/JS 웹 대시보드 + PowerShell HttpListener 백엔드로 전면 전환. Git 3개 저장소 + SVN 2개 상태를 실시간 JSON API로 수집. 파이프라인 스크립트 10개를 원클릭 실행 + 500ms 폴링 로그 스트리밍. 역할별(Developer/Character/Level/Viewer) UI 필터링.',
+        insight: 'WPF는 단일 사용자 도구에 적합하지만, 팀 전체에 배포하려면 웹이 유일한 답이다. 브라우저는 인코딩, OS 호환성, 업데이트 문제를 한 번에 해결한다.',
+        arch: `Browser ← HTTP → DashboardServer.ps1
+├── GET /api/status  → Git×3 + SVN×2 상태 JSON
+├── GET /api/scripts → 실행 가능한 파이프라인 목록
+├── POST /api/run/:s → bat 스크립트 비동기 실행
+├── GET /api/log     → 500ms 폴링 실시간 로그
+└── POST /api/stop   → 프로세스 종료`
+    },
+    {
+        id: 'notion-python-pipeline',
+        tag: 'Pipeline',
+        title: 'bat/ps1 스크립트 전량 삭제 — Python 패키지로 파이프라인 일원화',
+        problem: 'bat와 PowerShell 스크립트가 혼재하면서 인코딩 충돌(LF/CRLF, UTF-8/CP949), 환경변수 미전파, em-dash 파싱 에러 등 셸 간 호환성 문제가 반복 발생.',
+        solution: 'bat/ps1 스크립트를 전량 삭제하고 bgritz Python 패키지로 일원화. setup-developer/character/level/viewer 4개 원클릭 명령으로 역할별 셋업 분리. pip install로 설치, Cross-platform 호환.',
+        insight: '셸 스크립트는 빠르게 만들 수 있지만 조직에 배포하면 OS/인코딩/버전 차이가 모든 장점을 상쇄한다. Python 패키지는 초기 투자가 크지만 "한 번 만들면 어디서나 동일하게 동작"한다.',
+        arch: null
+    },
+    {
+        id: 'notion-prebuilt-100gb',
+        tag: 'Pipeline',
+        title: '프리컴파일 엔진 50GB → 100GB — 누락된 것들의 발견',
+        problem: '프리컴파일 엔진을 5개 핵심 폴더만 패키징(~50GB)해서 아티스트에게 보냈더니, Generated 파일(자동생성 헤더), 서드파티 라이브러리(.lib/.dll), 플러그인 헤더(.hpp/.h) 누락으로 빌드/실행 실패.',
+        solution: 'Generated 폴더, 서드파티 라이브러리, 플러그인 헤더/라이브러리를 모두 포함하도록 패키징 범위 확대. ElectronicNodes 플러그인이 .cpp를 #include하는 비표준 패턴 → 화이트리스트 예외 처리. 최종 ~100GB이지만 아티스트 PC에서 정상 동작.',
+        insight: '프리컴파일 배포에서 "컴파일된 바이너리만 주면 된다"는 착각이 가장 위험하다. Generated 헤더, 서드파티 링크 라이브러리, 플러그인 퍼블릭 헤더까지 포함해야 실제로 동작한다.',
+        arch: `v1 패키징 (~50GB) — 실패
+├── Binaries/   ✓
+├── Content/    ✓
+├── Plugins/    (바이너리만)
+├── Generated/  ✗ ← 자동생성 헤더 누락
+└── ThirdParty/ ✗ ← .lib/.dll 누락
+
+v2 패키징 (~100GB) — 성공
+├── Binaries/   ✓
+├── Content/    ✓
+├── Plugins/    ✓ (헤더 + 라이브러리 + 화이트리스트)
+├── Generated/  ✓
+└── ThirdParty/ ✓`
+    },
+    // ── DevOps ──
+    {
+        id: 'notion-docker-nas',
+        tag: 'DevOps',
+        title: 'NAS에 Docker로 팀 서버 배포 — 중앙 인증과 배포 관리',
+        problem: '15인 이상의 아티스트에게 SVN 계정 관리, 파이프라인 업데이트 알림, 접속 현황 모니터링을 수동으로 처리. 개발자가 빠지면 관리가 중단되는 SPOF 구조.',
+        solution: 'Synology NAS에 PHP+Apache Docker 컨테이너로 TeamServer API를 배포. 도메인 기반 역방향 프록시 구성. SVN 계정 기반 로그인/회원가입 + 관리자 승인 시스템. 12개 API 엔드포인트(checkin, user_login, approve, online, release_check 등)로 팀 상태 자동 관리.',
+        insight: 'NAS는 단순 파일 서버가 아니라 Docker를 돌릴 수 있는 상시 운영 서버다. 소규모 팀에서 AWS 비용 없이 팀 인프라를 유지하려면 NAS Docker가 최적의 선택지다.',
+        arch: `Synology NAS
+├── Docker: PHP 8.2 + Apache (TeamServer API)
+│     ├── /checkin     — 출근 체크인
+│     ├── /user_login  — SVN 계정 인증
+│     ├── /approve     — 관리자 승인
+│     ├── /online      — 접속 현황
+│     └── /release_*   — 업데이트 관리
+├── Reverse Proxy: api.dnable.synology.me
+└── SVN Server: 프로젝트 + 엔진 빌드`
+    },
+    // ── Animation ──
+    {
+        id: 'notion-foot-fix',
+        tag: 'MoCap',
+        title: '모캡 까치발 보정 — Pelvis 이동에서 Mesh 위치로 전환한 이유',
+        problem: 'Vicon 모캡 데이터에서 퍼포머와 캐릭터 간 체형 차이로 까치발(Tiptoe) 문제 발생. 초기에 Pelvis 본을 이동하여 높이를 보정했으나 다리가 늘어나는 부작용 발생.',
+        solution: 'Pelvis 본 이동 대신 Mesh 자체의 위치를 조절하여 전체 높이 보정(다리 늘어남 없음). FootTiptoeFixComponent + AnimNode로 발목/발가락 회전 오프셋을 실시간 조절. Link Both Feet 모드로 양발 동시 조절, Blend Weight + Smoothing Factor로 급격한 변화 방지.',
+        insight: '본 이동은 IK 체인에 영향을 미치지만 Mesh 이동은 렌더링 공간에서만 작용한다. 높이 보정은 "본 계층구조 밖에서" 처리해야 다리 길이에 영향을 주지 않는다.',
+        arch: `v1: Pelvis Bone Move → 다리 IK 체인 영향 → 다리 늘어남
+v2: Mesh Position Offset → IK 체인 무관 → 정상 비율 유지
+
+FootTiptoeFixComponent
+├── Height Offset     (-30~+30cm, Mesh 위치)
+├── Foot Rotation     (Pitch/Roll/Yaw ±45°)
+├── Toe Rotation      (Pitch/Roll/Yaw ±45°)
+├── Link Both Feet    (양발 동시 조절)
+└── Blend Weight      (보정 강도 + 스무딩)`
     }
 ];
