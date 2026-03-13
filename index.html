@@ -712,7 +712,7 @@ BGRITZProject ← SVN Content (아티스트)
                 <div class="qna-card reveal">
                     <div class="qna-question">
                         <span class="qna-badge">Rendering</span>
-                        <h4>UE5에 커스텀 Shading Model을 추가할 때 가장 어려웠던 부분은?</h4>
+                        <h3 class="qna-title">UE5에 커스텀 Shading Model을 추가할 때 가장 어려웠던 부분은?</h3>
                     </div>
                     <div class="qna-answer">
                         <p>구현 자체는 패턴이 정해져 있다. ShadingCommon.ush에 ID를 등록하고, GBuffer 인코딩을 추가하고, BxDF를 작성하면 된다. BxDF는 하프램버트를 기본으로 설계했고, 하이라이트와 림라이트는 별도 패스에서 연산하는 구조를 전제했다.</p>
@@ -722,7 +722,7 @@ BGRITZProject ← SVN Content (아티스트)
                 <div class="qna-card reveal">
                     <div class="qna-question">
                         <span class="qna-badge">Broadcast</span>
-                        <h4>NDI 이중 버퍼에서 60fps를 유지하기 위해 뭘 신경 썼나?</h4>
+                        <h3 class="qna-title">NDI 이중 버퍼에서 60fps를 유지하기 위해 뭘 신경 썼나?</h3>
                     </div>
                     <div class="qna-answer">
                         <p>먼저 전제 조건을 파악해야 한다. 우리 시스템은 <strong>30개 이상의 렌더를 동시에 전송하는 구조</strong>이고, 엔진 컴퓨터는 2대였다. 이 스케일에서는 소프트웨어만으로 60fps를 완벽히 유지하기 어렵다.</p>
@@ -732,7 +732,7 @@ BGRITZProject ← SVN Content (아티스트)
                 <div class="qna-card reveal">
                     <div class="qna-question">
                         <span class="qna-badge">Broadcast</span>
-                        <h4>DeckLink 4채널 출력에서 Genlock 안 걸면 실제로 어떤 문제가 생기나?</h4>
+                        <h3 class="qna-title">DeckLink 4채널 출력에서 Genlock 안 걸면 실제로 어떤 문제가 생기나?</h3>
                     </div>
                     <div class="qna-answer">
                         <p>비디오 프레임만의 문제가 아니라, <strong>오디오·LiveLink(모캡)·비디오 — 3종의 싱크가 모두 어긋난다.</strong> 라이브 프로덕션에서 가장 까다로운 이슈 중 하나다.</p>
@@ -742,7 +742,7 @@ BGRITZProject ← SVN Content (아티스트)
                 <div class="qna-card reveal">
                     <div class="qna-question">
                         <span class="qna-badge">Infrastructure</span>
-                        <h4>AWS EFS로 SVN을 운영했을 때 비용 이슈는?</h4>
+                        <h3 class="qna-title">AWS EFS로 SVN을 운영했을 때 비용 이슈는?</h3>
                     </div>
                     <div class="qna-answer">
                         <p>Unreal 프로젝트 특성상 레벨, 시퀀서 등 바이너리 에셋 용량이 방대하기 때문에, EFS의 GB당 단가가 S3 대비 높아 대용량 바이너리 에셋 저장에는 구조적으로 맞지 않았다.</p>
@@ -752,7 +752,7 @@ BGRITZProject ← SVN Content (아티스트)
                 <div class="qna-card reveal">
                     <div class="qna-question">
                         <span class="qna-badge">DevOps</span>
-                        <h4>10명 넘는 팀에서 SVN 권한 관리를 어떻게 했나?</h4>
+                        <h3 class="qna-title">10명 넘는 팀에서 SVN 권한 관리를 어떻게 했나?</h3>
                     </div>
                     <div class="qna-answer">
                         <p>직군별 그룹 단위로 설계했다. <strong>배경모델러·애니메이터·라이팅</strong>은 시퀀서·맵·프로젝트 관리 권한으로 묶고, <strong>리거·캐릭터모델러·원화가</strong>는 프로젝트 관리 권한으로 묶었다. 전반적인 프로세스·엔진 관리·배포는 개발자가 총괄하는 구조다.</p>
@@ -762,7 +762,7 @@ BGRITZProject ← SVN Content (아티스트)
                 <div class="qna-card reveal">
                     <div class="qna-question">
                         <span class="qna-badge">Frontend</span>
-                        <h4>React + Redux + Electron 런처의 아키텍처 설계 과정은?</h4>
+                        <h3 class="qna-title">React + Redux + Electron 런처의 아키텍처 설계 과정은?</h3>
                     </div>
                     <div class="qna-answer">
                         <p>IPC 통신 구조, Blob 기반 다운로드 처리, Redux 상태 관리, 카드 구조 UI, 컴포넌트 단위 분리까지 아키텍처부터 직접 설계했다. 다운로드 → ZIP 압축해제 → 설치까지의 파이프라인을 IPC로 연결하고, 진행률을 실시간으로 Renderer 프로세스에 전송하는 구조다.</p>
