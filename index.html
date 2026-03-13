@@ -44,6 +44,7 @@
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#insights">Insights</a></li>
                 <li><a href="#blog">Blog</a></li>
+                <li><a href="#qna">Q&A</a></li>
                 <li><a href="#career">Career</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -699,11 +700,84 @@ BGRITZProject ← SVN Content (아티스트)
         </div>
     </section>
 
-    <!-- Career Section -->
-    <section class="section" id="career">
+    <!-- Technical Q&A Section -->
+    <section class="section" id="qna">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">05</span>
+                <h2 class="section-title">Technical Q&A</h2>
+                <p class="section-desc">실무에서 내린 판단과 그 이유 — 기술 면접 형식의 자문자답</p>
+            </div>
+            <div class="qna-grid">
+                <div class="qna-card reveal">
+                    <div class="qna-question">
+                        <span class="qna-badge">Rendering</span>
+                        <h4>UE5에 커스텀 Shading Model을 추가할 때 가장 어려웠던 부분은?</h4>
+                    </div>
+                    <div class="qna-answer">
+                        <p>구현 자체는 패턴이 정해져 있다. ShadingCommon.ush에 ID를 등록하고, GBuffer 인코딩을 추가하고, BxDF를 작성하면 된다. BxDF는 하프램버트를 기본으로 설계했고, 하이라이트와 림라이트는 별도 패스에서 연산하는 구조를 전제했다.</p>
+                        <p>핵심 고민은 <strong>"어떤 패스를 하이잭할 것인가"</strong>라는 아키텍처 의사결정이었다. DeferredLight에서 다중 광원을 이미 구현한 상태였기 때문에, 기존 패스를 건드리면 영향 범위가 넓어진다. 기존 시스템을 유지하면서 NPR을 확장할 수 있는 삽입 지점을 찾는 것 — 그 설계 판단이 가장 중요했다.</p>
+                    </div>
+                </div>
+                <div class="qna-card reveal">
+                    <div class="qna-question">
+                        <span class="qna-badge">Broadcast</span>
+                        <h4>NDI 이중 버퍼에서 60fps를 유지하기 위해 뭘 신경 썼나?</h4>
+                    </div>
+                    <div class="qna-answer">
+                        <p>먼저 전제 조건을 파악해야 한다. 우리 시스템은 <strong>30개 이상의 렌더를 동시에 전송하는 구조</strong>이고, 엔진 컴퓨터는 2대였다. 이 스케일에서는 소프트웨어만으로 60fps를 완벽히 유지하기 어렵다.</p>
+                        <p>따라서 NDI는 <strong>프리뷰/모니터링 용도</strong>로 설계했다. 본방송 송출은 DeckLink SDI가 담당하고, NDI는 감독과 스탭이 각 카메라를 실시간으로 확인하는 데 활용된다. 모든 기술에 동일한 품질 기준을 적용하는 것이 아니라, <strong>용도에 맞게 트레이드오프를 설계</strong>하는 것이 중요하다.</p>
+                    </div>
+                </div>
+                <div class="qna-card reveal">
+                    <div class="qna-question">
+                        <span class="qna-badge">Broadcast</span>
+                        <h4>DeckLink 4채널 출력에서 Genlock 안 걸면 실제로 어떤 문제가 생기나?</h4>
+                    </div>
+                    <div class="qna-answer">
+                        <p>비디오 프레임만의 문제가 아니라, <strong>오디오·LiveLink(모캡)·비디오 — 3종의 싱크가 모두 어긋난다.</strong> 라이브 프로덕션에서 가장 까다로운 이슈 중 하나다.</p>
+                        <p>Genlock이 없는 환경에서는 Synology NAS의 <strong>NTP로 타임베이스를 통합</strong>한 뒤, 오디오는 OBS 단계에서 딜레이를 보정하는 방식으로 우회한다. 오디오 인터페이스에 Genlock이 있으면 하드웨어로 해결되지만, 없는 환경에서 소프트웨어로 동기화를 확보하는 설계 역시 실무에서는 필수적이다.</p>
+                    </div>
+                </div>
+                <div class="qna-card reveal">
+                    <div class="qna-question">
+                        <span class="qna-badge">Infrastructure</span>
+                        <h4>AWS EFS로 SVN을 운영했을 때 비용 이슈는?</h4>
+                    </div>
+                    <div class="qna-answer">
+                        <p>Unreal 프로젝트 특성상 레벨, 시퀀서 등 바이너리 에셋 용량이 방대하기 때문에, EFS의 GB당 단가가 S3 대비 높아 대용량 바이너리 에셋 저장에는 구조적으로 맞지 않았다.</p>
+                        <p><strong>서브레포 분리를 통한 권한·용량 분산</strong>으로 1차 대응하고, 이후 스토리지를 S3로 전환하여 에셋을 분리 수신하는 구조로 변경했다. 스토리지 선택 시 과금 모델과 에셋 특성의 적합성을 사전에 검토하는 것이 중요하다는 교훈이었다.</p>
+                    </div>
+                </div>
+                <div class="qna-card reveal">
+                    <div class="qna-question">
+                        <span class="qna-badge">DevOps</span>
+                        <h4>10명 넘는 팀에서 SVN 권한 관리를 어떻게 했나?</h4>
+                    </div>
+                    <div class="qna-answer">
+                        <p>직군별 그룹 단위로 설계했다. <strong>배경모델러·애니메이터·라이팅</strong>은 시퀀서·맵·프로젝트 관리 권한으로 묶고, <strong>리거·캐릭터모델러·원화가</strong>는 프로젝트 관리 권한으로 묶었다. 전반적인 프로세스·엔진 관리·배포는 개발자가 총괄하는 구조다.</p>
+                        <p>핵심 원칙은 <strong>권한 경계 = 책임 경계.</strong> 직군 간 에셋 접근이 필요한 상황이 발생한다면, 권한을 열어주는 것이 아니라 프로세스 설계를 재검토해야 한다는 신호로 판단한다.</p>
+                    </div>
+                </div>
+                <div class="qna-card reveal">
+                    <div class="qna-question">
+                        <span class="qna-badge">Frontend</span>
+                        <h4>React + Redux + Electron 런처의 아키텍처 설계 과정은?</h4>
+                    </div>
+                    <div class="qna-answer">
+                        <p>IPC 통신 구조, Blob 기반 다운로드 처리, Redux 상태 관리, 카드 구조 UI, 컴포넌트 단위 분리까지 아키텍처부터 직접 설계했다. 다운로드 → ZIP 압축해제 → 설치까지의 파이프라인을 IPC로 연결하고, 진행률을 실시간으로 Renderer 프로세스에 전송하는 구조다.</p>
+                        <p>메인 도메인은 버추얼 프로덕션이지만, 웹·백엔드·인프라 역시 <strong>설계부터 운영까지 직접 수행해온 영역이다.</strong> 프로젝트에 필요한 기술이라면 도메인을 가리지 않고 풀스택으로 해결한다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Section -->
+    <section class="section section-dark" id="career">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">06</span>
                 <h2 class="section-title">Career</h2>
             </div>
             <div class="timeline">
@@ -882,7 +956,7 @@ BGRITZProject ← SVN Content (아티스트)
     <section class="section" id="skills">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">06</span>
+                <span class="section-tag">07</span>
                 <h2 class="section-title">Tech Stack</h2>
             </div>
             <div class="skills-grid">
@@ -1038,7 +1112,7 @@ BGRITZProject ← SVN Content (아티스트)
     <section class="section section-dark" id="contact">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">07</span>
+                <span class="section-tag">08</span>
                 <h2 class="section-title">Contact</h2>
             </div>
             <div class="contact-grid reveal">
@@ -1100,6 +1174,8 @@ BGRITZProject ← SVN Content (아티스트)
     </footer>
 
     <script src="codeData.js"></script>
-    <script src="script.js"></script>
+    <script type="module" src="modules/main.js"></script>
+    <!-- Fallback for file:// protocol where ES modules are blocked by CORS -->
+    <script nomodule src="script.js"></script>
 </body>
 </html>
