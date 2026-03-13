@@ -602,5 +602,173 @@ FootTiptoeFixComponent
 ├── Toe Rotation      (Pitch/Roll/Yaw ±45°)
 ├── Link Both Feet    (양발 동시 조절)
 └── Blend Weight      (보정 강도 + 스무딩)`
+    },
+    // ── D:\SoulX Documents ──
+    {
+        id: 'xroomlite-iteration',
+        tag: 'Tool',
+        title: 'XROOMLite 22버전 반복 — v1.0에서 v2.0까지의 진화',
+        problem: 'XROOM 풀 빌드는 100GB+ 용량에 초기 셋업 시간이 길어 신규 인원 온보딩과 빠른 프로토타이핑이 불가능했다.',
+        solution: 'XROOMLite를 독립 프로젝트로 분리하여 22개 버전을 반복. v1.0 기본 뷰어 → v1.5 에셋 로딩 최적화 → v1.8 네트워크 동기화 → v2.0 풀 기능 경량 버전까지 점진적으로 발전.',
+        insight: '거대한 프로젝트를 경량 서브셋으로 분리하면 온보딩 시간이 수일에서 수시간으로 단축된다. 22번의 버전 반복은 "한번에 완성"보다 점진적 검증이 더 빠르다는 것을 증명한다.',
+        arch: `XROOMLite Version History
+├── v1.0~v1.4  — Core Viewer (기본 렌더링 + 카메라)
+├── v1.5~v1.7  — Asset Optimization (로딩 속도 개선)
+├── v1.8~v1.9  — Network Sync (멀티유저 테스트)
+└── v2.0       — Full-Feature Lite (프로덕션 경량 빌드)`
+    },
+    {
+        id: 'bci-unreal',
+        tag: 'Networking',
+        title: 'Brain-Wave × Unreal — EEG 신호를 실시간 UE5 인터랙션으로',
+        problem: 'Emotiv EEG 헤드셋의 뇌파 데이터를 Unreal Engine에서 실시간으로 수신하여 인터랙션에 활용해야 했으나, EEG SDK와 UE5 사이에 직접 통신 경로가 없었다.',
+        solution: 'OpenViBE로 EEG 신호를 전처리한 후 OSC 프로토콜로 UE5에 전송. UE5 OSC 플러그인으로 수신하여 집중도/이완도를 실시간 변수로 매핑. 뇌파 상태에 따라 환경 변화, 오브젝트 인터랙션 트리거.',
+        insight: 'BCI(Brain-Computer Interface)를 게임 엔진에 연결할 때 OSC는 저지연·범용성에서 최적의 미들웨어다. EEG 원본 데이터보다 OpenViBE에서 전처리된 특징값을 전송하는 것이 안정성과 반응 속도 모두에서 유리하다.',
+        arch: `Emotiv EEG Headset
+├── Raw EEG Signal → OpenViBE
+│   ├── Band-pass Filter (Alpha/Beta/Theta)
+│   ├── Feature Extraction (집중도/이완도)
+│   └── OSC Output (localhost:9000)
+└── UE5 OSC Plugin
+    ├── /brain/focus    → 환경 라이팅 변화
+    ├── /brain/relax    → 파티클 밀도 제어
+    └── /brain/trigger  → 오브젝트 인터랙션`
+    },
+    {
+        id: 'paraguay-delivery',
+        tag: 'Delivery',
+        title: '파라과이 방송 시스템 납품 — 현지 교육까지 포함한 글로벌 딜리버리',
+        problem: '한국에서 개발한 실시간 방송 시스템을 파라과이 현지에 납품해야 했다. 네트워크 환경, 하드웨어 세팅, 운영 인력의 기술 수준이 모두 한국과 달랐다.',
+        solution: '시스템을 모듈화하여 현지 네트워크에 맞춘 설정 프리셋 제공. DeckLink SDI + NDI 이중화로 안정성 확보. 현지 운영자 대상 교육 매뉴얼 작성 및 직접 트레이닝 수행.',
+        insight: '글로벌 납품에서 기술보다 중요한 것은 "현지 운영자가 독립적으로 운영할 수 있는가"이다. 모듈화된 설정 프리셋과 현지어 매뉴얼이 원격 지원 비용을 90% 줄여준다.',
+        arch: `Global Delivery Pipeline
+├── Pre-Delivery
+│   ├── Network Assessment (현지 대역폭 측정)
+│   ├── Hardware Spec Matching (DeckLink/NDI 호환)
+│   └── Config Preset Generation (현지 최적화)
+├── On-Site Setup
+│   ├── SDI + NDI Dual Path (이중화)
+│   ├── Timecode Sync (LTC/MTC)
+│   └── Failover Testing
+└── Training
+    ├── Operator Manual (현지어)
+    ├── Hands-on Workshop (3일)
+    └── Remote Support Channel`
+    },
+    {
+        id: 'ai-workflow',
+        tag: 'Pipeline',
+        title: 'AI 워크플로우 R&D — ComfyUI + n8n + NAS 자동화 파이프라인',
+        problem: 'AI 이미지 생성(StableDiffusion)을 프로덕션 워크플로우에 통합하려면 수동 프롬프트 입력 → 결과 확인 → 후처리의 반복이 병목이었다.',
+        solution: 'ComfyUI로 노드 기반 생성 파이프라인 구축, n8n으로 트리거·후처리·저장을 자동화. NAS Docker에 ComfyUI 서버를 배포하여 팀 공유. React 프론트엔드로 비개발자도 프롬프트 입력 가능.',
+        insight: 'AI 도구의 프로덕션 도입은 "모델 성능"보다 "워크플로우 자동화"가 핵심이다. n8n 같은 로우코드 오케스트레이터가 개발자와 아티스트 사이의 갭을 메워준다.',
+        arch: `AI Production Pipeline
+├── Frontend (React)
+│   └── Prompt Input UI → n8n Webhook
+├── Orchestration (n8n)
+│   ├── Trigger → ComfyUI API
+│   ├── Result Polling
+│   ├── Post-Processing (upscale, crop)
+│   └── NAS Storage Upload
+├── Generation (ComfyUI on NAS Docker)
+│   ├── StableDiffusion XL
+│   ├── ControlNet (포즈/깊이)
+│   └── Custom LoRA Models
+└── Output → Slack Notification + Gallery`
+    },
+    {
+        id: 'webgl-photobooth',
+        tag: 'Tool',
+        title: 'WebGL Photo Booth — React + WebGL 실시간 카메라 필터',
+        problem: '이벤트 현장에서 참가자 사진을 실시간으로 촬영하고 커스텀 필터를 적용하여 즉석 출력해야 했다. 네이티브 앱 설치 없이 브라우저만으로 동작해야 했다.',
+        solution: 'React로 UI를 구성하고 WebGL 셰이더로 실시간 카메라 필터 적용. getUserMedia API로 카메라 접근, Canvas → WebGL 파이프라인으로 프레임 단위 처리. 크로마키, 배경 합성, 스티커 오버레이를 실시간 렌더링.',
+        insight: 'WebGL 셰이더는 브라우저에서도 GPU 가속을 활용할 수 있어 네이티브 앱 수준의 실시간 이미지 처리가 가능하다. 설치 없는 즉시 접근성이 이벤트 현장에서는 결정적 장점이다.',
+        arch: `WebGL Photo Booth
+├── Camera Input (getUserMedia)
+│   └── MediaStream → Canvas → WebGL Texture
+├── WebGL Pipeline
+│   ├── Chroma Key Shader (배경 제거)
+│   ├── Color Grading (LUT 필터)
+│   ├── Sticker Overlay (알파 블렌딩)
+│   └── Background Composite
+├── UI (React)
+│   ├── Filter Selector
+│   ├── Countdown Timer
+│   └── Preview + Retake
+└── Output
+    ├── Canvas.toBlob() → Download
+    └── Direct Print (ESC/POS)`
+    },
+    {
+        id: 'xroom-design-system',
+        tag: 'Tool',
+        title: 'XROOM Design System — 커스텀 컬러 시스템부터 컴포넌트 라이브러리까지',
+        problem: 'XROOM UI가 기획·개발·디자인 간 일관성 없이 파편화되어 있었다. 같은 버튼이 화면마다 다른 색상·크기·간격으로 구현되어 유지보수와 신규 화면 제작 속도가 저하.',
+        solution: '커스텀 컬러 팔레트(Primary/Secondary/Semantic)를 정의하고, Figma 기반 컴포넌트 라이브러리를 4단계로 구축. 토큰 → 원자 → 분자 → 유기체 계층 구조로 UE5 UMG 위젯과 1:1 매핑.',
+        insight: '디자인 시스템은 "예쁜 컴포넌트 모음"이 아니라 "의사결정의 일관성"이다. 컬러 토큰 하나를 변경하면 전체 UI에 자동 반영되는 구조가 팀 규모와 무관하게 품질을 보장한다.',
+        arch: `XROOM Design System (4-Part)
+├── Part 1: Color System
+│   ├── Primary Palette (Brand Colors)
+│   ├── Secondary Palette (UI States)
+│   ├── Semantic Colors (Success/Warning/Error)
+│   └── Dark/Light Theme Tokens
+├── Part 2: Typography + Spacing
+│   ├── Type Scale (12/14/16/20/24/32)
+│   └── Spacing Grid (4px base unit)
+├── Part 3: Component Library
+│   ├── Atoms (Button, Input, Badge, Icon)
+│   ├── Molecules (Card, Form Group, Nav Item)
+│   └── Organisms (Header, Sidebar, Modal)
+└── Part 4: Figma ↔ UMG Mapping
+    └── Token Export → UE5 Widget Blueprint`
+    },
+    {
+        id: 'unity-porting-lessons',
+        tag: 'Pipeline',
+        title: 'Unity 포팅 프로젝트 — 중단에서 얻은 교훈',
+        problem: 'XROOM의 일부 기능을 Unity로 포팅하여 크로스 플랫폼 지원을 검토했다. UE5 고유 기능(Nanite, Lumen, GBuffer 커스텀)에 대한 의존도가 예상보다 높았다.',
+        solution: '코어 로직(네트워킹, 세션 관리)은 포팅에 성공했으나, 렌더링 파이프라인 차이로 비주얼 패리티 달성이 불가하다고 판단하여 프로젝트를 중단. 크로스 엔진 호환 가능한 모듈과 불가능한 모듈을 명확히 분류하여 문서화.',
+        insight: '"실패한 프로젝트"에서 가장 큰 수확은 엔진 종속성 지도다. 어떤 모듈이 이식 가능하고 어떤 것이 불가능한지를 실증적으로 파악한 경험은, 이후 아키텍처 설계에서 결합도를 의식적으로 낮추게 만들었다.',
+        arch: `Unity Porting Assessment
+├── ✅ Portable (성공)
+│   ├── Session Management (C# 재작성)
+│   ├── Network Protocol (Shared Lib)
+│   └── UI Logic (MVVM 패턴)
+├── ❌ Non-Portable (UE5 종속)
+│   ├── Nanite Mesh → Unity Mesh 호환 X
+│   ├── Lumen GI → Unity Light Probe 대체 불가
+│   ├── GBufferT (커스텀 MRT) → SRP 한계
+│   └── Niagara FX → VFX Graph 재작성 필요
+└── 📋 Lesson: 코어 로직은 엔진 독립적으로,
+    렌더링은 엔진 네이티브로 설계`
+    },
+    {
+        id: 'xroom-architecture',
+        tag: 'Pipeline',
+        title: 'XROOM 아키텍처 — 모듈 분리와 확장 방향 설계',
+        problem: 'XROOM이 커지면서 기능 간 결합도가 높아져 하나의 모듈 수정이 다른 모듈에 영향을 주는 문제가 빈번해졌다. 신규 기능 추가 시 사이드 이펙트 파악에 시간이 과도하게 소요.',
+        solution: 'XROOM을 Core/Rendering/Network/Content 4개 레이어로 분리. 각 레이어는 인터페이스로만 통신하고, 도식화를 통해 의존성 방향을 단방향으로 강제. AI/WebRTC 등 신규 모듈은 Plugin 형태로 독립 추가.',
+        insight: '아키텍처 도식화는 코드 리뷰보다 먼저 해야 한다. 화살표 방향이 순환하는 순간 기술 부채가 시작된다. 모듈 간 의존성을 시각적으로 관리하면 리팩터링 시점을 사전에 감지할 수 있다.',
+        arch: `XROOM Architecture (4-Layer)
+├── Core Layer
+│   ├── Session Manager
+│   ├── Config System
+│   └── Event Bus (단방향 메시지)
+├── Rendering Layer
+│   ├── ToonPipeline (GBufferT)
+│   ├── Compositing (가상+실사 합성)
+│   └── Post-Processing Chain
+├── Network Layer
+│   ├── Replication (UE5 NetDriver)
+│   ├── NDI/SDI Bridge
+│   └── OSC Controller
+├── Content Layer
+│   ├── Asset Manager
+│   ├── Level Streaming
+│   └── Save/Load System
+└── Plugin Slots
+    ├── AI Module (ComfyUI Bridge)
+    ├── WebRTC (브라우저 스트리밍)
+    └── BCI (뇌파 인터페이스)`
     }
 ];

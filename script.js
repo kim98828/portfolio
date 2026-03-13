@@ -714,11 +714,40 @@ document.addEventListener('DOMContentLoaded', () => {
             blogGrid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         }
 
+        const VISIBLE_LIMIT = 3;
+        let blogUnlocked = false;
+
         renderBlogCards(blogData);
+        applyBlogLimit();
 
         // Update "All" count
         const allBtn = document.querySelector('.blog-filter[data-filter="all"] .blog-filter-count');
         if (allBtn) allBtn.textContent = `(${blogData.length})`;
+
+        // Apply 3-card limit + CTA overlay
+        function applyBlogLimit() {
+            if (blogUnlocked) return;
+            const cards = blogGrid.querySelectorAll('.blog-card:not(.hidden)');
+            cards.forEach((card, i) => {
+                if (i >= VISIBLE_LIMIT) card.classList.add('blog-locked');
+                else card.classList.remove('blog-locked');
+            });
+            // Add/update CTA overlay
+            let cta = blogGrid.parentElement.querySelector('.blog-cta-overlay');
+            if (!cta && cards.length > VISIBLE_LIMIT) {
+                cta = document.createElement('div');
+                cta.className = 'blog-cta-overlay';
+                cta.innerHTML = `
+                    <div class="blog-cta-content">
+                        <p class="blog-cta-count">${blogData.length}개의 Problem Solving 카드</p>
+                        <p class="blog-cta-text">나머지 카드를 보려면 연락해주세요</p>
+                        <a href="#contact" class="btn btn-primary blog-cta-btn">Contact Me</a>
+                    </div>
+                `;
+                blogGrid.parentElement.appendChild(cta);
+            }
+            if (cta) cta.style.display = cards.length > VISIBLE_LIMIT ? '' : 'none';
+        }
 
         // Filter click
         document.querySelectorAll('.blog-filter').forEach(btn => {
@@ -734,13 +763,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         card.classList.add('hidden');
                     }
                 });
+                applyBlogLimit();
             });
         });
 
         // Card expand/collapse
         blogGrid.addEventListener('click', (e) => {
             const card = e.target.closest('.blog-card');
-            if (!card) return;
+            if (!card || card.classList.contains('blog-locked')) return;
             card.classList.toggle('expanded');
         });
     }
