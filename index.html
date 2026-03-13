@@ -613,7 +613,7 @@ BGRITZProject ← SVN Content (아티스트)
                     <h3 class="insight-title">XROOM — Viewport 오버로드 기반 실시간 컴포지팅</h3>
                     <div class="insight-body">
                         <p>실시간 합성(Compositing)을 위해 <strong>Viewport를 오버로드하여 전경·렌더·후경을 레이어별로 분리 렌더링</strong>했다. 핵심 문제는 3D Plane에 머티리얼을 매핑하면 해상도 저하가 발생한다는 점이었다.</p>
-                        <p>Plane 크기와 정확히 일치하는 위치에 <strong>2D로 직접 드로잉</strong>하여 3D 경유 없이 원본 화질을 유지하는 방식으로 해결했다. 이 경험을 DNABLE에 그대로 적용하여, 후경의 연기·움직이는 배경을 <strong>화질 저하 없이 2D로 렌더링</strong>하면서 3D 리소스 비용을 절감했다.</p>
+                        <p>Plane 크기와 정확히 일치하는 위치에 <strong>2D로 직접 드로잉</strong>하여 3D 경유 없이 원본 화질을 유지하는 방식으로 해결했다. 이 경험이 DNABLE에서 후경 렌더링에 그대로 이어졌다 — <strong>미디어 텍스처를 정확하고 향상된 품질로 출력</strong>하고, 추후 스튜디오 맵에서도 동일한 방식으로 동작하도록 확장 가능한 구조를 미리 준비할 수 있었다.</p>
                         <div class="insight-comparison">
                             <div class="comparison-item con">
                                 <span class="comparison-label">3D Plane 매핑</span>
