@@ -770,5 +770,171 @@ FootTiptoeFixComponent
     ├── AI Module (ComfyUI Bridge)
     ├── WebRTC (브라우저 스트리밍)
     └── BCI (뇌파 인터페이스)`
+    },
+    // ── Cross-Domain Versatility ──
+    {
+        id: 'azure-kinect-lidar',
+        tag: 'Tool',
+        title: 'Azure Kinect + LiDAR — 깊이 센서 기반 인터랙티브 설치',
+        problem: '전시 공간에서 관객의 위치와 동작을 실시간으로 인식하여 인터랙티브 콘텐츠를 구동해야 했다. 일반 카메라로는 깊이 정보가 없어 정확한 공간 추적이 불가능.',
+        solution: 'Azure Kinect의 ToF 깊이 센서와 LiDAR 포인트 클라우드를 결합하여 3D 공간 맵핑. Body Tracking SDK로 스켈레톤 추출 후 Unreal Engine에 실시간 전달. LiDAR는 넓은 공간 커버리지, Kinect는 정밀 제스처 인식으로 역할 분담.',
+        insight: '깊이 센서마다 최적 거리와 정밀도가 다르다. Azure Kinect(0.5~5m 정밀)와 LiDAR(5~50m 광역)를 조합하면 좁은 무대부터 넓은 전시장까지 하나의 시스템으로 커버할 수 있다.',
+        arch: `Depth Sensor Pipeline
+├── Azure Kinect (정밀 트래킹)
+│   ├── ToF Depth (0.5~5m)
+│   ├── Body Tracking SDK → 32 Joints
+│   └── → UE5 LiveLink
+├── LiDAR (광역 감지)
+│   ├── Point Cloud (5~50m)
+│   ├── Clustering → 관객 위치
+│   └── → Zone Trigger
+└── Fusion
+    ├── 근거리: Kinect 제스처
+    └── 원거리: LiDAR 존 진입`
+    },
+    {
+        id: 'electron-launcher',
+        tag: 'Pipeline',
+        title: 'Electron 런처 — React + CI/CD 자동 업데이트 시스템',
+        problem: 'XROOM 사용자들이 매번 수동으로 버전을 확인하고 다운로드해야 했다. Steam 외 배포 채널(직접 설치)에서 버전 파편화가 심각.',
+        solution: 'Electron + React로 데스크톱 런처 제작. electron-updater로 자동 업데이트 파이프라인 구축. AWS S3에 빌드 아티팩트 업로드, 런처가 시작 시 버전 체크 → 델타 다운로드 → 자동 패치. Redux로 다운로드 진행률, 설치 상태 관리.',
+        insight: '자동 업데이트의 핵심은 "사용자가 아무것도 하지 않아도 최신 버전"을 보장하는 것이다. 런처를 자체 제작하면 업데이트 UX뿐 아니라 사용 통계 수집까지 완전히 제어할 수 있다.',
+        arch: `Electron Launcher Pipeline
+├── Build (CI)
+│   ├── UE5 Package → Zip
+│   ├── Version Manifest (JSON)
+│   └── Upload → AWS S3
+├── Launcher (Electron + React)
+│   ├── Version Check → S3 Manifest
+│   ├── Delta Download (changed files only)
+│   ├── Progress UI (Redux state)
+│   └── Auto-Patch → Launch
+└── Channels
+    ├── Stable (production)
+    ├── Beta (QA)
+    └── Dev (internal)`
+    },
+    {
+        id: 'smart-factory',
+        tag: 'Delivery',
+        title: '스마트 팩토리 — Unreal Engine 기반 제조업 시각화',
+        problem: '제조업 현장의 생산 라인 데이터를 실시간으로 시각화해야 했다. 기존 SCADA 시스템은 2D 대시보드에 한정되어 공간적 맥락(어떤 라인의 어떤 장비인지)을 직관적으로 파악하기 어려웠다.',
+        solution: 'Unreal Engine으로 공장 3D 디지털 트윈을 구축. 센서 데이터를 실시간으로 수신하여 장비별 상태(가동/정지/이상)를 3D 모델에 색상으로 매핑. 관리자가 가상 공간을 돌아다니며 현장 파악 가능.',
+        insight: '게임 엔진의 렌더링 능력은 게임 밖에서도 강력하다. 3D 시각화만으로 제조업 관리자의 의사결정 속도가 달라진다 — "어디가 문제인가"를 텍스트 로그 대신 공간으로 보여주는 것.',
+        arch: `Smart Factory Digital Twin
+├── Data Layer
+│   ├── PLC / Sensor → OPC-UA
+│   └── Real-time DB → REST API
+├── UE5 Visualization
+│   ├── Factory 3D Model (1:1 Scale)
+│   ├── Equipment Status (Color Coding)
+│   ├── Production Line Flow Animation
+│   └── Alert Overlay (이상 감지)
+└── Interface
+    ├── Desktop Viewer
+    └── Packaged Build (배포)`
+    },
+    {
+        id: 'xr-education',
+        tag: 'Delivery',
+        title: '제주·대구 XR교육 — 메인 강사로 커리큘럼 기획부터 실습까지',
+        problem: 'XR(VR/AR) 기술을 비개발자 교육생에게 전달해야 했다. Unreal Engine의 학습 곡선이 높아 단기 과정에서 실질적 결과물을 만들어내기 어려웠다.',
+        solution: '커리큘럼을 직접 기획하여 "결과물 우선" 접근법 채택. 첫 날부터 완성된 프로젝트를 배포하고 역순으로 각 기능을 분해·학습. Blueprint 중심으로 진입 장벽을 낮추되, C++ 확장 포인트를 미리 설계하여 심화 교육 연결.',
+        insight: '기술 교육에서 가장 중요한 것은 "첫 성공 경험의 속도"다. 이론→실습이 아니라 실습→이론 순서가 비개발자의 동기를 유지시킨다. 강사 경험은 곧 기술 문서화·온보딩 설계 역량으로 직결된다.',
+        arch: `XR Education Program
+├── Day 1: 완성 프로젝트 배포 + 체험
+├── Day 2~3: 기능 분해 + Blueprint 실습
+│   ├── VR Interaction (Grab, Teleport)
+│   ├── AR Marker Tracking
+│   └── UI + Audio Integration
+├── Day 4: 개인 프로젝트 제작
+└── Day 5: 발표 + 피드백
+    └── 결과물: 개인 VR/AR 체험 앱`
+    },
+    {
+        id: 'steam-gs-launch',
+        tag: 'Delivery',
+        title: 'Steam 런칭 + GS인증 — 프로덕트 배포의 전 과정',
+        problem: 'XROOM을 상용 제품으로 출시하려면 Steam 스토어 등록, Steamworks SDK 통합, GS(Good Software) 인증까지 동시에 진행해야 했다. 개발팀 규모가 작아 모든 과정을 소수가 직접 수행.',
+        solution: 'Steamworks SDK를 Unreal 프로젝트에 통합하고, SteamPipe로 빌드 자동 업로드 파이프라인 구축. GS인증은 테스트 시나리오 문서화 + 결함 관리 + 성능 기준 충족을 직접 수행. 스토어 페이지 에셋(스크린샷, 영상, 설명)도 직접 제작.',
+        insight: '소규모 팀에서 런칭까지 도달하려면 "개발 외의 모든 것"도 직접 해야 한다. 스토어 등록, 인증, 마케팅 에셋 제작 경험은 프로덕트 감각의 핵심이다. GS인증 과정은 QA 프로세스를 체계화하는 계기가 되었다.',
+        arch: `Product Launch Pipeline
+├── Steam
+│   ├── Steamworks SDK Integration
+│   ├── SteamPipe Auto-Upload (CI)
+│   ├── Store Page (스크린샷, 트레일러)
+│   ├── Achievement / Cloud Save
+│   └── Branch Management (stable/beta)
+├── GS Certification
+│   ├── Test Scenario Documentation
+│   ├── Defect Tracking & Resolution
+│   └── Performance Benchmark Pass
+└── Marketing
+    ├── Trailer Video Production
+    └── Press Kit / Media Assets`
+    },
+    {
+        id: 'opencv-photobooth',
+        tag: 'Tool',
+        title: 'C++ OpenCV 키오스크 포토부스 — 하드웨어 직접 제어',
+        problem: '이벤트 현장용 포토부스를 제작해야 했다. 상용 솔루션은 커스터마이징이 제한적이고, 카메라·프린터·결제 단말기를 하나의 시스템으로 통합해야 했다.',
+        solution: 'C++ WinForms 기반 키오스크 앱 제작. OpenCV로 카메라 캡처 + 실시간 필터(크로마키, 보정), ESC/POS 프로토콜로 포토 프린터 직접 제어, 시리얼 통신으로 결제 단말기 연동. 전체를 키오스크 모드로 잠금.',
+        insight: '하드웨어 직접 제어(시리얼, ESC/POS, USB 카메라)를 다뤄본 경험은 소프트웨어만으로 해결할 수 없는 문제를 이해하게 해준다. "연결"의 마지막 1%는 항상 물리적 인터페이스에서 결정된다.',
+        arch: `Kiosk Photo Booth (C++)
+├── Camera (OpenCV)
+│   ├── USB Camera Capture
+│   ├── Chroma Key Filter
+│   ├── Color Correction
+│   └── Background Composite
+├── Payment (Serial)
+│   ├── Card Terminal (COM Port)
+│   └── Cash Acceptor (Serial)
+├── Print (ESC/POS)
+│   ├── Photo Printer Direct Control
+│   └── Layout Template Engine
+└── Kiosk Mode
+    ├── Fullscreen Lock
+    └── Watchdog (Auto-Restart)`
+    },
+    {
+        id: 'threejs-homepage',
+        tag: 'Tool',
+        title: 'Three.js + React — 회사 홈페이지 3D 인터랙티브',
+        problem: '회사 홈페이지에 XROOM의 3D 기술력을 보여줄 인터랙티브 요소가 필요했다. 일반적인 정적 페이지로는 "실시간 3D 플랫폼 회사"라는 아이덴티티를 전달하기 어려웠다.',
+        solution: 'React + react-three-fiber로 3D 씬을 홈페이지에 직접 임베딩. Three.js 기반 인터랙티브 모델 뷰어, 파티클 이펙트, 스크롤 연동 카메라 애니메이션 구현. Suspense + lazy loading으로 3D 에셋 로딩 최적화.',
+        insight: '웹 3D는 "멋진 데모"가 아니라 "첫 로딩 3초 이내"가 핵심이다. react-three-fiber의 선언적 API는 React 생태계와 자연스럽게 통합되어 3D를 UI 컴포넌트처럼 관리할 수 있게 해준다.',
+        arch: `3D Interactive Homepage
+├── React (SPA)
+│   ├── Page Router
+│   ├── Styled Components
+│   └── i18next (다국어)
+├── react-three-fiber
+│   ├── 3D Model Viewer (GLTF)
+│   ├── Particle Effects
+│   ├── Scroll-linked Camera
+│   └── Suspense + Lazy Loading
+└── Deploy
+    └── Vercel / GitHub Pages`
+    },
+    {
+        id: 'studio-xam-webrtc',
+        tag: 'Streaming',
+        title: 'studio-xam — Next.js + WebRTC 3D 웨비나 플랫폼',
+        problem: '3D 가상 공간에서 실시간 화상 회의를 진행하는 웨비나 플랫폼이 필요했다. 기존 화상 솔루션(Zoom 등)은 3D 환경과 통합이 불가능.',
+        solution: 'Next.js 13 + react-three-fiber로 3D 가상 공간 구현. WebRTC(socket.io-client)로 P2P 영상 통화, 3D 씬 안에 참가자 비디오를 텍스처로 매핑. MUI로 채팅/참가자 목록 UI, ChakraUI로 컨트롤 패널 구성.',
+        insight: 'WebRTC 비디오를 Three.js 텍스처로 바로 매핑하면 "3D 공간 안의 화상 통화"가 자연스럽게 구현된다. 프레임워크 경계를 넘는 데이터 흐름(WebRTC → Canvas → Three.js Texture)을 이해하는 것이 핵심.',
+        arch: `studio-xam Architecture
+├── Frontend (Next.js 13)
+│   ├── react-three-fiber (3D 공간)
+│   ├── WebRTC Video → Three.js Texture
+│   ├── MUI (채팅, 참가자)
+│   └── ChakraUI (컨트롤)
+├── Signaling (socket.io)
+│   ├── Room Management
+│   ├── WebRTC SDP Exchange
+│   └── Chat / Reactions
+└── Media
+    ├── P2P (소규모)
+    └── SFU 옵션 (대규모)`
     }
 ];
