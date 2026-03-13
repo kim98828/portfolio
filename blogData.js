@@ -2,6 +2,75 @@
 // Blog Card Data — Problem-Solving Cards
 // ============================================
 const blogData = [
+    // ── Featured 3 ──
+    {
+        id: 'featured-toon-buffer',
+        tag: 'Rendering',
+        title: 'DNABLE — 섀도우 채널 분리와 커스텀 Toon 버퍼 설계',
+        problem: 'UE5 기본 GBuffer로는 Toon 렌더링에 필요한 그림자 제어가 불가능했다. 머리카락 그림자가 얼굴에 지거나, 반음영 구간을 아티스트가 독립적으로 조절할 수 없는 문제가 반복되었다.',
+        solution: '커스텀 Toon Buffer A·B·C를 설계하여 섀도우 채널을 완전히 분리했다. 얼굴·몸체·헤어 각각의 그림자를 독립 채널로 렌더링하여, 아티스트가 채널별로 그림자를 그릴지 말지를 개별 제어할 수 있도록 구현. 반음영, 섀도우 블러, 다중 광원, GI, Fake GI, 아웃라인, 림라이트, 반투명까지 성능 저하 없이 송출 검증 완료.',
+        insight: '렌더링 문제를 "셰이더 코드"가 아니라 "버퍼 아키텍처"에서 해결하면, 아티스트에게 프로그래머 없이도 라이팅을 제어할 수 있는 권한을 넘겨줄 수 있다.',
+        arch: `Custom Toon Buffer Architecture
+├── Toon Buffer A — Shadow Control
+│   ├── Face Shadow Channel (독립 on/off)
+│   ├── Hair Shadow Channel (독립 on/off)
+│   └── Body Shadow Channel (독립 on/off)
+├── Toon Buffer B — Shading Parameters
+│   ├── Half-Shadow Range (반음영 구간)
+│   ├── Shadow Blur Intensity
+│   └── Rim Light Mask
+├── Toon Buffer C — Extended
+│   ├── Outline Thickness
+│   ├── Translucency Mask (반투명)
+│   └── Fake GI Intensity
+└── Result → 성능 저하 없이 실시간 송출 검증`
+    },
+    {
+        id: 'featured-viewport-compositing',
+        tag: 'Compositing',
+        title: 'XROOM — 3D→2D 좌표 변환으로 화질 저하 없는 실시간 컴포지팅',
+        problem: 'Viewport에서 전경·XR·후경을 레이어별로 분리 렌더링해야 했다. 3D Plane에 미디어 텍스처를 매핑하면 리샘플링으로 인해 화질이 저하되는 문제가 있었다.',
+        solution: 'Viewport 렌더링을 오버로드하여 전경·XR·후경 3개 레이어로 분리. 3D 공간의 Plane 위치를 2D 스크린 좌표로 변환(WorldToScreen)하여, 3D를 경유하지 않고 해당 위치에 직접 2D로 드로잉. 원본 해상도 그대로 출력되어 화질 저하가 완전히 사라졌고, 이 방식을 DNABLE 후경 렌더링에도 그대로 적용.',
+        insight: '3D 엔진 안에서 "굳이 3D로 그릴 필요 없는 것"을 판별하는 눈이 중요하다. 좌표 변환 한 번으로 3D Plane의 GPU 비용과 화질 저하를 동시에 제거할 수 있다.',
+        arch: `Viewport Compositing Pipeline
+├── Layer Separation (Viewport Overload)
+│   ├── Background Layer (후경 — 미디어/2D)
+│   ├── XR Layer (가상 3D 씬)
+│   └── Foreground Layer (전경 — 오버레이)
+├── 3D → 2D Coordinate Transform
+│   ├── Plane WorldPosition
+│   ├── → ProjectWorldToScreen()
+│   └── → DrawTexture at ScreenPos (원본 해상도)
+├── Result
+│   ├── XROOM: 전경/XR/후경 합성
+│   └── DNABLE: 후경 연기·움직이는 배경 (동일 방식)
+└── vs 3D Plane: 리샘플링 없음 → 화질 100% 보존`
+    },
+    {
+        id: 'featured-hardware-integration',
+        tag: 'Broadcast',
+        title: '공통 — SDI·NDI·SRT·OSC·WebRTC·BCI 하드웨어 통합 아키텍처',
+        problem: '프로젝트마다 요구되는 입출력 장비가 달랐다. Blackmagic DeckLink SDI, NDI, SRT, OSC, WebRTC, Emotiv EEG, Azure Kinect, LiDAR, Arduino 등 — 매번 새로운 하드웨어와 프로토콜을 연동해야 했다.',
+        solution: '장비별 통신 프로토콜(SDI/NDI/SRT/OSC/WebRTC/시리얼)을 하나의 통합 I/O 레이어로 추상화. 각 장비는 플러그인으로 독립 연결되고, 라우팅 테이블로 입출력 경로를 런타임에 변경 가능. XROOM에서는 방송 송출, DNABLE에서는 모캡+방송, 별도 프로젝트에서는 뇌파(BCI)·깊이 센서까지 동일 구조로 연동.',
+        insight: '하드웨어를 "직접 만져본 경험"은 스펙 시트로 대체할 수 없다. SDI의 Genlock, NDI의 디스커버리, OSC의 번들 타이밍, EEG의 노이즈 특성 — 각 프로토콜의 실전 특성을 체감해야 안정적인 통합 아키텍처가 나온다.',
+        arch: `Unified Hardware I/O Architecture
+├── Video I/O
+│   ├── Blackmagic DeckLink (4ch SDI, Genlock)
+│   ├── AJA (SDI alternative)
+│   ├── NDI (LAN 프리뷰, 디스커버리)
+│   ├── SRT (인터넷 스트리밍)
+│   └── WebRTC (브라우저 실시간)
+├── Control
+│   ├── OSC (Stream Deck, 조명, 카메라)
+│   ├── Arduino (물리 센서, 액추에이터)
+│   └── Serial (결제 단말, 프린터)
+├── Sensing
+│   ├── Emotiv EEG → OpenViBE → OSC → UE5
+│   ├── Azure Kinect (Body Tracking)
+│   └── LiDAR (공간 감지)
+└── Routing Table
+    └── 런타임 입출력 경로 변경 가능`
+    },
     // ── Rendering ──
     {
         id: 'toon-shading',
