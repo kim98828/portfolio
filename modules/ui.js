@@ -134,6 +134,38 @@ export function initUI() {
             content.classList.toggle('open');
         });
     });
+
+    // --- Master Domain Filter (Technical Depth section) ---
+    const masterFilter = document.getElementById('master-domain-filter');
+    if (masterFilter) {
+        const section = masterFilter.closest('section');
+        const allCards = section.querySelectorAll('[data-domain]');
+        const killingHeader = section.querySelector('.section-header[style]');
+        const buttons = masterFilter.querySelectorAll('.domain-filter-btn');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                allCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.domain === filter) {
+                        card.classList.remove('domain-hidden');
+                        card.classList.add('domain-show');
+                    } else {
+                        card.classList.add('domain-hidden');
+                        card.classList.remove('domain-show');
+                    }
+                });
+
+                if (killingHeader) {
+                    killingHeader.style.display = (filter === 'all' || filter === 'engine') ? '' : 'none';
+                }
+            });
+        });
+    }
 }
 
 // --- Code Popup ---
