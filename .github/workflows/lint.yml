@@ -30,7 +30,16 @@ jobs:
               "custom-property-pattern": null,
               "alpha-value-notation": null,
               "color-function-notation": null,
+              "color-function-alias-notation": null,
               "declaration-block-no-redundant-longhand-properties": null,
+              "declaration-block-no-duplicate-properties": null,
+              "declaration-block-single-line-max-declarations": null,
+              "keyframes-name-pattern": null,
+              "value-keyword-case": null,
+              "property-no-vendor-prefix": null,
+              "media-feature-range-notation": null,
+              "rule-empty-line-before": null,
+              "at-rule-empty-line-before": null,
               "function-no-unknown": [true, { "ignoreFunctions": ["color-mix", "env"] }],
               "media-feature-name-no-unknown": [true, { "ignoreMediaFeatureNames": ["prefers-reduced-motion"] }]
             }
