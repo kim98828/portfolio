@@ -15,7 +15,6 @@
 //   ui.js               — Navigation, scroll, popups, blog cards
 //   backend.js          — Google Apps Script integration (no-cors)
 
-import { initLockScreen } from './lock-screen.js';
 import { initParticleRenderer } from './particle-renderer.js';
 import { initUI } from './ui.js';
 import { sendVisitNotification, loadVisitorCount, initContactForm } from './backend.js';
@@ -23,10 +22,10 @@ import { sendVisitNotification, loadVisitorCount, initContactForm } from './back
 document.addEventListener('DOMContentLoaded', () => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Auth gate — onUnlock callback triggers visit notification
-    initLockScreen(() => sendVisitNotification(), prefersReducedMotion);
+    // Lock screen removed — send visit notification immediately
+    sendVisitNotification();
 
-    // Canvas particle system (auto-waits for unlock if needed)
+    // Canvas particle system
     if (!prefersReducedMotion) initParticleRenderer();
 
     // All UI interactions

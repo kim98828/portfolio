@@ -7,7 +7,7 @@
 import { isMobile } from './config.js';
 import { CanvasRenderer } from './canvas-renderer.js';
 import { SpatialHash } from './spatial-hash.js';
-import { isUnlocked } from './lock-screen.js';
+// lock-screen import removed
 
 /** Physics & rendering constants — extracted for tuning and documentation */
 const PHYSICS = {
@@ -197,22 +197,7 @@ export function initParticleRenderer() {
     }, { passive: true });
     heroEl.addEventListener('touchend', () => { mouse.x = -9999; mouse.y = -9999; });
 
-    // Start immediately if unlocked, otherwise wait for unlock event
-    function boot() {
-        renderer.init();
-        renderer.start();
-    }
-
-    if (isUnlocked()) {
-        boot();
-    } else {
-        const lockScreen = document.getElementById('lock-screen');
-        const obs = new MutationObserver(() => {
-            if (lockScreen.classList.contains('unlocked')) {
-                boot();
-                obs.disconnect();
-            }
-        });
-        obs.observe(lockScreen, { attributes: true, attributeFilter: ['class'] });
-    }
+    // Lock screen removed — start immediately
+    renderer.init();
+    renderer.start();
 }
