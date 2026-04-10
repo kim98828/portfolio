@@ -19,19 +19,36 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install linters
-        run: npm install -g stylelint stylelint-config-standard
-
-      - name: Lint CSS
+      - name: Create stylelint config
         run: |
-          echo '{ "extends": "stylelint-config-standard", "rules": { "no-descending-specificity": null, "selector-class-pattern": null, "custom-property-pattern": null, "alpha-value-notation": null, "color-function-notation": null, "declaration-block-no-redundant-longhand-properties": null } }' > .stylelintrc.json
-          npx stylelint "style.css" --formatter compact || true
+          cat > .stylelintrc.json << 'EOF'
+          {
+            "extends": "stylelint-config-standard",
+            "rules": {
+              "no-descending-specificity": null,
+              "selector-class-pattern": null,
+              "custom-property-pattern": null,
+              "alpha-value-notation": null,
+              "color-function-notation": null,
+              "declaration-block-no-redundant-longhand-properties": null,
+              "function-no-unknown": [true, { "ignoreFunctions": ["color-mix", "env"] }],
+              "media-feature-name-no-unknown": [true, { "ignoreMediaFeatureNames": ["prefers-reduced-motion"] }]
+            }
+          }
+          EOF
 
-      - name: Syntax check JS
+      - name: Install & Run Stylelint
+        run: |
+          npm install stylelint stylelint-config-standard
+          npx stylelint "style.css" --formatter compact
+
+      - name: Syntax check JS (non-module)
         run: |
           node -c script.js
           node -c codeData.js
-          # ES modules require --input-type flag
+
+      - name: Syntax check JS (ES modules)
+        run: |
           for f in modules/*.js; do
-            node --input-type=module --check < "$f" 2>/dev/null || node -c "$f" 2>/dev/null || echo "Note: $f uses ES modules (browser-native)"
+            node --input-type=module -e "$(cat "$f")" 2>/dev/null && echo "OK: $f" || echo "WARN: $f (import resolution expected in browser)"
           done

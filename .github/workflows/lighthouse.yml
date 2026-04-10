@@ -22,15 +22,33 @@ jobs:
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli
 
-      - name: Run Lighthouse
+      - name: Create lighthouserc
         run: |
-          lhci autorun \
-            --collect.staticDistDir=. \
-            --collect.url=index.html \
-            --assert.assertions.categories:performance=off \
-            --assert.assertions.categories:accessibility=warn \
-            --assert.assertions.categories:best-practices=warn \
-            --assert.assertions.categories:seo=off
+          cat > .lighthouserc.json << 'LHEOF'
+          {
+            "ci": {
+              "collect": {
+                "staticDistDir": ".",
+                "url": ["http://localhost/index.html"]
+              },
+              "assert": {
+                "assertions": {
+                  "categories:accessibility": ["warn", { "minScore": 0.8 }],
+                  "categories:best-practices": ["warn", { "minScore": 0.8 }],
+                  "categories:performance": "off",
+                  "categories:seo": "off"
+                }
+              },
+              "upload": {
+                "target": "filesystem",
+                "outputDir": ".lighthouseci"
+              }
+            }
+          }
+          LHEOF
+
+      - name: Run Lighthouse
+        run: lhci autorun
 
       - name: Upload Lighthouse Report
         if: always()
