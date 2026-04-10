@@ -17,27 +17,6 @@
     <!-- Scroll Progress Bar -->
     <div class="scroll-progress" aria-hidden="true"></div>
 
-    <!-- Password Lock Screen -->
-    <div class="lock-screen" id="lock-screen">
-        <canvas id="lock-canvas"></canvas>
-        <div class="lock-container">
-            <div class="lock-icon-wrap">
-                <div class="lock-ring"></div>
-                <div class="lock-ring lock-ring-2"></div>
-                <div class="lock-icon">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-            </div>
-            <h2 class="lock-title">Access Required</h2>
-            <p class="lock-desc">GitHub Pages에 호스팅되어 있어 잠금화면을 두었습니다.<br>이력서에 기재된 연락처를 입력해주세요.</p>
-            <div class="lock-form">
-                <input type="tel" id="lock-password" class="lock-input" placeholder="연락처" autocomplete="off">
-                <button id="lock-submit" class="lock-btn">Enter</button>
-            </div>
-            <p class="lock-error" id="lock-error">비밀번호가 틀렸습니다.</p>
-        </div>
-    </div>
-
     <!-- Navigation -->
     <nav class="nav" id="nav">
         <div class="nav-container">
@@ -257,7 +236,7 @@
                                 <ul class="h-timeline-achievements">
                                     <li>커스텀 NPR 렌더링 파이프라인 (엔진 소스 수정)</li>
                                     <li>DeckLink 4ch SDI + NDI 방송 시스템</li>
-                                    <li>30인 조직 DevOps 파이프라인 (BGRITZSetup)</li>
+                                    <li>30인 조직 DevOps 파이프라인 (StudioSetup)</li>
                                     <li>28개 Claude 슬래시 커맨드 + n8n 자동화</li>
                                     <li>5인 동시 모캡 시스템 (VICON + ARKit)</li>
                                 </ul>
@@ -588,7 +567,7 @@
                             <div class="domain-detail-section">
                                 <h4>Core Capabilities</h4>
                                 <ul class="domain-detail-list">
-                                    <li><strong>BGRITZSetup v2.0</strong> — Python 기반 역할별 자동 셋업(Developer/Character/Level/Viewer), 환경 구축 1~2일 → 30분</li>
+                                    <li><strong>StudioSetup v2.0</strong> — Python 기반 역할별 자동 셋업(Developer/Character/Level/Viewer), 환경 구축 1~2일 → 30분</li>
                                     <li><strong>Gitflow Strategy</strong> — Engine/Setup/Project 3개 레포 통합 브랜치 전략 수립 및 운영</li>
                                     <li><strong>Precompiled Engine Distribution</strong> — 개발자 빌드 → NAS 자동 업로드 → 아티스트 원클릭 동기화</li>
                                     <li><strong>SVN Hook Control</strong> — 15인 이상 아티스트의 에셋 배포를 훅 기반으로 제어, 직군별 권한 분리</li>
@@ -600,10 +579,10 @@
                                 <pre class="domain-arch">EpicGames/UnrealEngine (upstream)
     ↓ fork
 VanillaUnrealEngine (5.5)
-    ↓ merge + // BGRITZ markers
-BGRITZ_Engine (bgritz-main → dev → feature/*)
+    ↓ merge + // Custom Engine markers
+CustomEngine (studio-main → dev → feature/*)
     ↓ prebuilt binaries → SVN NAS
-BGRITZProject ← SVN Content (아티스트)
+StudioProject ← SVN Content (아티스트)
 
 [Role-based Setup]
   Developer : Git + Source Build
@@ -832,8 +811,8 @@ BGRITZProject ← SVN Content (아티스트)
                         <img src="https://cdn.prod.website-files.com/6808b101a54828061a77e046/6895572b2ce457bf59c744af_%EB%B9%84%EA%B7%B8%EB%A6%BF%EC%B8%A0%20%EC%8B%A4%EB%A3%A8%EC%97%A3%2001.jpg" alt="DNABLE 버추얼 아이돌" class="project-image" loading="lazy">
                     </div>
                     <div class="project-gallery">
-                        <img src="images/dnable-dashboard.jpg" alt="BGRITZ Pipeline 대시보드 — Gitflow 시각화 + Asset Audit" loading="lazy">
-                        <img src="images/dnable-debug-ui.jpg" alt="BGRITZ Debug Settings — 엔진 커스텀 디버그 도구" loading="lazy">
+                        <img src="images/dnable-dashboard.jpg" alt="Studio Pipeline 대시보드 — Gitflow 시각화 + Asset Audit" loading="lazy">
+                        <img src="images/dnable-debug-ui.jpg" alt="Studio Debug Settings — 엔진 커스텀 디버그 도구" loading="lazy">
                         <img src="images/dnable-infra.jpg" alt="NAS 리버스 프록시 아키텍처 — 대시보드 + n8n 자동화" loading="lazy">
                     </div>
                     <div class="project-badge-container">
@@ -948,7 +927,7 @@ BGRITZProject ← SVN Content (아티스트)
                                     <span class="challenge-num">04</span>
                                     <h4>30인 조직의 이종 도구 환경 통합</h4>
                                     <p class="challenge-problem">개발자 2인은 Git + 소스 빌드, 아티스트 15인 이상은 SVN + 프리빌드 엔진. 역할별 필요 도구와 설정이 달라 환경 구축에 1~2일 소요. 엔진 업데이트 시 전체 팀 동기화 실패 빈번.</p>
-                                    <p class="challenge-solution">Python 기반 통합 파이프라인(BGRITZSetup) 구축. 역할별 셋업 자동화(Developer/Character/Level/Viewer), Gitflow 전략 수립, 28개 Claude 슬래시 커맨드로 AI 자동화, FastAPI 대시보드로 팀 상태 관리. SVN 훅을 통한 15인 이상 동시 배포 제어, 프리컴파일 엔진 NAS 자동 전달.</p>
+                                    <p class="challenge-solution">Python 기반 통합 파이프라인(StudioSetup) 구축. 역할별 셋업 자동화(Developer/Character/Level/Viewer), Gitflow 전략 수립, 28개 Claude 슬래시 커맨드로 AI 자동화, FastAPI 대시보드로 팀 상태 관리. SVN 훅을 통한 15인 이상 동시 배포 제어, 프리컴파일 엔진 NAS 자동 전달.</p>
                                     <p class="challenge-impact">환경 구축 1~2일 → 원클릭 30분. SVN 훅 기반 배포 컨트롤로 아티스트가 빌드 시스템을 절대 만지지 않는 구조 확립. Notion 일일/주간 보고 자동화.</p>
                                 </div>
                             </div>
@@ -957,11 +936,11 @@ BGRITZProject ← SVN Content (아티스트)
                                 <pre class="arch-flow">EpicGames/UnrealEngine (upstream)
         ↓ fork
 VanillaUnrealEngine (branch: 5.5)
-        ↓ merge + // BGRITZ Engine Start/End 마커
-BGRITZ_Engine (branch: bgritz-main → dev → feature/*)
+        ↓ merge + // Custom Engine Start/End 마커
+CustomEngine (branch: studio-main → dev → feature/*)
         ↓ prebuilt binaries
         ↓ upload-engine → SVN NAS
-BGRITZProject ← SVN Content (아티스트)
+StudioProject ← SVN Content (아티스트)
         ↓
 [Role-based Setup]
   Developer : Git clone → Source Build → Register
@@ -1083,7 +1062,7 @@ BGRITZProject ← SVN Content (아티스트)
                     <div class="insight-body">
                         <p>UE5 엔진 소스 빌드는 <strong>고사양 PC에서도 40분 이상</strong> 소요된다. 캐릭터 모델러, 애니메이터 등 아티스트가 엔진을 직접 빌드하는 것은 비현실적이었다.</p>
                         <p>해결책으로 <strong>역할 기반 배포 전략</strong>을 설계했다. 개발자가 커스텀 엔진을 소스에서 빌드하면, 프리컴파일된 바이너리가 SVN NAS로 자동 업로드된다. 아티스트는 <code>SyncPrebuiltEngine</code> 한 번이면 최신 엔진을 받는다.</p>
-                        <p>엔진 소스 수정부에는 <code>// BGRITZ Engine Start YYYY-MM-DD</code> 마커를 의무화하여 <strong>커스텀 변경 사항을 추적 가능하게</strong> 만들었다. Epic 업스트림 병합 시 충돌 지점을 즉시 파악할 수 있다.</p>
+                        <p>엔진 소스 수정부에는 <code>// Custom Engine Start YYYY-MM-DD</code> 마커를 의무화하여 <strong>커스텀 변경 사항을 추적 가능하게</strong> 만들었다. Epic 업스트림 병합 시 충돌 지점을 즉시 파악할 수 있다.</p>
                         <div class="insight-comparison">
                             <div class="comparison-item con">
                                 <span class="comparison-label">전원 소스 빌드</span>
@@ -1243,8 +1222,8 @@ BGRITZProject ← SVN Content (아티스트)
             <div class="section-header">
                 <span class="section-tag">05</span>
                 <h2 class="section-title">Problem Solving</h2>
-                <p class="section-desc">BGRITZ · XROOM 프로젝트에서 마주한 문제들과 해결 과정</p>
-                <img src="images/problem-solving-map.jpg" alt="BGRITZ · XROOM 문제 해결의 거대한 여정 — 전체 기술 맵" class="section-hero-image" loading="lazy">
+                <p class="section-desc">DNABLE · XROOM 프로젝트에서 마주한 문제들과 해결 과정</p>
+                <img src="images/problem-solving-map.jpg" alt="DNABLE · XROOM 문제 해결의 거대한 여정 — 전체 기술 맵" class="section-hero-image" loading="lazy">
             </div>
             <!-- Filters removed — featured 3 + title list -->
             <div class="blog-grid" id="blog-grid">
@@ -1330,7 +1309,7 @@ BGRITZProject ← SVN Content (아티스트)
                     </div>
                     <div class="qna-answer">
                         <p><strong>"사용자가 절대 빌드 시스템을 만지지 않는 구조"</strong>를 최우선으로 생각한다. 아티스트 15명에게 Git 명령어를 가르치는 것보다, 원클릭 셋업 스크립트를 만드는 것이 팀 전체의 생산성을 훨씬 더 높인다.</p>
-                        <p>BGRITZSetup을 설계할 때 역할별(Developer/Character/Level/Viewer) 파이프라인을 분리한 이유도 같다. 캐릭터 모델러에게 엔진 소스 빌드가 필요 없고, 레벨 디자이너에게 SVN 전체 체크아웃이 필요 없다. <strong>각 직군이 필요로 하는 최소한의 환경만 자동으로 구성</strong>하면, 셋업 시간이 1~2일에서 30분으로 줄어든다.</p>
+                        <p>StudioSetup을 설계할 때 역할별(Developer/Character/Level/Viewer) 파이프라인을 분리한 이유도 같다. 캐릭터 모델러에게 엔진 소스 빌드가 필요 없고, 레벨 디자이너에게 SVN 전체 체크아웃이 필요 없다. <strong>각 직군이 필요로 하는 최소한의 환경만 자동으로 구성</strong>하면, 셋업 시간이 1~2일에서 30분으로 줄어든다.</p>
                     </div>
                 </div>
                 <div class="qna-card reveal" data-domain="ai">

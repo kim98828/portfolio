@@ -137,7 +137,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
         tag: 'Rendering',
         title: '엔진 20개 파일 수정 — 모든 메시에 네이티브 아웃라인',
         problem: '플러그인 레벨 아웃라인은 SkeletalMesh에만 작동하고 StaticMesh, InstancedMesh, HISM을 지원하지 않으며, LOD 거리 컬링과 Sequencer 연동도 불가능했다.',
-        solution: 'UMeshComponent에 BGRITZOutlineMaterial을 1급 UPROPERTY로 추가. OverlayMaterial 인프라를 미러링하되 ReverseCulling만 반전하여, 모든 메시 타입이 아웃라인을 자동으로 얻도록 엔진 소스 20개 파일 수정.',
+        solution: 'UMeshComponent에 CustomOutlineMaterial을 1급 UPROPERTY로 추가. OverlayMaterial 인프라를 미러링하되 ReverseCulling만 반전하여, 모든 메시 타입이 아웃라인을 자동으로 얻도록 엔진 소스 20개 파일 수정.',
         insight: 'OverlayMaterial 인프라를 정확히 복제하면 오클루전 컬링, LOD, 거리 스케일 등 기존 최적화를 공짜로 상속받는다 — 변경점은 컬링 방향 하나뿐.',
         arch: null
     },
@@ -189,7 +189,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
         tag: 'Broadcast',
         title: 'Stream Deck → 언리얼: OSC 카메라 전환 & 실시간 의상 교체',
         problem: '라이브 방송 중 디렉터가 4채널 SDI 카메라 소스를 물리 컨트롤러로 전환하고, 캐릭터 의상도 실시간으로 교체해야 했다.',
-        solution: 'UOSCControlManager가 UDP 8000에서 OSC 수신. 프리뷰 패널의 표시 순서가 곧 OSC 인덱스. 의상 변경은 /bgritz/costume/[Code]/set으로 동적 에셋 탐색(DA_[Code]_Set_[Number]_*) 수행.',
+        solution: 'UOSCControlManager가 UDP 8000에서 OSC 수신. 프리뷰 패널의 표시 순서가 곧 OSC 인덱스. 의상 변경은 /studio/costume/[Code]/set으로 동적 에셋 탐색(DA_[Code]_Set_[Number]_*) 수행.',
         insight: '프리뷰 패널의 표시 순서를 OSC API의 인덱스로 그대로 사용하면 설정 파일이 필요 없다 — 디렉터가 화면에서 3번을 보고 OSC 3을 보내면 그냥 동작한다.',
         arch: null
     },
@@ -199,10 +199,10 @@ FOV 120° → tan=1.73 → compensation=0.58×`
         tag: 'Camera',
         title: '설정 파일 없는 카메라 아키텍처 — 레벨에 놓으면 끝',
         problem: '라이브 공연에서 자유 카메라와 최대 9개 고정 앵글 + 캐릭터 추적 카메라를 빠르게 전환해야 하지만, 설정 파일 기반 프리셋 관리가 복잡했다.',
-        solution: 'CameraActorManager가 FreeCameraPawn(NumPad 0)과 레벨 배치 BGRITZCameraActorBase(NumPad 1-9)를 통합 관리. CameraID 문자열 정렬로 NumPad 자동 매핑. ShotType 프리셋으로 원클릭 배치.',
+        solution: 'CameraActorManager가 FreeCameraPawn(NumPad 0)과 레벨 배치 CameraActorBase(NumPad 1-9)를 통합 관리. CameraID 문자열 정렬로 NumPad 자동 매핑. ShotType 프리셋으로 원클릭 배치.',
         insight: '레벨에 배치된 카메라 액터의 위치가 곧 설정이므로, 앵글 변경 시 설정 파일이 아닌 액터를 움직이면 된다.',
         arch: `NumPad 0 ──→ FreeCameraPawn (자유 카메라)
-NumPad 1-9 ─→ BGRITZCameraActorBase (레벨 배치)
+NumPad 1-9 ─→ CameraActorBase (레벨 배치)
                 ├─ AngleCameraActor (고정 앵글)
                 └─ FollowCameraActor (캐릭터 추적)
 Arrow Keys ──→ 카메라 순환
@@ -285,9 +285,9 @@ Arrow Keys ──→ 카메라 순환
         tag: 'Tool',
         title: 'LookDev 액터 — 모든 라이팅 변수를 하나의 제어판에서',
         problem: '톤 라이팅, 컬러 그레이딩, 블룸, GI 파라미터를 실시간으로 조정해야 하지만, 여러 PostProcess 컴포넌트가 동일 필드에 겹쳐 써서 "마지막에 쓴 놈이 이김" 버그 발생.',
-        solution: 'Coordinator 패턴의 BGRITZLookDevActor — 6개 독립 컴포넌트(Lighting/PP/Tonemapper/SplitCG/Character/GI)가 각각 소유한 PP 필드만 조작. DataAsset 프리셋으로 세이브/로드, 언두/리두 지원.',
+        solution: 'Coordinator 패턴의 LookDevActor — 6개 독립 컴포넌트(Lighting/PP/Tonemapper/SplitCG/Character/GI)가 각각 소유한 PP 필드만 조작. DataAsset 프리셋으로 세이브/로드, 언두/리두 지원.',
         insight: '소유권을 감사하여 각 PP 필드를 정확히 하나의 컴포넌트에 할당하니, 15개의 죽은 CVar과 6개의 죽은 struct 필드가 발견되었다 — 이들은 한 번도 적용된 적이 없었다.',
-        arch: `ABGRITZLookDevActor (Coordinator)
+        arch: `ALookDevActor (Coordinator)
 ├── LightingComp    → DirectionalLight, SkyLight
 ├── PPComp          → Exposure, Bloom, Vignette, Split Bloom
 ├── TonemapperComp  → GT7 CVar control
@@ -302,7 +302,7 @@ Arrow Keys ──→ 카메라 순환
         tag: 'DevOps',
         title: 'UE5 엔진 포크 유지보수 — 마커 + 레지스트리 시스템',
         problem: '100+ C++ 파일, 50+ 셰이더 파일을 수정한 엔진 포크에서 Epic 업스트림 병합 시 어떤 파일이 변경되었는지 추적할 방법이 없으면 고고학적 작업이 된다.',
-        solution: '모든 엔진 수정부에 // BGRITZ Engine Start YYYY-MM-DD 마커 의무화 + ModifiedEngineFiles.md 레지스트리에 파일 경로/설명/날짜 기록. grep "BGRITZ Engine Start"로 전체 변경 목록 즉시 확인.',
+        solution: '모든 엔진 수정부에 // Custom Engine Start YYYY-MM-DD 마커 의무화 + ModifiedEngineFiles.md 레지스트리에 파일 경로/설명/날짜 기록. grep "Custom Engine Start"로 전체 변경 목록 즉시 확인.',
         insight: '날짜 스탬프 마커 시스템이 블랙박스 엔진 포크를 자기 문서화 감사 추적으로 변환한다 — grep 한 줄이면 업스트림 대비 전체 변경 표면이 드러난다.',
         arch: null
     },
@@ -311,7 +311,7 @@ Arrow Keys ──→ 카메라 순환
         tag: 'DevOps',
         title: '아티스트는 빌드 시스템을 절대 만지지 않는 역할별 파이프라인',
         problem: '엔진 개발자는 Git+소스 빌드, 아티스트는 SVN+프리빌드 엔진. 역할별 도구가 달라 환경 구축에 1~2일 소요되고, 아티스트가 실수로 빌드를 깨뜨리는 사고 빈발.',
-        solution: 'Python BGRITZSetup — config.toml 통합 설정, 역할별 자동 셋업(Developer: Git+Build, Character/Level: SVN+Prebuilt). FastAPI 대시보드로 팀 상태 관리. 프리컴파일 엔진 SVN NAS 배포.',
+        solution: 'Python StudioSetup — config.toml 통합 설정, 역할별 자동 셋업(Developer: Git+Build, Character/Level: SVN+Prebuilt). FastAPI 대시보드로 팀 상태 관리. 프리컴파일 엔진 SVN NAS 배포.',
         insight: '아티스트에게 빌드 툴체인을 노출하지 않는 SVN 전용 경로를 만들면 "아티스트가 엔진 빌드를 깨뜨리는" 고전적 문제가 구조적으로 불가능해진다.',
         arch: `Developer  : 00→01→02→03→04→05→06→09 (Git+Build)
 Character  : 00A→10→05→06s (SVN+Prebuilt, no maps)
@@ -342,7 +342,7 @@ Viewer     : 00A→10→05→06s (read-only)`
         tag: 'Pipeline',
         title: 'GameMode 자동 캐릭터 디스커버리와 공연 오케스트레이션',
         problem: '5명의 버추얼 아이돌 캐릭터, 카메라 시스템, 공연 상태(Active/Paused/Stopped)를 하나의 GameMode에서 조율해야 하지만, 기본 UE GameMode는 이 워크플로우를 지원하지 않음.',
-        solution: 'ABGRITZ_v01GameModeBase가 BeginPlay에서 GetAllActorsOfClass로 모든 VirtualIdolCharacter를 자동 등록. 첫 번째가 Primary Idol. BlueprintImplementableEvent로 공연 시작/종료 시 음악/조명/UI 반응.',
+        solution: 'AStudioGameModeBase가 BeginPlay에서 GetAllActorsOfClass로 모든 VirtualIdolCharacter를 자동 등록. 첫 번째가 Primary Idol. BlueprintImplementableEvent로 공연 시작/종료 시 음악/조명/UI 반응.',
         insight: 'BeginPlay에서 GetAllActorsOfClass로 자동 탐색하면, 새 캐릭터를 레벨에 놓기만 해도 시스템이 자동으로 인식한다 — 설정 제로.',
         arch: null
     },
@@ -535,12 +535,12 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
         tag: 'Broadcast',
         title: 'Stream Deck 하나로 멀티 PC 동시 제어 — OSC 원격 방송 시스템',
         problem: '라이브 방송 중 카메라 전환과 캐릭터 의상 변경을 여러 대의 PC(메인/백업)에서 동시에 실행해야 한다. 각 PC에 직접 접근하면 지연이 발생하고, 한 대만 명령이 빠지면 화면이 불일치.',
-        solution: 'UE5에 OSC 서버(포트 8000)를 구현하고 Stream Deck에서 버튼 하나로 여러 PC에 동시 명령 전송. 채널별 카메라 소스 전환(/bgritz/channel/{1-4}/source)과 캐릭터별 의상 세트 변경(/bgritz/costume/{name}/set)을 OSC 경로로 매핑.',
+        solution: 'UE5에 OSC 서버(포트 8000)를 구현하고 Stream Deck에서 버튼 하나로 여러 PC에 동시 명령 전송. 채널별 카메라 소스 전환(/studio/channel/{1-4}/source)과 캐릭터별 의상 세트 변경(/studio/costume/{name}/set)을 OSC 경로로 매핑.',
         insight: '방송 현장에서는 "1개 버튼 = 1개 동작"이 철칙이다. OSC의 멀티캐스트 특성을 이용하면 메인/백업 서버를 동시에 제어할 수 있어 화면 불일치 사고를 원천 차단한다.',
         arch: `Stream Deck → OSC Multicast
 ├── UE5 Main Server (port 8000)
-│     ├── /bgritz/channel/1/source 2  → Camera Switch
-│     └── /bgritz/costume/all/set 3   → Costume Change
+│     ├── /studio/channel/1/source 2  → Camera Switch
+│     └── /studio/costume/all/set 3   → Costume Change
 └── UE5 Backup Server (port 8000)
       └── (동일 명령 동시 수신)`
     },
@@ -611,7 +611,7 @@ Raster:  DeferredLight → SurfaceShadow/TransmissionShadow = 1.0`
         tag: 'Pipeline',
         title: 'bat/ps1 스크립트 전량 삭제 — Python 패키지로 파이프라인 일원화',
         problem: 'bat와 PowerShell 스크립트가 혼재하면서 인코딩 충돌(LF/CRLF, UTF-8/CP949), 환경변수 미전파, em-dash 파싱 에러 등 셸 간 호환성 문제가 반복 발생.',
-        solution: 'bat/ps1 스크립트를 전량 삭제하고 bgritz Python 패키지로 일원화. setup-developer/character/level/viewer 4개 원클릭 명령으로 역할별 셋업 분리. pip install로 설치, Cross-platform 호환.',
+        solution: 'bat/ps1 스크립트를 전량 삭제하고 studio-pipeline Python 패키지로 일원화. setup-developer/character/level/viewer 4개 원클릭 명령으로 역할별 셋업 분리. pip install로 설치, Cross-platform 호환.',
         insight: '셸 스크립트는 빠르게 만들 수 있지만 조직에 배포하면 OS/인코딩/버전 차이가 모든 장점을 상쇄한다. Python 패키지는 초기 투자가 크지만 "한 번 만들면 어디서나 동일하게 동작"한다.',
         arch: null
     },

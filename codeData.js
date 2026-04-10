@@ -741,14 +741,14 @@ Aggregate daily pages → weekly_report page
   → Auto-link to daily detail pages`
     },
     pipeline: {
-        label: 'BGRITZSetup — Studio Pipeline',
+        label: 'StudioSetup — Studio Pipeline',
         lang: 'Python / YAML',
         desc: 'UE5 커스텀 엔진 빌드 → 프리컴파일 배포까지 자동화하는 스튜디오 파이프라인 설계',
         code: `<span class="code-comment"># config.toml — 통합 설정</span>
 <span class="code-key">[git]</span>
 vanilla_repo = <span class="code-str">"DnableCorp/VanillaUnrealEngine"</span>  <span class="code-comment"># branch: 5.5</span>
-engine_repo  = <span class="code-str">"DnableCorp/BGRITZ_Engine"</span>       <span class="code-comment"># branch: bgritz-main</span>
-project_repo = <span class="code-str">"DnableCorp/BGRITZProject"</span>       <span class="code-comment"># branch: main</span>
+engine_repo  = <span class="code-str">"DnableCorp/CustomEngine"</span>       <span class="code-comment"># branch: studio-main</span>
+project_repo = <span class="code-str">"DnableCorp/StudioProject"</span>       <span class="code-comment"># branch: main</span>
 
 <span class="code-key">[pipeline]</span>
 <span class="code-comment"># Role-based Setup Automation</span>
@@ -766,11 +766,11 @@ setup-viewer     = [00A, 10, 05, 06s]
   → Create ZIP → GitHub Release → NAS deploy`
     },
     gitflow: {
-        label: 'BGRITZ Gitflow Strategy',
+        label: 'Studio Gitflow Strategy',
         lang: 'Git',
         desc: '3개 레포에 걸친 Gitflow 브랜치 전략 및 엔진 업스트림 병합 워크플로우',
         code: `<span class="code-comment">// Engine Branch Model</span>
-bgritz-main ← 안정 빌드 (프리컴파일 배포 대상)
+studio-main ← 안정 빌드 (프리컴파일 배포 대상)
     ↑ merge
   dev ← 통합 개발 브랜치
     ↑ merge
@@ -778,8 +778,8 @@ bgritz-main ← 안정 빌드 (프리컴파일 배포 대상)
 
 <span class="code-comment">// Upstream Merge Workflow</span>
 VanillaUnrealEngine (5.5) → vanilla-sync
-    → vanilla-merge → BGRITZ_Engine (bgritz-main)
-    → 충돌 해결: // BGRITZ Engine Start 마커 기준
+    → vanilla-merge → CustomEngine (studio-main)
+    → 충돌 해결: // Custom Engine Start 마커 기준
 
 <span class="code-comment">// Commit Convention (Korean Tags)</span>
 [기능]  새 기능 추가
@@ -789,15 +789,15 @@ VanillaUnrealEngine (5.5) → vanilla-sync
 [렌더링] 셰이더/파이프라인 변경
 
 <span class="code-comment">// Engine Source Modification Marker</span>
-<span class="code-key">// ----BGRITZ Engine Start 2026-03-10----</span>
+<span class="code-key">// ----Custom Engine Start 2026-03-10----</span>
   modified code here...
-<span class="code-key">// ----BGRITZ Engine End----</span>`
+<span class="code-key">// ----Custom Engine End----</span>`
     },
     ghactions: {
         label: 'GitHub Actions CI/CD',
         lang: 'YAML',
         desc: 'Tag 기반 릴리스 자동화 및 배포 파이프라인',
-        code: `<span class="code-comment"># BGRITZSetup release.yml</span>
+        code: `<span class="code-comment"># StudioSetup release.yml</span>
 <span class="code-key">name:</span> Release
 <span class="code-key">on:</span>
   push:
@@ -813,10 +813,10 @@ VanillaUnrealEngine (5.5) → vanilla-sync
           <span class="code-comment"># Bundle pipeline package</span>
           mkdir -p release &amp;&amp; cp -r src/ release/
           cp pyproject.toml config.toml release/
-          zip -r BGRITZSetup-v\$VERSION.zip release/
+          zip -r StudioSetup-v\$VERSION.zip release/
       - <span class="code-key">uses:</span> softprops/action-gh-release@v2
         with:
-          files: BGRITZSetup-*.zip
+          files: StudioSetup-*.zip
           generate_release_notes: <span class="code-num">true</span>`
     },
     docker: {
@@ -846,14 +846,14 @@ deploy-to-nas.ps1 → docker build → docker push
   → ssh nas "docker-compose up -d"`
     },
     fastapi: {
-        label: 'BGRITZSetup Dashboard',
+        label: 'StudioSetup Dashboard',
         lang: 'Python',
         desc: 'FastAPI 기반 팀 대시보드 — 파이프라인 실행, 인증, 상태 관리',
-        code: `<span class="code-comment"># bgritz/dashboard/main.py</span>
+        code: `<span class="code-comment"># studio-pipeline/dashboard/main.py</span>
 <span class="code-key">from</span> fastapi <span class="code-key">import</span> FastAPI, Depends
-<span class="code-key">from</span> bgritz.core <span class="code-key">import</span> git_ops, svn_ops
+<span class="code-key">from</span> studio_pipeline.core <span class="code-key">import</span> git_ops, svn_ops
 
-app = FastAPI(title=<span class="code-str">"BGRITZ Dashboard"</span>)
+app = FastAPI(title=<span class="code-str">"Studio Dashboard"</span>)
 
 <span class="code-key">@app.post</span>(<span class="code-str">"/api/auth/login"</span>)
 <span class="code-key">async def</span> <span class="code-fn">login</span>(creds: LoginRequest):
