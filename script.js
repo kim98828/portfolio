@@ -880,4 +880,359 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ============================================
+    // Domain Filter (Insights + Q&A)
+    // ============================================
+    document.querySelectorAll('.domain-filter').forEach(filterBar => {
+        const targetId = filterBar.dataset.target;
+        const grid = document.getElementById(targetId);
+        if (!grid) return;
+
+        const buttons = filterBar.querySelectorAll('.domain-filter-btn');
+        const cards = grid.querySelectorAll('[data-domain]');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+
+                // Update active button
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Filter cards
+                let visibleCount = 0;
+                cards.forEach(card => {
+                    if (filter === 'all' || card.dataset.domain === filter) {
+                        card.classList.remove('domain-hidden');
+                        card.classList.add('domain-show');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('domain-hidden');
+                        card.classList.remove('domain-show');
+                    }
+                });
+
+                // Also hide/show the "Core Killing Features" sub-header if in insights
+                if (targetId === 'insights-grid') {
+                    const subHeaders = grid.parentElement.querySelectorAll('.section-header[style]');
+                    subHeaders.forEach(sh => {
+                        // Show sub-header only when "all" or "engine" is selected (killing features are all engine)
+                        if (filter === 'all' || filter === 'engine') {
+                            sh.style.display = '';
+                        } else {
+                            sh.style.display = 'none';
+                        }
+                    });
+                    // Also filter the second insights-grid (killing features)
+                    const killingGrid = grid.parentElement.querySelectorAll('.insights-grid');
+                    if (killingGrid.length > 1) {
+                        const killingCards = killingGrid[1].querySelectorAll('[data-domain]');
+                        killingCards.forEach(card => {
+                            if (filter === 'all' || card.dataset.domain === filter) {
+                                card.classList.remove('domain-hidden');
+                                card.classList.add('domain-show');
+                            } else {
+                                card.classList.add('domain-hidden');
+                                card.classList.remove('domain-show');
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+    // ============================================
+    // Expertise Hub — View Toggle
+    // ============================================
+    const expertiseTabs = document.querySelectorAll('.expertise-tab');
+    const expertiseViews = document.querySelectorAll('.expertise-view');
+
+    expertiseTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const viewId = 'view-' + tab.dataset.view;
+
+            // Update tabs
+            expertiseTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Update views
+            expertiseViews.forEach(v => v.classList.remove('active'));
+            const target = document.getElementById(viewId);
+            if (target) target.classList.add('active');
+
+            // Re-trigger radar animation when switching to domain view
+            if (tab.dataset.view === 'domain' && radarCanvas) {
+                resizeRadar();
+                animProgress = 0;
+                drawRadar();
+            }
+
+            // Re-observe reveal elements in newly visible view
+            if (target) {
+                target.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+        });
+    });
+
+    // ============================================
+    // Expertise Hub — Radar Chart + Domain Cards
+    // ============================================
+
+    const radarCanvas = document.getElementById('radar-canvas');
+    let resizeRadar = () => {};
+    let drawRadar = () => {};
+    let animProgress = 0;
+
+    if (radarCanvas && !prefersReducedMotion) {
+        const rctx = radarCanvas.getContext('2d');
+        const domainCards = document.querySelectorAll('.domain-card');
+
+        // Domain data: name, value (0-1), color
+        const domains = [
+            { name: 'Engine', value: 0.95, color: '#f59e0b', key: 'engine' },
+            { name: 'Pipeline', value: 0.90, color: '#06b6d4', key: 'pipeline' },
+            { name: 'AI', value: 0.85, color: '#ec4899', key: 'ai' },
+            { name: 'Frontend', value: 0.75, color: '#6366f1', key: 'frontend' },
+            { name: 'Backend', value: 0.70, color: '#10b981', key: 'backend' }
+        ];
+
+        const count = domains.length;
+        let radarAnimId = null;
+        let hoveredDomain = -1;
+
+        function getCanvasSize() {
+            const rect = radarCanvas.parentElement.getBoundingClientRect();
+            const size = Math.min(rect.width, rect.height);
+            return size;
+        }
+
+        resizeRadar = function() {
+            const size = getCanvasSize();
+            const dpr = window.devicePixelRatio || 1;
+            radarCanvas.width = size * dpr;
+            radarCanvas.height = size * dpr;
+            radarCanvas.style.width = size + 'px';
+            radarCanvas.style.height = size + 'px';
+            rctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        drawRadar = function() {
+            const size = getCanvasSize();
+            const cx = size / 2;
+            const cy = size / 2;
+            const maxR = size * 0.38;
+
+            rctx.clearRect(0, 0, size, size);
+
+            // Draw grid rings (5 levels)
+            for (let level = 1; level <= 5; level++) {
+                const r = maxR * (level / 5);
+                rctx.beginPath();
+                for (let i = 0; i <= count; i++) {
+                    const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+                    const x = cx + Math.cos(angle) * r;
+                    const y = cy + Math.sin(angle) * r;
+                    if (i === 0) rctx.moveTo(x, y);
+                    else rctx.lineTo(x, y);
+                }
+                rctx.closePath();
+                rctx.strokeStyle = 'rgba(255,255,255,0.06)';
+                rctx.lineWidth = 0.8;
+                rctx.stroke();
+            }
+
+            // Draw axis lines
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+                rctx.beginPath();
+                rctx.moveTo(cx, cy);
+                rctx.lineTo(cx + Math.cos(angle) * maxR, cy + Math.sin(angle) * maxR);
+                rctx.strokeStyle = 'rgba(255,255,255,0.08)';
+                rctx.lineWidth = 0.6;
+                rctx.stroke();
+            }
+
+            // Draw filled area (animated)
+            const ease = 1 - Math.pow(1 - Math.min(animProgress, 1), 3);
+            rctx.beginPath();
+            for (let i = 0; i <= count; i++) {
+                const idx = i % count;
+                const angle = (idx / count) * Math.PI * 2 - Math.PI / 2;
+                const r = maxR * domains[idx].value * ease;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+                if (i === 0) rctx.moveTo(x, y);
+                else rctx.lineTo(x, y);
+            }
+            rctx.closePath();
+
+            // Gradient fill
+            const grad = rctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+            grad.addColorStop(0, 'rgba(99, 102, 241, 0.15)');
+            grad.addColorStop(0.5, 'rgba(6, 182, 212, 0.08)');
+            grad.addColorStop(1, 'rgba(99, 102, 241, 0.03)');
+            rctx.fillStyle = grad;
+            rctx.fill();
+
+            // Border
+            rctx.strokeStyle = 'rgba(99, 102, 241, 0.5)';
+            rctx.lineWidth = 1.5;
+            rctx.stroke();
+
+            // Draw vertices + labels
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+                const r = maxR * domains[i].value * ease;
+                const x = cx + Math.cos(angle) * r;
+                const y = cy + Math.sin(angle) * r;
+                const isHovered = hoveredDomain === i;
+
+                // Vertex glow
+                if (isHovered) {
+                    rctx.beginPath();
+                    rctx.arc(x, y, 12, 0, Math.PI * 2);
+                    rctx.fillStyle = domains[i].color.replace(')', ',0.2)').replace('rgb', 'rgba').replace('#', '');
+                    // Use hex to rgba
+                    const hc = domains[i].color;
+                    const hr = parseInt(hc.slice(1,3), 16);
+                    const hg = parseInt(hc.slice(3,5), 16);
+                    const hb = parseInt(hc.slice(5,7), 16);
+                    rctx.fillStyle = `rgba(${hr},${hg},${hb},0.2)`;
+                    rctx.fill();
+                }
+
+                // Vertex dot
+                rctx.beginPath();
+                rctx.arc(x, y, isHovered ? 6 : 4, 0, Math.PI * 2);
+                rctx.fillStyle = domains[i].color;
+                rctx.fill();
+
+                // Label
+                const labelR = maxR + 24;
+                const lx = cx + Math.cos(angle) * labelR;
+                const ly = cy + Math.sin(angle) * labelR;
+
+                rctx.font = isHovered ? '600 13px Inter' : '500 12px Inter';
+                rctx.fillStyle = isHovered ? domains[i].color : 'rgba(255,255,255,0.6)';
+                rctx.textAlign = 'center';
+                rctx.textBaseline = 'middle';
+                rctx.fillText(domains[i].name, lx, ly);
+
+                // Value percentage
+                const pctR = maxR + 40;
+                const px = cx + Math.cos(angle) * pctR;
+                const py = cy + Math.sin(angle) * pctR;
+                rctx.font = '500 10px Inter';
+                rctx.fillStyle = isHovered ? domains[i].color : 'rgba(255,255,255,0.3)';
+                rctx.fillText(Math.round(domains[i].value * 100) + '%', px, py);
+            }
+
+            // Animate
+            if (animProgress < 1) {
+                animProgress += 0.025;
+                radarAnimId = requestAnimationFrame(drawRadar);
+            }
+        }
+
+        // Mouse interaction on radar
+        radarCanvas.addEventListener('mousemove', (e) => {
+            const rect = radarCanvas.getBoundingClientRect();
+            const size = getCanvasSize();
+            const mx = (e.clientX - rect.left) * (size / rect.width);
+            const my = (e.clientY - rect.top) * (size / rect.height);
+            const cx = size / 2;
+            const cy = size / 2;
+            const maxR = size * 0.38;
+
+            let closest = -1;
+            let closestDist = Infinity;
+            const ease = 1 - Math.pow(1 - Math.min(animProgress, 1), 3);
+
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+                const r = maxR * domains[i].value * ease;
+                const vx = cx + Math.cos(angle) * r;
+                const vy = cy + Math.sin(angle) * r;
+                const d = Math.sqrt((mx - vx) ** 2 + (my - vy) ** 2);
+                if (d < 30 && d < closestDist) {
+                    closest = i;
+                    closestDist = d;
+                }
+            }
+
+            if (hoveredDomain !== closest) {
+                hoveredDomain = closest;
+                drawRadar();
+                // Highlight corresponding card
+                domainCards.forEach(card => card.classList.remove('radar-hover'));
+                if (closest >= 0) {
+                    const key = domains[closest].key;
+                    const card = document.querySelector(`.domain-card[data-domain="${key}"]`);
+                    if (card) card.classList.add('radar-hover');
+                }
+            }
+        });
+
+        radarCanvas.addEventListener('mouseleave', () => {
+            hoveredDomain = -1;
+            drawRadar();
+            domainCards.forEach(card => card.classList.remove('radar-hover'));
+        });
+
+        // Click on radar vertex → expand card
+        radarCanvas.addEventListener('click', (e) => {
+            if (hoveredDomain >= 0) {
+                const key = domains[hoveredDomain].key;
+                const card = document.querySelector(`.domain-card[data-domain="${key}"]`);
+                if (card) {
+                    card.classList.toggle('expanded');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        });
+
+        // Start radar animation when visible
+        const radarObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    resizeRadar();
+                    animProgress = 0;
+                    drawRadar();
+                    radarObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        radarObserver.observe(radarCanvas.parentElement);
+
+        window.addEventListener('resize', () => {
+            resizeRadar();
+            drawRadar();
+        });
+    }
+
+    // Domain card expand/collapse
+    document.querySelectorAll('.domain-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            // Don't toggle if clicking inside the detail panel links
+            if (e.target.closest('.domain-detail a')) return;
+            card.classList.toggle('expanded');
+        });
+
+        // Animate level bar on scroll
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    cardObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        cardObserver.observe(card);
+    });
+
 });

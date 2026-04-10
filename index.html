@@ -44,11 +44,11 @@
             <a href="#hero" class="nav-logo">KMS</a>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
+                <li><a href="#expertise">Expertise</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#insights">Insights</a></li>
                 <li><a href="#blog">Blog</a></li>
                 <li><a href="#qna">Q&A</a></li>
-                <li><a href="#career">Career</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
@@ -192,11 +192,509 @@
         </div>
     </section>
 
+    <!-- Expertise Hub Section -->
+    <section class="section section-dark" id="expertise">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">02</span>
+                <h2 class="section-title">Expertise Hub</h2>
+                <p class="section-desc">같은 경험, 두 가지 시선 — 경력 흐름과 역량 깊이를 전환하며 확인하세요</p>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="expertise-toggle">
+                <button class="expertise-tab active" data-view="timeline">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Career Timeline
+                </button>
+                <button class="expertise-tab" data-view="domain">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/></svg>
+                    Skill Domains
+                </button>
+            </div>
+
+            <!-- ====== VIEW 1: Career Timeline ====== -->
+            <div class="expertise-view active" id="view-timeline">
+                <div class="career-timeline-view">
+                    <!-- Summary Stats Bar -->
+                    <div class="career-stats-bar reveal">
+                        <div class="career-stat-item">
+                            <span class="career-stat-num">6+</span>
+                            <span class="career-stat-label">Years</span>
+                        </div>
+                        <div class="career-stat-divider"></div>
+                        <div class="career-stat-item">
+                            <span class="career-stat-num">1,760+</span>
+                            <span class="career-stat-label">Commits</span>
+                        </div>
+                        <div class="career-stat-divider"></div>
+                        <div class="career-stat-item">
+                            <span class="career-stat-num">2</span>
+                            <span class="career-stat-label">Awards</span>
+                        </div>
+                        <div class="career-stat-divider"></div>
+                        <div class="career-stat-item">
+                            <span class="career-stat-num">3</span>
+                            <span class="career-stat-label">Projects</span>
+                        </div>
+                    </div>
+
+                    <!-- Horizontal Timeline -->
+                    <div class="h-timeline">
+                        <!-- DNABLE -->
+                        <div class="h-timeline-item reveal" data-company="dnable">
+                            <div class="h-timeline-dot current"></div>
+                            <div class="h-timeline-card">
+                                <div class="h-timeline-date">2025.07 ~ Present</div>
+                                <h3 class="h-timeline-company">DNABLE</h3>
+                                <span class="h-timeline-role">리드 개발자</span>
+                                <div class="h-timeline-skills">
+                                    <span class="h-skill-tag engine">Engine</span>
+                                    <span class="h-skill-tag pipeline">Pipeline</span>
+                                    <span class="h-skill-tag ai">AI</span>
+                                    <span class="h-skill-tag backend">Backend</span>
+                                </div>
+                                <ul class="h-timeline-achievements">
+                                    <li>커스텀 NPR 렌더링 파이프라인 (엔진 소스 수정)</li>
+                                    <li>DeckLink 4ch SDI + NDI 방송 시스템</li>
+                                    <li>30인 조직 DevOps 파이프라인 (BGRITZSetup)</li>
+                                    <li>28개 Claude 슬래시 커맨드 + n8n 자동화</li>
+                                    <li>5인 동시 모캡 시스템 (VICON + ARKit)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- SoulX -->
+                        <div class="h-timeline-item reveal" data-company="soulx">
+                            <div class="h-timeline-dot"></div>
+                            <div class="h-timeline-card">
+                                <div class="h-timeline-date">2022.05 ~ 2025.08 <small>(3년 4개월)</small></div>
+                                <h3 class="h-timeline-company">SoulX</h3>
+                                <span class="h-timeline-role">기술개발팀 팀장</span>
+                                <div class="h-timeline-skills">
+                                    <span class="h-skill-tag engine">Engine</span>
+                                    <span class="h-skill-tag frontend">Frontend</span>
+                                    <span class="h-skill-tag backend">Backend</span>
+                                    <span class="h-skill-tag pipeline">Pipeline</span>
+                                </div>
+                                <ul class="h-timeline-achievements">
+                                    <li>XROOM 메인 프로덕트 전체 개발 (960+ 커밋)</li>
+                                    <li>CES 혁신상 + 에디슨 어워드 수상</li>
+                                    <li>NDI/FFmpeg/Pixel Streaming 방송 시스템</li>
+                                    <li>Electron/React 런처 + 3채널 배포</li>
+                                    <li>파라과이 납품 + GS인증 + Steam 런칭</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- HanYoung -->
+                        <div class="h-timeline-item reveal" data-company="hanyoung">
+                            <div class="h-timeline-dot"></div>
+                            <div class="h-timeline-card">
+                                <div class="h-timeline-date">2020.11 ~ 2021.12 <small>(1년 2개월)</small></div>
+                                <h3 class="h-timeline-company">한영시스텍</h3>
+                                <span class="h-timeline-role">삼성 SDS 서비스 운영</span>
+                                <div class="h-timeline-skills">
+                                    <span class="h-skill-tag backend">Infra</span>
+                                </div>
+                                <ul class="h-timeline-achievements">
+                                    <li>삼성페이/패스/뮤직 등 주요 서비스 인프라 운영</li>
+                                    <li>네트워크 관리 및 장애 대응</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cross-cutting accomplishments -->
+                    <div class="career-cross reveal">
+                        <h4 class="career-cross-title">Cross-cutting Accomplishments</h4>
+                        <div class="career-cross-grid">
+                            <div class="career-cross-item">
+                                <span class="career-cross-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                                </span>
+                                <div>
+                                    <strong>CES Innovation Award</strong>
+                                    <span>라스베이거스 직접 참가, XROOM으로 혁신상 수상</span>
+                                </div>
+                            </div>
+                            <div class="career-cross-item">
+                                <span class="career-cross-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                                </span>
+                                <div>
+                                    <strong>Edison Awards</strong>
+                                    <span>세계적 혁신 어워드, 연구개발부터 수상까지 주도</span>
+                                </div>
+                            </div>
+                            <div class="career-cross-item">
+                                <span class="career-cross-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                </span>
+                                <div>
+                                    <strong>글로벌 납품</strong>
+                                    <span>파라과이 방송국 납품 + 1개월 현지 교육</span>
+                                </div>
+                            </div>
+                            <div class="career-cross-item">
+                                <span class="career-cross-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                </span>
+                                <div>
+                                    <strong>GS인증 획득</strong>
+                                    <span>직접 컨택하여 소프트웨어 품질 인증 취득</span>
+                                </div>
+                            </div>
+                            <div class="career-cross-item">
+                                <span class="career-cross-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/></svg>
+                                </span>
+                                <div>
+                                    <strong>XR 교육 메인 강사</strong>
+                                    <span>대구/제주 XR 교육 프로그램 기획 및 강의</span>
+                                </div>
+                            </div>
+                            <div class="career-cross-item">
+                                <span class="career-cross-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                </span>
+                                <div>
+                                    <strong>정보처리산업기사</strong>
+                                    <span>동원대학교 게임콘텐츠과 GPA 4.0/4.5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== VIEW 2: Skill Domains ====== -->
+            <div class="expertise-view" id="view-domain">
+                <div class="expertise-layout">
+                <!-- Radar Chart -->
+                <div class="radar-wrap reveal">
+                    <canvas id="radar-canvas" width="420" height="420"></canvas>
+                    <div class="radar-center-label">
+                        <span class="radar-center-name">Full Stack</span>
+                        <span class="radar-center-sub">Depth Map</span>
+                    </div>
+                </div>
+
+                <!-- Domain Cards -->
+                <div class="domain-cards">
+                    <!-- Engine -->
+                    <div class="domain-card reveal" data-domain="engine">
+                        <div class="domain-card-header">
+                            <div class="domain-icon engine">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
+                            </div>
+                            <div class="domain-card-title">
+                                <h3>Engine</h3>
+                                <span class="domain-card-sub">Source-Level Engineering</span>
+                            </div>
+                            <div class="domain-level">
+                                <span class="domain-level-bar" style="--level: 95%"></span>
+                            </div>
+                        </div>
+                        <div class="domain-card-metrics">
+                            <span class="domain-metric"><strong>8</strong> Rendering Modules</span>
+                            <span class="domain-metric"><strong>75+</strong> C++ Classes</span>
+                            <span class="domain-metric"><strong>NPR/PBR</strong> Hybrid</span>
+                        </div>
+                        <div class="domain-card-expand-btn">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <span>Deep Dive</span>
+                        </div>
+                        <div class="domain-detail">
+                            <div class="domain-detail-section">
+                                <h4>Core Capabilities</h4>
+                                <ul class="domain-detail-list">
+                                    <li><strong>Custom Shading Model</strong> — ShadingCommon.ush에 SHADINGMODELID_TOON 등록, Deferred Lighting에서 동작하는 NPR BxDF 구현</li>
+                                    <li><strong>GBuffer Extension</strong> — 반음영, 섀도우 채널 분리, 섀도우 블러, 다중 광원, GI, Fake GI를 커스텀 GBuffer에 매핑</li>
+                                    <li><strong>Post-Process Pipeline</strong> — 3-Band Cel Shading, 2종 Tonemapper(GranTurismo/Custom), Split Bloom/CG</li>
+                                    <li><strong>Lock-Free Concurrency</strong> — TSharedPtr Atomic Swap 기반 5인 모캡 스레드 안전 패턴</li>
+                                </ul>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Architecture</h4>
+                                <pre class="domain-arch">┌──── Custom Render Pipeline ─────┐
+│  Toon Shading Model (BxDF)     │
+│  SDF Face Shadow               │
+│  3-Band Cel + Split Bloom      │
+│  GranTurismo Tonemapper        │
+│  Outline / Rimlight / Alpha    │
+└─────────────────────────────────┘
+        ↓ Engine Source Mod
+  ShadingCommon.ush → GBuffer
+  DeferredLightPixelShaders.usf
+  MaterialTemplate.ush</pre>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Proven In</h4>
+                                <div class="domain-proof-tags">
+                                    <span class="proof-tag">DNABLE — NPR Toon Pipeline</span>
+                                    <span class="proof-tag">XROOM — Core Engine Systems</span>
+                                    <span class="proof-tag">960+ Commits</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backend -->
+                    <div class="domain-card reveal" data-domain="backend">
+                        <div class="domain-card-header">
+                            <div class="domain-icon backend">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                            </div>
+                            <div class="domain-card-title">
+                                <h3>Backend</h3>
+                                <span class="domain-card-sub">Server & Infrastructure</span>
+                            </div>
+                            <div class="domain-level">
+                                <span class="domain-level-bar" style="--level: 70%"></span>
+                            </div>
+                        </div>
+                        <div class="domain-card-metrics">
+                            <span class="domain-metric"><strong>AWS</strong> Infra</span>
+                            <span class="domain-metric"><strong>GAS</strong> Serverless</span>
+                            <span class="domain-metric"><strong>3ch</strong> Deploy</span>
+                        </div>
+                        <div class="domain-card-expand-btn">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <span>Deep Dive</span>
+                        </div>
+                        <div class="domain-detail">
+                            <div class="domain-detail-section">
+                                <h4>Core Capabilities</h4>
+                                <ul class="domain-detail-list">
+                                    <li><strong>Serverless Backend</strong> — Google Apps Script로 방문자 추적, 메시지 수신, Telegram 알림 전송 구현</li>
+                                    <li><strong>AWS Infrastructure</strong> — EC2, EFS→S3 마이그레이션, CloudFront CDN, SVN 서버 운영</li>
+                                    <li><strong>Version API Server</strong> — Steam/Electron/AWS 3채널 동시 배포를 위한 중앙 버전 관리 서버</li>
+                                    <li><strong>Firebase Auth</strong> — JWT 기반 사용자 인증 + Electron 런처 연동</li>
+                                    <li><strong>FastAPI Dashboard</strong> — 팀 상태 모니터링, Gitflow 시각화, Asset Audit 대시보드</li>
+                                </ul>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Architecture</h4>
+                                <pre class="domain-arch">[Google Apps Script]
+  POST /visit  → Spreadsheet + Telegram
+  POST /message → Email + Telegram
+  GET /count   → Visitor Stats
+
+[AWS Infrastructure]
+  EC2 → SVN Server → EFS/S3 Storage
+  CloudFront → Static CDN
+  Version API → 3-Channel Sync
+
+[FastAPI + NAS]
+  Dashboard → Team Status
+  n8n → Asset Automation
+  Reverse Proxy → Internal Tools</pre>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Proven In</h4>
+                                <div class="domain-proof-tags">
+                                    <span class="proof-tag">XROOM — 3채널 배포 시스템</span>
+                                    <span class="proof-tag">DNABLE — FastAPI 대시보드</span>
+                                    <span class="proof-tag">Portfolio — GAS Serverless</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Frontend -->
+                    <div class="domain-card reveal" data-domain="frontend">
+                        <div class="domain-card-header">
+                            <div class="domain-icon frontend">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            </div>
+                            <div class="domain-card-title">
+                                <h3>Frontend</h3>
+                                <span class="domain-card-sub">Interactive UI & Visual</span>
+                            </div>
+                            <div class="domain-level">
+                                <span class="domain-level-bar" style="--level: 75%"></span>
+                            </div>
+                        </div>
+                        <div class="domain-card-metrics">
+                            <span class="domain-metric"><strong>React</strong> + Redux</span>
+                            <span class="domain-metric"><strong>Canvas</strong> Particle</span>
+                            <span class="domain-metric"><strong>Three.js</strong> WebGL</span>
+                        </div>
+                        <div class="domain-card-expand-btn">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <span>Deep Dive</span>
+                        </div>
+                        <div class="domain-detail">
+                            <div class="domain-detail-section">
+                                <h4>Core Capabilities</h4>
+                                <ul class="domain-detail-list">
+                                    <li><strong>Electron + React/Redux</strong> — IPC 통신, Blob 다운로드, 자동 업데이트, 카드 UI 아키텍처 설계부터 구현</li>
+                                    <li><strong>Canvas Particle System</strong> — 마우스 반응형 파티클 + 접선 궤도 물리 + 그라디언트 연결선 실시간 렌더링</li>
+                                    <li><strong>Three.js / WebGL</strong> — 인터랙티브 3D 홈페이지, WebGL 포토부스 개발</li>
+                                    <li><strong>Modern CSS</strong> — View Transitions API, scroll-driven animation, glassmorphism, 반응형 디자인</li>
+                                </ul>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Architecture</h4>
+                                <pre class="domain-arch">[Electron Launcher]
+  Main Process ← IPC → Renderer (React)
+  Redux Store → Download/Install State
+  Auto-Update → Version API Check
+  ZIP Extract → Delta Patching
+
+[This Portfolio]
+  Canvas Particle Constellation
+  Lock Screen (Wireframe + Aurora)
+  Scroll Reveal + Counter Animation
+  Code Popup on Skill Hover
+  View Transitions API</pre>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Proven In</h4>
+                                <div class="domain-proof-tags">
+                                    <span class="proof-tag">XROOM — Electron 런처</span>
+                                    <span class="proof-tag">SoulX — Three.js 홈페이지</span>
+                                    <span class="proof-tag">Portfolio — Canvas 파티클</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pipeline -->
+                    <div class="domain-card reveal" data-domain="pipeline">
+                        <div class="domain-card-header">
+                            <div class="domain-icon pipeline">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            </div>
+                            <div class="domain-card-title">
+                                <h3>Pipeline</h3>
+                                <span class="domain-card-sub">DevOps & Team Automation</span>
+                            </div>
+                            <div class="domain-level">
+                                <span class="domain-level-bar" style="--level: 90%"></span>
+                            </div>
+                        </div>
+                        <div class="domain-card-metrics">
+                            <span class="domain-metric"><strong>30</strong>인 조직</span>
+                            <span class="domain-metric"><strong>15+</strong> 동시 배포</span>
+                            <span class="domain-metric"><strong>3</strong> Repo Gitflow</span>
+                        </div>
+                        <div class="domain-card-expand-btn">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <span>Deep Dive</span>
+                        </div>
+                        <div class="domain-detail">
+                            <div class="domain-detail-section">
+                                <h4>Core Capabilities</h4>
+                                <ul class="domain-detail-list">
+                                    <li><strong>BGRITZSetup v2.0</strong> — Python 기반 역할별 자동 셋업(Developer/Character/Level/Viewer), 환경 구축 1~2일 → 30분</li>
+                                    <li><strong>Gitflow Strategy</strong> — Engine/Setup/Project 3개 레포 통합 브랜치 전략 수립 및 운영</li>
+                                    <li><strong>Precompiled Engine Distribution</strong> — 개발자 빌드 → NAS 자동 업로드 → 아티스트 원클릭 동기화</li>
+                                    <li><strong>SVN Hook Control</strong> — 15인 이상 아티스트의 에셋 배포를 훅 기반으로 제어, 직군별 권한 분리</li>
+                                    <li><strong>GitHub Actions CI/CD</strong> — 릴리스 자동화, Steam/Electron/AWS 3채널 동시 배포</li>
+                                </ul>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Architecture</h4>
+                                <pre class="domain-arch">EpicGames/UnrealEngine (upstream)
+    ↓ fork
+VanillaUnrealEngine (5.5)
+    ↓ merge + // BGRITZ markers
+BGRITZ_Engine (bgritz-main → dev → feature/*)
+    ↓ prebuilt binaries → SVN NAS
+BGRITZProject ← SVN Content (아티스트)
+
+[Role-based Setup]
+  Developer : Git + Source Build
+  Character : SVN + Prebuilt (no maps)
+  Level     : SVN + Prebuilt + Maps
+  Viewer    : SVN + Prebuilt (read-only)</pre>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Proven In</h4>
+                                <div class="domain-proof-tags">
+                                    <span class="proof-tag">DNABLE — 30인 조직 DevOps</span>
+                                    <span class="proof-tag">XROOM — Steam 3채널 배포</span>
+                                    <span class="proof-tag">Portfolio — GitHub Actions CI</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI -->
+                    <div class="domain-card reveal" data-domain="ai">
+                        <div class="domain-card-header">
+                            <div class="domain-icon ai">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                            </div>
+                            <div class="domain-card-title">
+                                <h3>AI</h3>
+                                <span class="domain-card-sub">Automation & Intelligence</span>
+                            </div>
+                            <div class="domain-level">
+                                <span class="domain-level-bar" style="--level: 85%"></span>
+                            </div>
+                        </div>
+                        <div class="domain-card-metrics">
+                            <span class="domain-metric"><strong>28</strong> Claude Cmds</span>
+                            <span class="domain-metric"><strong>3</strong> Repo Rules</span>
+                            <span class="domain-metric"><strong>n8n</strong> Workflows</span>
+                        </div>
+                        <div class="domain-card-expand-btn">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            <span>Deep Dive</span>
+                        </div>
+                        <div class="domain-detail">
+                            <div class="domain-detail-section">
+                                <h4>Core Capabilities</h4>
+                                <ul class="domain-detail-list">
+                                    <li><strong>Claude Code Integration</strong> — 3개 레포에 CLAUDE.md 규칙 + 28개 슬래시 커맨드로 반복 워크플로우 캡슐화</li>
+                                    <li><strong>/done 원커맨드</strong> — 문서 정리 → 전체 커밋 → Notion 일일보고까지 자동 처리</li>
+                                    <li><strong>n8n Automation Server</strong> — 소품 변형 에셋 파이프라인, Notion API 일일/주간 보고서 자동 생성</li>
+                                    <li><strong>AI Image Pipeline</strong> — ComfyUI + Stable Diffusion을 프로덕션 워크플로우에 통합</li>
+                                    <li><strong>Progressive AI Adoption</strong> — 초기 ChatGPT부터 Claude Code까지, AI 기여 비율을 점진적으로 높여온 경험</li>
+                                </ul>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Workflow</h4>
+                                <pre class="domain-arch">[Claude Code — 28 Slash Commands]
+  /engine-modify → marker + docs update
+  /build         → checkpoint + compile
+  /commit        → convention + staging
+  /done          → docs → commit → Notion
+
+[CLAUDE.md Rules × 3 Repos]
+  Engine  : C++ conventions + marker policy
+  Setup   : Python conventions + role policy
+  Project : BP conventions + asset policy
+
+[n8n Automation]
+  Trigger → ComfyUI → Asset Transform
+  Notion API → Daily/Weekly Report
+  Webhook → Team Notification</pre>
+                            </div>
+                            <div class="domain-detail-section">
+                                <h4>Proven In</h4>
+                                <div class="domain-proof-tags">
+                                    <span class="proof-tag">DNABLE — 28 Claude Commands</span>
+                                    <span class="proof-tag">DNABLE — n8n 자동화 서버</span>
+                                    <span class="proof-tag">200+ 커밋 1인 일관 품질</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div><!-- /expertise-view domain -->
+        </div>
+    </section>
+
     <!-- Projects Section -->
     <section class="section section-dark" id="projects">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">02</span>
+                <span class="section-tag">03</span>
                 <h2 class="section-title">Featured Projects</h2>
             </div>
 
@@ -497,12 +995,23 @@ BGRITZProject ← SVN Content (아티스트)
     <section class="section" id="insights">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">03</span>
+                <span class="section-tag">04</span>
                 <h2 class="section-title">Technical Insights</h2>
-                <p class="section-desc">기술 선택의 이유와 설계 철학</p>
+                <p class="section-desc">기술 선택의 이유와 설계 철학 — 도메인별로 필터링하여 관심 분야만 확인하세요</p>
             </div>
-            <div class="insights-grid">
-                <div class="insight-card reveal">
+
+            <!-- Domain Filter -->
+            <div class="domain-filter" data-target="insights-grid">
+                <button class="domain-filter-btn active" data-filter="all">All</button>
+                <button class="domain-filter-btn" data-filter="engine">Engine</button>
+                <button class="domain-filter-btn" data-filter="pipeline">Pipeline</button>
+                <button class="domain-filter-btn" data-filter="ai">AI</button>
+                <button class="domain-filter-btn" data-filter="backend">Backend</button>
+                <button class="domain-filter-btn" data-filter="frontend">Frontend</button>
+            </div>
+
+            <div class="insights-grid" id="insights-grid">
+                <div class="insight-card reveal" data-domain="engine">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                     </div>
@@ -523,7 +1032,7 @@ BGRITZProject ← SVN Content (아티스트)
                         </div>
                     </div>
                 </div>
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="engine">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     </div>
@@ -544,7 +1053,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <p>NDI는 소프트웨어만으로 동작하여 카메라 전환, 모자이크 프리뷰 등 모니터링 용도에 적합하다고 생각했다. 반면 본방송 송출은 <strong>DeckLink SDI 하드웨어</strong>를 통해 Genlock 기반 프레임 동기화와 방송 표준을 충족하는 편이 안정적이라 판단했다. 소프트웨어(NDI)와 하드웨어(SDI)의 역할을 분리하면 각각의 강점을 살리면서 시스템 전체의 안정성을 확보할 수 있다.</p>
                     </div>
                 </div>
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="engine">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
                     </div>
@@ -565,7 +1074,7 @@ BGRITZProject ← SVN Content (아티스트)
                         </div>
                     </div>
                 </div>
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="pipeline">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                     </div>
@@ -587,7 +1096,7 @@ BGRITZProject ← SVN Content (아티스트)
                         </div>
                     </div>
                 </div>
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="ai">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
                     </div>
@@ -609,7 +1118,7 @@ BGRITZProject ← SVN Content (아티스트)
                     </div>
                 </div>
 
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="pipeline">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
@@ -629,7 +1138,7 @@ BGRITZProject ← SVN Content (아티스트)
                         </div>
                     </div>
                 </div>
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="pipeline">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
@@ -657,7 +1166,7 @@ BGRITZProject ← SVN Content (아티스트)
                 <p class="section-desc">XROOM · DNABLE · 공통 — 실전에서 증명한 3가지 핵심 역량</p>
             </div>
             <div class="insights-grid">
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="engine">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                     </div>
@@ -678,7 +1187,7 @@ BGRITZProject ← SVN Content (아티스트)
                         </div>
                     </div>
                 </div>
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="engine">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                     </div>
@@ -699,7 +1208,7 @@ BGRITZProject ← SVN Content (아티스트)
                         </div>
                     </div>
                 </div>
-                <div class="insight-card reveal">
+                <div class="insight-card reveal" data-domain="engine">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
                     </div>
@@ -732,7 +1241,7 @@ BGRITZProject ← SVN Content (아티스트)
     <section class="section section-dark" id="blog">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">04</span>
+                <span class="section-tag">05</span>
                 <h2 class="section-title">Problem Solving</h2>
                 <p class="section-desc">BGRITZ · XROOM 프로젝트에서 마주한 문제들과 해결 과정</p>
                 <img src="images/problem-solving-map.jpg" alt="BGRITZ · XROOM 문제 해결의 거대한 여정 — 전체 기술 맵" class="section-hero-image" loading="lazy">
@@ -748,12 +1257,23 @@ BGRITZProject ← SVN Content (아티스트)
     <section class="section" id="qna">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">05</span>
+                <span class="section-tag">06</span>
                 <h2 class="section-title">Technical Q&A</h2>
-                <p class="section-desc">실무에서 내린 판단과 그 이유 — 기술 면접 형식의 자문자답</p>
+                <p class="section-desc">실무에서 내린 판단과 그 이유 — 도메인별로 필터링하여 관심 분야만 확인하세요</p>
             </div>
-            <div class="qna-grid">
-                <div class="qna-card reveal">
+
+            <!-- Domain Filter -->
+            <div class="domain-filter" data-target="qna-grid">
+                <button class="domain-filter-btn active" data-filter="all">All</button>
+                <button class="domain-filter-btn" data-filter="engine">Engine</button>
+                <button class="domain-filter-btn" data-filter="pipeline">Pipeline</button>
+                <button class="domain-filter-btn" data-filter="ai">AI</button>
+                <button class="domain-filter-btn" data-filter="backend">Backend</button>
+                <button class="domain-filter-btn" data-filter="frontend">Frontend</button>
+            </div>
+
+            <div class="qna-grid" id="qna-grid">
+                <div class="qna-card reveal" data-domain="engine">
                     <div class="qna-question">
                         <span class="qna-badge">Rendering</span>
                         <h3 class="qna-title">UE5에 커스텀 Shading Model을 추가할 때 가장 어려웠던 부분은?</h3>
@@ -763,7 +1283,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <p>핵심 고민은 <strong>"어떤 패스를 하이잭할 것인가"</strong>라는 아키텍처 의사결정이었다. DeferredLight에서 다중 광원을 이미 구현한 상태였기 때문에, 기존 패스를 건드리면 영향 범위가 넓어진다. 기존 시스템을 유지하면서 NPR을 확장할 수 있는 삽입 지점을 찾는 것 — 그 설계 판단이 가장 중요했다.</p>
                     </div>
                 </div>
-                <div class="qna-card reveal">
+                <div class="qna-card reveal" data-domain="engine">
                     <div class="qna-question">
                         <span class="qna-badge">Broadcast</span>
                         <h3 class="qna-title">NDI 이중 버퍼에서 60fps를 유지하기 위해 뭘 신경 썼나?</h3>
@@ -773,7 +1293,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <p>따라서 NDI는 <strong>프리뷰/모니터링 용도</strong>로 설계했다. 본방송 송출은 DeckLink SDI가 담당하고, NDI는 감독과 스탭이 각 카메라를 실시간으로 확인하는 데 활용된다. 모든 기술에 동일한 품질 기준을 적용하는 것이 아니라, <strong>용도에 맞게 트레이드오프를 설계</strong>하는 것이 중요하다.</p>
                     </div>
                 </div>
-                <div class="qna-card reveal">
+                <div class="qna-card reveal" data-domain="engine">
                     <div class="qna-question">
                         <span class="qna-badge">Broadcast</span>
                         <h3 class="qna-title">DeckLink 4채널 출력에서 Genlock 안 걸면 실제로 어떤 문제가 생기나?</h3>
@@ -783,7 +1303,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <p>Genlock이 없는 환경에서는 Synology NAS의 <strong>NTP로 타임베이스를 통합</strong>한 뒤, 오디오는 OBS 단계에서 딜레이를 보정하는 방식으로 우회한다. 오디오 인터페이스에 Genlock이 있으면 하드웨어로 해결되지만, 없는 환경에서 소프트웨어로 동기화를 확보하는 설계 역시 실무에서는 필수적이다.</p>
                     </div>
                 </div>
-                <div class="qna-card reveal">
+                <div class="qna-card reveal" data-domain="backend">
                     <div class="qna-question">
                         <span class="qna-badge">Infrastructure</span>
                         <h3 class="qna-title">AWS EFS로 SVN을 운영했을 때 비용 이슈는?</h3>
@@ -793,7 +1313,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <p><strong>서브레포 분리를 통한 권한·용량 분산</strong>으로 1차 대응하고, 이후 스토리지를 S3로 전환하여 에셋을 분리 수신하는 구조로 변경했다. 스토리지 선택 시 과금 모델과 에셋 특성의 적합성을 사전에 검토하는 것이 중요하다는 교훈이었다.</p>
                     </div>
                 </div>
-                <div class="qna-card reveal">
+                <div class="qna-card reveal" data-domain="pipeline">
                     <div class="qna-question">
                         <span class="qna-badge">DevOps</span>
                         <h3 class="qna-title">10명 넘는 팀에서 SVN 권한 관리를 어떻게 했나?</h3>
@@ -803,7 +1323,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <p>핵심 원칙은 <strong>권한 경계 = 책임 경계.</strong> 직군 간 에셋 접근이 필요한 상황이 발생한다면, 권한을 열어주는 것이 아니라 프로세스 설계를 재검토해야 한다는 신호로 판단한다.</p>
                     </div>
                 </div>
-                <div class="qna-card reveal">
+                <div class="qna-card reveal" data-domain="pipeline">
                     <div class="qna-question">
                         <span class="qna-badge">Pipeline</span>
                         <h3 class="qna-title">파이프라인 설계 시 가장 중요하게 생각하는 것은?</h3>
@@ -813,7 +1333,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <p>BGRITZSetup을 설계할 때 역할별(Developer/Character/Level/Viewer) 파이프라인을 분리한 이유도 같다. 캐릭터 모델러에게 엔진 소스 빌드가 필요 없고, 레벨 디자이너에게 SVN 전체 체크아웃이 필요 없다. <strong>각 직군이 필요로 하는 최소한의 환경만 자동으로 구성</strong>하면, 셋업 시간이 1~2일에서 30분으로 줄어든다.</p>
                     </div>
                 </div>
-                <div class="qna-card reveal">
+                <div class="qna-card reveal" data-domain="ai">
                     <div class="qna-question">
                         <span class="qna-badge">AI / Automation</span>
                         <h3 class="qna-title">AI 자동화를 팀 워크플로우에 어떻게 녹였나?</h3>
@@ -823,7 +1343,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <p>예를 들어 <code>/done</code> 커맨드 하나로 문서 정리 → 전체 커밋 → Notion 일일보고까지 자동 처리된다. 또한 Notion API를 직접 연동하여 일일/주간 보고서를 자동 생성하고, n8n으로 소품 변형 에셋 파이프라인을 자동화했다. 결과적으로 <strong>3개 레포에 걸친 200+ 커밋을 1인이 일관된 품질로</strong> 유지할 수 있었다.</p>
                     </div>
                 </div>
-                <div class="qna-card reveal">
+                <div class="qna-card reveal" data-domain="frontend">
                     <div class="qna-question">
                         <span class="qna-badge">Frontend</span>
                         <h3 class="qna-title">React + Redux + Electron 런처의 아키텍처 설계 과정은?</h3>
@@ -831,185 +1351,6 @@ BGRITZProject ← SVN Content (아티스트)
                     <div class="qna-answer">
                         <p>IPC 통신 구조, Blob 기반 다운로드 처리, Redux 상태 관리, 카드 구조 UI, 컴포넌트 단위 분리까지 아키텍처부터 직접 설계했다. 다운로드 → ZIP 압축해제 → 설치까지의 파이프라인을 IPC로 연결하고, 진행률을 실시간으로 Renderer 프로세스에 전송하는 구조다.</p>
                         <p>메인 도메인은 버추얼 프로덕션이지만, 웹·백엔드·인프라 역시 <strong>설계부터 운영까지 직접 수행해온 영역이다.</strong> 프로젝트에 필요한 기술이라면 도메인을 가리지 않고 풀스택으로 해결한다.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Career Section -->
-    <section class="section section-dark" id="career">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">06</span>
-                <h2 class="section-title">Career</h2>
-            </div>
-            <div class="timeline">
-                <!-- DNABLE -->
-                <div class="timeline-item reveal">
-                    <div class="timeline-marker current"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-header">
-                            <div>
-                                <h3 class="timeline-company">주식회사 디네이블 (DNABLE)</h3>
-                                <span class="timeline-role">리드 개발자 | 렌더링 엔진 · DevOps 파이프라인 · AI 자동화 설계</span>
-                            </div>
-                            <span class="timeline-date">2025.07 ~ Present</span>
-                        </div>
-                        <div class="timeline-details">
-                            <div class="timeline-task">
-                                <h4>커스텀 NPR 렌더링 파이프라인 구축</h4>
-                                <p>엔진 소스 수정을 통한 Clear Coat → Toon Shading Model 커스터마이징. 8개 렌더링 모듈 C++/HLSL 개발.</p>
-                            </div>
-                            <div class="timeline-task">
-                                <h4>방송 송출 시스템 구축</h4>
-                                <p>DeckLink Pro 4채널 SDI 출력, NDI 모자이크 프리뷰, Stream Deck OSC 원격 제어.</p>
-                            </div>
-                            <div class="timeline-task">
-                                <h4>모션캡처 시스템 개발 및 촬영 운용</h4>
-                                <p>VICON/LiveLink 기반 최대 5인 동시 캡처. MotionBuilder 자동 리타겟 스크립트 개발.</p>
-                            </div>
-                            <div class="timeline-task">
-                                <h4>스튜디오 DevOps 파이프라인 구축 (30인 조직, 15인+ 배포)</h4>
-                                <p>Gitflow 전략 수립(bgritz-main/dev/feature/*), Python 기반 통합 파이프라인(BGRITZSetup v2.0) 설계·구현. 역할별 자동 셋업(Developer/Character/Level/Viewer), SVN 훅 기반 15인 이상 동시 배포 제어, 프리컴파일 엔진 NAS 배포, GitHub Actions 릴리스 자동화, FastAPI 대시보드.</p>
-                            </div>
-                            <div class="timeline-task">
-                                <h4>AI 자동화 & 팀 워크플로우</h4>
-                                <p>3개 레포에 CLAUDE.md + 28개 슬래시 커맨드 구축. /done(문서→커밋→Notion보고) 원커맨드 마무리. Notion 일일/주간 자동 보고, n8n 자동화 서버.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SoulX -->
-                <div class="timeline-item reveal">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-header">
-                            <div>
-                                <h3 class="timeline-company">주식회사 소울엑스 (SoulX)</h3>
-                                <span class="timeline-role">기술개발팀 팀장 | 메인 프로덕트 개발, 관리, 기획</span>
-                            </div>
-                            <span class="timeline-date">2022.05 ~ 2025.08<br><small>3년 4개월</small></span>
-                        </div>
-                        <div class="timeline-details">
-                            <div class="timeline-task">
-                                <h4>XROOM 메인 프로덕트 개발 (960+ 커밋)</h4>
-                                <p>연구개발 계획서 직접 작성 → 핵심 시스템 전체 개발. Save/Load, PPT Sequencer, Composure 크로마키 합성, MediaPlane, 멀티카메라, 멀티플레이어, JWT 인증 등 C++/Blueprint 기반 코어 시스템 구축. Steam 런칭.</p>
-                            </div>
-                            <div class="timeline-task">
-                                <h4>방송 & 스트리밍 시스템</h4>
-                                <p>NDI 입출력(비동기 이중 버퍼), FFmpeg 녹화, Pixel Streaming, BlackMagic DeckLink 연동. 플러그인 직접 제작.</p>
-                            </div>
-                            <div class="timeline-task">
-                                <h4>CES 혁신상 & 에디슨 어워드 수상</h4>
-                                <p>CES 직접 참가하여 혁신상 수상. 이후 에디슨 어워드 수상. 연구개발 계획서 작성부터 수상까지 프로덕트 전 과정 주도.</p>
-                            </div>
-                            <div class="timeline-task">
-                                <h4>글로벌 납품 & 인증</h4>
-                                <p>파라과이 방송국 납품, 안전보건공단 VR 포팅, GS인증 획득, 정부지원사업 R&D 수행.</p>
-                            </div>
-                            <div class="timeline-task">
-                                <h4>크로스 플랫폼 & 인프라</h4>
-                                <p>Electron/React/Redux 런처(GitHub Actions CI/CD), Three.js 홈페이지, WebGL 포토부스. AWS/GitHub/SVN 인프라 구축, XR 교육 메인 강사(대구, 제주).</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Hanyoung -->
-                <div class="timeline-item reveal">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-header">
-                            <div>
-                                <h3 class="timeline-company">한영시스텍주식회사</h3>
-                                <span class="timeline-role">삼성 SDS 서비스 운영 | 네트워크 관리</span>
-                            </div>
-                            <span class="timeline-date">2020.11 ~ 2021.12<br><small>1년 2개월</small></span>
-                        </div>
-                        <div class="timeline-details">
-                            <div class="timeline-task">
-                                <h4>삼성 SDS 서비스 운영</h4>
-                                <p>삼성페이, 삼성패스, 삼성뮤직, 삼성멤버스 등 삼성 SDS 주요 서비스의 인프라 운영 및 네트워크 관리.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Unreal Training -->
-                <div class="timeline-item reveal">
-                    <div class="timeline-marker edu"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-header">
-                            <div>
-                                <h3 class="timeline-company">영우글로벌러닝</h3>
-                                <span class="timeline-role">언리얼 엔진 국비교육 과정</span>
-                            </div>
-                            <span class="timeline-date">2021 ~ 2022<br><small>6개월</small></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dasom Telecom -->
-                <div class="timeline-item reveal">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-header">
-                            <div>
-                                <h3 class="timeline-company">다솜텔레콤</h3>
-                                <span class="timeline-role">휴대폰 판매 · 고객 응대 · 매장 관리</span>
-                            </div>
-                            <span class="timeline-date">2017.05 ~ 2020<br><small>약 3년</small></span>
-                        </div>
-                        <div class="timeline-details">
-                            <div class="timeline-task">
-                                <h4>고객 커뮤니케이션 역량</h4>
-                                <p>3년간 고객 대면 판매 경험. 비전공자에게 기술을 쉽게 설명하고, 요구사항을 빠르게 파악하는 능력을 키움. 개발자로서 기획·아티스트와의 원활한 소통에 직접적으로 기여.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Humming Company -->
-                <div class="timeline-item reveal">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-header">
-                            <div>
-                                <h3 class="timeline-company">허밍컴퍼니</h3>
-                                <span class="timeline-role">GUI, 반응형 웹, 인터페이스</span>
-                            </div>
-                            <span class="timeline-date">2018.01 ~ 2018.12<br><small>1년</small></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gold Unt -->
-                <div class="timeline-item reveal">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-header">
-                            <div>
-                                <h3 class="timeline-company">골드언트</h3>
-                                <span class="timeline-role">PC 조립·수리 · Apple 맥북/아이맥 수리</span>
-                            </div>
-                            <span class="timeline-date">~ 2015.06</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Education -->
-                <div class="timeline-item reveal">
-                    <div class="timeline-marker edu"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-header">
-                            <div>
-                                <h3 class="timeline-company">동원대학교</h3>
-                                <span class="timeline-role">게임콘텐츠과 | 학점 4.0 / 4.5</span>
-                            </div>
-                            <span class="timeline-date">2021.02 졸업 (조기취업)</span>
-                        </div>
                     </div>
                 </div>
             </div>
