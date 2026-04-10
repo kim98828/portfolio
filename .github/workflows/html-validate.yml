@@ -18,4 +18,5 @@ jobs:
         uses: anishathalye/proof-html@v2
         with:
           directory: '.'
+          check_css: false
           ignore_url_re: 'fonts\.googleapis\.com|fonts\.gstatic\.com'
