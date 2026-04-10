@@ -21,11 +21,13 @@ import { initUI } from './ui.js';
 import { sendVisitNotification, loadVisitorCount, initContactForm } from './backend.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // Auth gate — onUnlock callback triggers visit notification
-    initLockScreen(() => sendVisitNotification());
+    initLockScreen(() => sendVisitNotification(), prefersReducedMotion);
 
     // Canvas particle system (auto-waits for unlock if needed)
-    initParticleRenderer();
+    if (!prefersReducedMotion) initParticleRenderer();
 
     // All UI interactions
     initUI();

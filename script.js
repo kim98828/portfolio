@@ -58,11 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') tryUnlock();
     });
 
+    // ---- Reduced Motion Check ----
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // ============================================
     // Lock Screen — Wireframe Geometry + Aurora
     // ============================================
     const lockCanvas = document.getElementById('lock-canvas');
-    if (lockCanvas && !isUnlocked()) {
+    if (lockCanvas && !isUnlocked() && !prefersReducedMotion) {
         const lctx = lockCanvas.getContext('2d');
         let lw, lh, lockAnimId;
         let time = 0;
@@ -402,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Interactive Particle Constellation Renderer
     // ============================================
     const canvas = document.getElementById('hero-canvas');
-    if (canvas) {
+    if (canvas && !prefersReducedMotion) {
         const ctx = canvas.getContext('2d');
         let w, h, particles, mouse, animId;
         const isMobile = window.innerWidth <= 768;

@@ -713,6 +713,33 @@ Value = <span class="code-fn">FMath::Clamp</span>(Value, MinLimit, MaxLimit);
 
     <span class="code-key">return</span> Image.<span class="code-fn">fromarray</span>(sdf_norm)`
     },
+    notion: {
+        label: 'Notion API Automation',
+        lang: 'Python',
+        desc: 'Notion API를 통한 일일/주간 자동 보고 시스템. Markdown → Notion 블록 변환 포함',
+        code: `<span class="code-comment"># Notion Daily Report Automation</span>
+<span class="code-key">POST</span> /v1/pages → Create daily report page
+<span class="code-key">PATCH</span> /v1/blocks/{id}/children → Append blocks
+
+<span class="code-comment"># Markdown → Notion Block Converter</span>
+## Heading   → heading_2 block
+- List item  → bulleted_list_item
+**bold**     → rich_text annotations
+\`code\`      → inline code annotation
+
+<span class="code-comment"># Workflow</span>
+/done command
+  → Collect today's commits (3 repos)
+  → Convert to Markdown summary
+  → POST to Notion daily page
+  → Duplicate detection by date + category
+  → Batch block ops (delete + create, 100/req)
+
+<span class="code-comment"># Weekly Report</span>
+Aggregate daily pages → weekly_report page
+  → Category tags: [렌더링] [방송] [파이프라인]
+  → Auto-link to daily detail pages`
+    },
     pipeline: {
         label: 'BGRITZSetup — Studio Pipeline',
         lang: 'Python / YAML',

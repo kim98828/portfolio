@@ -607,6 +607,48 @@ BGRITZProject ← SVN Content (아티스트)
                 </div>
             </div>
 
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3 class="insight-title">왜 모캡 파이프라인을 완전 자동화했는가</h3>
+                    <div class="insight-body">
+                        <p>5인 동시 모션캡처 환경에서 <strong>캐릭터마다 80+ 본 매핑을 수동으로 설정</strong>하면, 한 캐릭터당 30분 이상 소요된다. 5인 × 2~3 의상 조합이면 촬영 전 세팅에만 반나절이 걸린다.</p>
+                        <p>MotionBuilder SDK(pyfbsdk)를 활용한 <strong>AutoRetarget 자동화</strong>를 구축했다. Config 파일에 본 매핑을 정의하고, Vicon 루트 서픽스("_root")와 Rig 캐릭터를 자동 감지하여 캐릭터라이즈 → 리타겟을 원클릭으로 처리한다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">수동 설정</span>
+                                <span>80+ 본 × 5인 × 의상 조합 → 촬영 전 반나절 세팅</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">AutoRetarget</span>
+                                <span>Config 기반 자동 감지 → 5인 리타겟 5분 이내 완료</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight-card reveal">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3 class="insight-title">왜 엔진 빌드에 체크포인트 시스템을 도입했는가</h3>
+                    <div class="insight-body">
+                        <p>UE5 커스텀 엔진 빌드는 3단계(Setup → GenerateProjectFiles → Build)로 구성되며 <strong>전체 소요 시간이 1~3시간</strong>이다. 네트워크 끊김이나 디스크 부족 등으로 중간에 실패하면 처음부터 다시 시작해야 했다.</p>
+                        <p>각 단계 완료 시 <code>.manu_build_checkpoint.json</code>에 상태를 기록하는 <strong>체크포인트 시스템</strong>을 설계했다. 실패 시 마지막 성공 단계부터 재개하고, 전체 빌드 성공 시 체크포인트를 초기화하여 다음 빌드는 클린 상태에서 시작한다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">단일 빌드</span>
+                                <span>3시간 빌드 중 실패 → 전체 재시작 → 개발자 반나절 낭비</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">체크포인트</span>
+                                <span>단계별 저장 → 실패 지점부터 재개 → 복구 시간 최소화</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 3대 킬링 피처 -->
             <div class="section-header" style="margin-top: 80px;">
                 <h3 class="section-title" style="font-size: 1.6rem;">Core Killing Features</h3>
@@ -757,6 +799,26 @@ BGRITZProject ← SVN Content (아티스트)
                     <div class="qna-answer">
                         <p>직군별 그룹 단위로 설계했다. <strong>배경모델러·애니메이터·라이팅</strong>은 시퀀서·맵·프로젝트 관리 권한으로 묶고, <strong>리거·캐릭터모델러·원화가</strong>는 프로젝트 관리 권한으로 묶었다. 전반적인 프로세스·엔진 관리·배포는 개발자가 총괄하는 구조다.</p>
                         <p>핵심 원칙은 <strong>권한 경계 = 책임 경계.</strong> 직군 간 에셋 접근이 필요한 상황이 발생한다면, 권한을 열어주는 것이 아니라 프로세스 설계를 재검토해야 한다는 신호로 판단한다.</p>
+                    </div>
+                </div>
+                <div class="qna-card reveal">
+                    <div class="qna-question">
+                        <span class="qna-badge">Pipeline</span>
+                        <h3 class="qna-title">파이프라인 설계 시 가장 중요하게 생각하는 것은?</h3>
+                    </div>
+                    <div class="qna-answer">
+                        <p><strong>"사용자가 절대 빌드 시스템을 만지지 않는 구조"</strong>를 최우선으로 생각한다. 아티스트 15명에게 Git 명령어를 가르치는 것보다, 원클릭 셋업 스크립트를 만드는 것이 팀 전체의 생산성을 훨씬 더 높인다.</p>
+                        <p>BGRITZSetup을 설계할 때 역할별(Developer/Character/Level/Viewer) 파이프라인을 분리한 이유도 같다. 캐릭터 모델러에게 엔진 소스 빌드가 필요 없고, 레벨 디자이너에게 SVN 전체 체크아웃이 필요 없다. <strong>각 직군이 필요로 하는 최소한의 환경만 자동으로 구성</strong>하면, 셋업 시간이 1~2일에서 30분으로 줄어든다.</p>
+                    </div>
+                </div>
+                <div class="qna-card reveal">
+                    <div class="qna-question">
+                        <span class="qna-badge">AI / Automation</span>
+                        <h3 class="qna-title">AI 자동화를 팀 워크플로우에 어떻게 녹였나?</h3>
+                    </div>
+                    <div class="qna-answer">
+                        <p>핵심은 <strong>"AI가 해도 되는 반복 작업"과 "사람이 판단해야 하는 작업"을 명확히 분리</strong>한 것이다. CLAUDE.md에 레포별 코딩 규칙·커밋 컨벤션·문서 구조를 정의하고, 28개 슬래시 커맨드로 반복 워크플로우를 캡슐화했다.</p>
+                        <p>예를 들어 <code>/done</code> 커맨드 하나로 문서 정리 → 전체 커밋 → Notion 일일보고까지 자동 처리된다. 또한 Notion API를 직접 연동하여 일일/주간 보고서를 자동 생성하고, n8n으로 소품 변형 에셋 파이프라인을 자동화했다. 결과적으로 <strong>3개 레포에 걸친 200+ 커밋을 1인이 일관된 품질로</strong> 유지할 수 있었다.</p>
                     </div>
                 </div>
                 <div class="qna-card reveal">
@@ -1051,6 +1113,7 @@ BGRITZProject ← SVN Content (아티스트)
                         <div class="skill-item" data-code="ghactions">GitHub Actions</div>
                         <div class="skill-item" data-code="docker">Docker</div>
                         <div class="skill-item" data-code="fastapi">FastAPI</div>
+                        <div class="skill-item" data-code="notion">Notion API</div>
                     </div>
                 </div>
 

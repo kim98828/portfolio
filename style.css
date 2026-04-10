@@ -2371,3 +2371,16 @@ body.locked {
     color: var(--text-primary);
     font-weight: 600;
 }
+
+/* ---- Reduced Motion ---- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .hero-cursor { animation: none; }
+    .scroll-indicator { animation: none; }
+    .lock-ring { animation: none; }
+    #hero-canvas, #lock-canvas { display: none; }
+}

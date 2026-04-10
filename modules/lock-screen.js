@@ -23,7 +23,7 @@ export function isUnlocked() {
  * Initializes password lock UI and wireframe canvas animation.
  * @param {Function} onUnlock - Callback fired on successful unlock
  */
-export function initLockScreen(onUnlock) {
+export function initLockScreen(onUnlock, reducedMotion = false) {
     const lockScreen = document.getElementById('lock-screen');
     const lockInput = document.getElementById('lock-password');
     const lockSubmit = document.getElementById('lock-submit');
@@ -61,7 +61,7 @@ export function initLockScreen(onUnlock) {
 
     // --- Wireframe canvas animation ---
     const lockCanvas = document.getElementById('lock-canvas');
-    if (!lockCanvas) return;
+    if (!lockCanvas || reducedMotion) return;
 
     const renderer = new CanvasRenderer(lockCanvas, () => lockScreen);
 
