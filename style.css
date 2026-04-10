@@ -86,6 +86,17 @@ img {
 
 /* Lock screen removed */
 
+/* Depth Sub Title */
+.depth-sub-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.02em;
+}
+
 /* ============================================
    Navigation
    ============================================ */

@@ -23,11 +23,9 @@
             <a href="#hero" class="nav-logo">KMS</a>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
-                <li><a href="#expertise">Expertise</a></li>
+                <li><a href="#expertise">Career</a></li>
                 <li><a href="#projects">Projects</a></li>
-                <li><a href="#insights">Insights</a></li>
-                <li><a href="#blog">Blog</a></li>
-                <li><a href="#qna">Q&A</a></li>
+                <li><a href="#technical">Technical</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
@@ -176,25 +174,10 @@
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">02</span>
-                <h2 class="section-title">Expertise Hub</h2>
-                <p class="section-desc">같은 경험, 두 가지 시선 — 경력 흐름과 역량 깊이를 전환하며 확인하세요</p>
+                <h2 class="section-title">Career</h2>
             </div>
 
-            <!-- View Toggle -->
-            <div class="expertise-toggle">
-                <button class="expertise-tab active" data-view="timeline">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    Career Timeline
-                </button>
-                <button class="expertise-tab" data-view="domain">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/></svg>
-                    Skill Domains
-                </button>
-            </div>
-
-            <!-- ====== VIEW 1: Career Timeline ====== -->
-            <div class="expertise-view active" id="view-timeline">
-                <div class="career-timeline-view">
+            <div class="career-timeline-view">
                     <!-- Summary Stats Bar -->
                     <div class="career-stats-bar reveal">
                         <div class="career-stat-item">
@@ -347,9 +330,8 @@
                 </div>
             </div>
 
-            <!-- ====== VIEW 2: Skill Domains ====== -->
-            <div class="expertise-view" id="view-domain">
-                <div class="expertise-layout">
+            <!-- Skill Domains view removed, keeping only Career Timeline -->
+            <div style="display:none">
                 <!-- Radar Chart -->
                 <div class="radar-wrap reveal">
                     <canvas id="radar-canvas" width="420" height="420"></canvas>
@@ -970,17 +952,17 @@ StudioProject ← SVN Content (아티스트)
         </div>
     </section>
 
-    <!-- Technical Insights Section -->
-    <section class="section" id="insights">
+    <!-- Technical Depth — 도메인별 통합 -->
+    <section class="section" id="technical">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">04</span>
-                <h2 class="section-title">Technical Insights</h2>
-                <p class="section-desc">기술 선택의 이유와 설계 철학 — 도메인별로 필터링하여 관심 분야만 확인하세요</p>
+                <h2 class="section-title">Technical Depth</h2>
+                <p class="section-desc">도메인별로 설계 철학, 의사결정, 문제 해결을 한눈에</p>
             </div>
 
-            <!-- Domain Filter -->
-            <div class="domain-filter" data-target="insights-grid">
+            <!-- Domain Tabs — 이 탭이 아래 모든 콘텐츠를 필터링 -->
+            <div class="domain-filter" id="master-domain-filter">
                 <button class="domain-filter-btn active" data-filter="all">All</button>
                 <button class="domain-filter-btn" data-filter="engine">Engine</button>
                 <button class="domain-filter-btn" data-filter="pipeline">Pipeline</button>
@@ -988,6 +970,9 @@ StudioProject ← SVN Content (아티스트)
                 <button class="domain-filter-btn" data-filter="backend">Backend</button>
                 <button class="domain-filter-btn" data-filter="frontend">Frontend</button>
             </div>
+
+            <!-- ── Insights ── -->
+            <h3 class="depth-sub-title">Design Decisions & Insights</h3>
 
             <div class="insights-grid" id="insights-grid">
                 <div class="insight-card reveal" data-domain="engine">
@@ -1213,44 +1198,15 @@ StudioProject ← SVN Content (아티스트)
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Problem Solving Blog Section -->
-    <section class="section section-dark" id="blog">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">05</span>
-                <h2 class="section-title">Problem Solving</h2>
-                <p class="section-desc">DNABLE · XROOM 프로젝트에서 마주한 문제들과 해결 과정</p>
-                <img src="images/problem-solving-map.jpg" alt="DNABLE · XROOM 문제 해결의 거대한 여정 — 전체 기술 맵" class="section-hero-image" loading="lazy">
-            </div>
-            <!-- Filters removed — featured 3 + title list -->
+            <!-- ── Problem Solving ── -->
+            <h3 class="depth-sub-title" style="margin-top: 60px;">Problem Solving</h3>
+            <img src="images/problem-solving-map.jpg" alt="DNABLE · XROOM 문제 해결의 거대한 여정 — 전체 기술 맵" class="section-hero-image" loading="lazy" style="margin-bottom: 2rem;">
             <div class="blog-grid" id="blog-grid">
                 <!-- Cards rendered by JS from blogData.js -->
             </div>
-        </div>
-    </section>
 
-    <!-- Technical Q&A Section -->
-    <section class="section" id="qna">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-tag">06</span>
-                <h2 class="section-title">Technical Q&A</h2>
-                <p class="section-desc">실무에서 내린 판단과 그 이유 — 도메인별로 필터링하여 관심 분야만 확인하세요</p>
-            </div>
-
-            <!-- Domain Filter -->
-            <div class="domain-filter" data-target="qna-grid">
-                <button class="domain-filter-btn active" data-filter="all">All</button>
-                <button class="domain-filter-btn" data-filter="engine">Engine</button>
-                <button class="domain-filter-btn" data-filter="pipeline">Pipeline</button>
-                <button class="domain-filter-btn" data-filter="ai">AI</button>
-                <button class="domain-filter-btn" data-filter="backend">Backend</button>
-                <button class="domain-filter-btn" data-filter="frontend">Frontend</button>
-            </div>
-
+            <!-- ── Q&A ── -->
+            <h3 class="depth-sub-title" style="margin-top: 60px;">Technical Q&A</h3>
             <div class="qna-grid" id="qna-grid">
                 <div class="qna-card reveal" data-domain="engine">
                     <div class="qna-question">
@@ -1340,7 +1296,7 @@ StudioProject ← SVN Content (아티스트)
     <section class="section" id="skills">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">07</span>
+                <span class="section-tag">05</span>
                 <h2 class="section-title">Tech Stack</h2>
             </div>
             <div class="skills-grid">
@@ -1497,7 +1453,7 @@ StudioProject ← SVN Content (아티스트)
     <section class="section section-dark" id="contact">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">08</span>
+                <span class="section-tag">06</span>
                 <h2 class="section-title">Contact</h2>
             </div>
             <div class="contact-grid reveal">

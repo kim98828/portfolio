@@ -617,110 +617,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================
-    // Domain Filter (Insights + Q&A)
+    // Master Domain Filter (Technical Depth section)
     // ============================================
-    document.querySelectorAll('.domain-filter').forEach(filterBar => {
-        const targetId = filterBar.dataset.target;
-        const grid = document.getElementById(targetId);
-        if (!grid) return;
-
-        const buttons = filterBar.querySelectorAll('.domain-filter-btn');
-        const cards = grid.querySelectorAll('[data-domain]');
+    const masterFilter = document.getElementById('master-domain-filter');
+    if (masterFilter) {
+        const section = masterFilter.closest('section');
+        const allCards = section.querySelectorAll('[data-domain]');
+        const subTitles = section.querySelectorAll('.depth-sub-title');
+        const killingHeader = section.querySelector('.section-header[style]');
+        const buttons = masterFilter.querySelectorAll('.domain-filter-btn');
 
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const filter = btn.dataset.filter;
 
-                // Update active button
                 buttons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
 
-                // Filter cards
-                let visibleCount = 0;
-                cards.forEach(card => {
+                allCards.forEach(card => {
                     if (filter === 'all' || card.dataset.domain === filter) {
                         card.classList.remove('domain-hidden');
                         card.classList.add('domain-show');
-                        visibleCount++;
                     } else {
                         card.classList.add('domain-hidden');
                         card.classList.remove('domain-show');
                     }
                 });
 
-                // Also hide/show the "Core Killing Features" sub-header if in insights
-                if (targetId === 'insights-grid') {
-                    const subHeaders = grid.parentElement.querySelectorAll('.section-header[style]');
-                    subHeaders.forEach(sh => {
-                        // Show sub-header only when "all" or "engine" is selected (killing features are all engine)
-                        if (filter === 'all' || filter === 'engine') {
-                            sh.style.display = '';
-                        } else {
-                            sh.style.display = 'none';
-                        }
-                    });
-                    // Also filter the second insights-grid (killing features)
-                    const killingGrid = grid.parentElement.querySelectorAll('.insights-grid');
-                    if (killingGrid.length > 1) {
-                        const killingCards = killingGrid[1].querySelectorAll('[data-domain]');
-                        killingCards.forEach(card => {
-                            if (filter === 'all' || card.dataset.domain === filter) {
-                                card.classList.remove('domain-hidden');
-                                card.classList.add('domain-show');
-                            } else {
-                                card.classList.add('domain-hidden');
-                                card.classList.remove('domain-show');
-                            }
-                        });
-                    }
+                // Hide killing features sub-header if no engine cards visible
+                if (killingHeader) {
+                    killingHeader.style.display = (filter === 'all' || filter === 'engine') ? '' : 'none';
                 }
             });
         });
-    });
+    }
 
-    // ============================================
-    // Expertise Hub — View Toggle
-    // ============================================
-    const expertiseTabs = document.querySelectorAll('.expertise-tab');
-    const expertiseViews = document.querySelectorAll('.expertise-view');
-
-    expertiseTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const viewId = 'view-' + tab.dataset.view;
-
-            // Update tabs
-            expertiseTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
-            // Update views
-            expertiseViews.forEach(v => v.classList.remove('active'));
-            const target = document.getElementById(viewId);
-            if (target) target.classList.add('active');
-
-            // Re-trigger radar animation when switching to domain view
-            if (tab.dataset.view === 'domain' && radarCanvas) {
-                resizeRadar();
-                animProgress = 0;
-                drawRadar();
-            }
-
-            // Re-observe reveal elements in newly visible view
-            if (target) {
-                target.querySelectorAll('.reveal:not(.visible)').forEach(el => {
-                    observer.observe(el);
-                });
-            }
-        });
-    });
-
-    // ============================================
-    // Expertise Hub — Radar Chart + Domain Cards
-    // ============================================
-
-    const radarCanvas = document.getElementById('radar-canvas');
-    let resizeRadar = () => {};
-    let drawRadar = () => {};
-    let animProgress = 0;
+    // Radar chart + domain cards removed (Skill Domains view removed)
+    const radarCanvas = null;
 
     if (radarCanvas && !prefersReducedMotion) {
         const rctx = radarCanvas.getContext('2d');
