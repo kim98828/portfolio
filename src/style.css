@@ -844,6 +844,7 @@ img {
     display: block;
     margin: 0 auto;
 }
+
 /* Blog-card arch trees: render at intrinsic size, never upscale narrow trees */
 .arch-svg svg.arch-tree-svg {
     width: auto;
