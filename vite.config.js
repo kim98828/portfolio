@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite';
 
-// Cloudflare Pages serves from the domain root, so base = '/'.
-// (GitHub Pages project sites would need base: '/portfolio/'.)
+// Base path depends on the host:
+//   - Cloudflare Pages / local dev → domain root '/'
+//   - GitHub Pages project site (kim98828.github.io/portfolio) → '/portfolio/'
+// The Pages deploy workflow sets DEPLOY_TARGET=github-pages.
+const base = process.env.DEPLOY_TARGET === 'github-pages' ? '/portfolio/' : '/';
+
 export default defineConfig({
-  base: '/',
+  base,
   build: {
     outDir: 'dist',
     emptyOutDir: true,
