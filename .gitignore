@@ -20,3 +20,9 @@ dist/
 .stylelintrc.json
 .lighthouserc.json
 .lighthouseci/
+
+# --- 하네스(자동화) 로컬 산출물 ---
+.claude/harness.log
+.claude/harness-unmatched.log
+.claude/secrets-blocklist.txt
+__tmp_*
