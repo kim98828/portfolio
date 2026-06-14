@@ -54,6 +54,25 @@ run session-stop.sh '{"stop_hook_active":false}'
 run session-stop.sh '{"stop_hook_active":true}'
 [ "$RC" = 0 ] && [ -z "$OUT" ] && ok "재진입 시 조용히 종료" || bad "재진입 가드 실패"
 
+SYNC="$(cd "$(dirname "$0")/.." && pwd)/sync"
+# 격리된 임시 프로젝트에 매핑을 깔고 실제 스크립트를 호출한다
+TMPD=$(mktemp -d); mkdir -p "$TMPD/.claude/sync"
+printf 'SECRETNAME\t익명플랫폼\n' > "$TMPD/.claude/sync/anonymize-map.tsv"
+
+echo "── sync: anonymize.sh ──"
+OUT=$(echo "프로젝트 SECRETNAME 출시" | CLAUDE_PROJECT_DIR="$TMPD" bash "$SYNC/anonymize.sh")
+{ echo "$OUT" | grep -q "익명플랫폼" && ! echo "$OUT" | grep -q "SECRETNAME"; } \
+  && ok "매핑 치환 동작" || bad "매핑 치환 실패 ($OUT)"
+
+echo "── sync: check-anon.sh ──"
+echo "여기에 SECRETNAME 노출" > "$TMPD/draft.txt"
+CLAUDE_PROJECT_DIR="$TMPD" bash "$SYNC/check-anon.sh" "$TMPD/draft.txt" >/dev/null 2>&1
+[ $? = 2 ] && ok "미익명화 명칭 차단(exit 2)" || bad "미익명화 명칭 미차단"
+echo "여기는 익명플랫폼 이야기" > "$TMPD/clean.txt"
+CLAUDE_PROJECT_DIR="$TMPD" bash "$SYNC/check-anon.sh" "$TMPD/clean.txt" >/dev/null 2>&1
+[ $? = 0 ] && ok "깨끗한 텍스트 통과(exit 0)" || bad "깨끗한 텍스트 오차단"
+rm -rf "$TMPD"
+
 echo ""
 echo "결과: $PASS 통과 / $FAIL 실패"
 [ "$FAIL" = 0 ] || exit 1

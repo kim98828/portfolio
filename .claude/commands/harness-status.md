@@ -10,4 +10,5 @@
    - `.claude/harness.log` 가 있으면 최근 발동(교정 감지/턴 종료/차단) 건수와 마지막 시각.
    - `.claude/harness-unmatched.log` 가 있으면 **반복(2회 이상) 발생한 에러를 빈도순**으로 표시 → 새 anti-pattern / feedback 후보로 제안 (confidence 증가 신호).
 8. **blocklist 설정 여부**: `.claude/secrets-blocklist.txt` 존재 여부 (없으면 example 복사 안내).
-9. 한눈에 보는 표로 보고.
+9. **동기화 하네스**: `.claude/sync/anonymize-map.tsv` 와 `source.txt` 존재 여부(없으면 example 복사 안내), `source-cursor.json` 의 마지막 동기화 SHA/버전/날짜. 가능하면 `bash .claude/sync/collect-source.sh` 로 미반영 신규 커밋 수를 표시(CURSOR_UPTODATE 면 최신).
+10. 한눈에 보는 표로 보고.

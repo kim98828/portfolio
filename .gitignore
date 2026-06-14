@@ -25,4 +25,7 @@ dist/
 .claude/harness.log
 .claude/harness-unmatched.log
 .claude/secrets-blocklist.txt
+# 익명화 매핑·소스경로(실제 내부 명칭/경로 포함) — example 만 커밋, 실제값은 로컬 전용
+.claude/sync/anonymize-map.tsv
+.claude/sync/source.txt
 __tmp_*

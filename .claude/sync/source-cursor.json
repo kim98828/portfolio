@@ -1,0 +1,6 @@
+{
+  "last_synced_sha": "",
+  "last_synced_version": "",
+  "last_synced_date": "",
+  "_note": "동기화 커서. /sync-dev 완료 시 collect-source 의 NEXT_SHA/NEXT_VERSION 으로 갱신. SHA만 저장(내부 커밋 메시지/명칭 비저장)."
+}
