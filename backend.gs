@@ -5,16 +5,23 @@
 // 1. https://script.google.com 접속
 // 2. 새 프로젝트 만들기
 // 3. 이 코드 전체 복사 → 붙여넣기
-// 4. 상단 메뉴 "배포" → "새 배포"
-// 5. 유형: "웹 앱"
-// 6. 실행 주체: "나" / 액세스: "모든 사용자"
-// 7. 배포 → URL 복사
-// 8. index.html의 BACKEND_URL에 붙여넣기
+// 4. ⚙️ 프로젝트 설정 → "스크립트 속성"에 아래 두 값 추가:
+//      TELEGRAM_TOKEN = <BotFather에서 발급한 토큰>
+//      CHAT_ID        = <알림 받을 Chat ID>
+//    (코드에 직접 토큰을 넣지 말 것 — 저장소에 비밀값이 새어나갑니다.)
+// 5. 상단 메뉴 "배포" → "새 배포"
+// 6. 유형: "웹 앱"
+// 7. 실행 주체: "나" / 액세스: "모든 사용자"
+// 8. 배포 → URL 복사
+// 9. .env.production 의 VITE_BACKEND_URL 에 붙여넣기
 // ============================================
 
-const TELEGRAM_TOKEN = '8595926887:AAGH29JaqiW5xXGKjDZwkfDSLGOg0dyd9Oo';
-const CHAT_ID = '7329769268';
 const SHEET_NAME = 'PortfolioLog';
+
+// ---- 비밀값 / 설정은 Script Properties 에서만 읽는다 ----
+function getConfig(key) {
+  return PropertiesService.getScriptProperties().getProperty(key);
+}
 
 // 스프레드시트 가져오기 (없으면 자동 생성)
 function getSpreadsheet() {
@@ -51,6 +58,17 @@ function sanitize(str, maxLen) {
   return str.replace(/<[^>]*>/g, '').substring(0, maxLen || 500).trim();
 }
 
+// ---- Email 형식 검증 (느슨하지만 명백한 쓰레기는 차단) ----
+function isValidEmail(email) {
+  return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// 표준 JSON 응답
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 // POST 요청 처리
 function doPost(e) {
   try {
@@ -59,23 +77,26 @@ function doPost(e) {
 
     if (type === 'visit') {
       if (isRateLimited('visit', 30)) {
-        return ContentService.createTextOutput(JSON.stringify({ status: 'rate_limited' }))
-          .setMimeType(ContentService.MimeType.JSON);
+        return jsonResponse({ status: 'rate_limited' });
       }
       handleVisit(data);
     } else if (type === 'message') {
       if (isRateLimited('message', 5)) {
-        return ContentService.createTextOutput(JSON.stringify({ status: 'rate_limited' }))
-          .setMimeType(ContentService.MimeType.JSON);
+        return jsonResponse({ status: 'rate_limited' });
       }
-      handleMessage(data);
+      const ok = handleMessage(data);
+      if (!ok) {
+        return jsonResponse({ status: 'rejected' });
+      }
+    } else {
+      return jsonResponse({ status: 'rejected' });
     }
 
-    return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return jsonResponse({ status: 'ok' });
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    // 내부 에러 상세는 Stackdriver 로그에만 남기고, 클라이언트에는 일반 메시지만.
+    console.error('doPost error: ' + (err && err.stack ? err.stack : err));
+    return jsonResponse({ status: 'error' });
   }
 }
 
@@ -84,13 +105,10 @@ function doGet(e) {
   const action = e.parameter.action;
 
   if (action === 'count') {
-    const count = getVisitCount();
-    return ContentService.createTextOutput(JSON.stringify({ count: count }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return jsonResponse({ count: getVisitCount() });
   }
 
-  return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return jsonResponse({ status: 'ok' });
 }
 
 // ---- 방문자 처리 ----
@@ -102,13 +120,10 @@ function handleVisit(data) {
   const screenRes = sanitize(data.screen, 20) || 'Unknown';
   const referrer = sanitize(data.referrer, 500) || 'Direct';
 
-  // Google Sheets에 로그
+  // 데이터 저장(핵심) → 카운터 → 알림(부가) 순서. 앞 단계 실패가 뒤로 전파되지 않도록 분리.
   logToSheet([timestamp, 'VISIT', browser, platform, language, screenRes, referrer, '']);
-
-  // 카운터 증가
   incrementVisitCounter();
 
-  // Telegram 알림
   const msg = `🔓 <b>포트폴리오 열람!</b>\n\n`
     + `📅 시간: ${timestamp}\n`
     + `🌐 브라우저: ${browser}\n`
@@ -120,19 +135,20 @@ function handleVisit(data) {
   sendTelegram(msg);
 }
 
-// ---- 메시지 처리 ----
+// ---- 메시지 처리 ---- (성공 여부 boolean 반환)
 function handleMessage(data) {
   const timestamp = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
   const name = sanitize(data.name, 100) || 'Anonymous';
-  const email = sanitize(data.email, 200) || 'N/A';
+  const rawEmail = sanitize(data.email, 200);
   const message = sanitize(data.message, 2000) || '';
 
-  if (!message) return;
+  if (!message) return false;
 
-  // Google Sheets에 로그
+  const email = isValidEmail(rawEmail) ? rawEmail : 'N/A (invalid)';
+
+  // 데이터 저장(핵심) 먼저 — 알림이 실패해도 문의는 유실되지 않는다.
   logToSheet([timestamp, 'MESSAGE', '', '', '', '', '', name + ' | ' + email + ' | ' + message]);
 
-  // Telegram 알림
   const msg = `💬 <b>새 메시지 도착!</b>\n\n`
     + `📅 시간: ${timestamp}\n`
     + `👤 이름: ${name}\n`
@@ -140,6 +156,7 @@ function handleMessage(data) {
     + `💭 메시지:\n${message}`;
 
   sendTelegram(msg);
+  return true;
 }
 
 // ---- Google Sheets 로그 ----
@@ -160,8 +177,7 @@ function logToSheet(rowData) {
 // ---- 방문자 수 (카운터 셀 방식 — O(1)) ----
 function getVisitCount() {
   const props = PropertiesService.getScriptProperties();
-  const count = parseInt(props.getProperty('VISIT_COUNT') || '0', 10);
-  return count;
+  return parseInt(props.getProperty('VISIT_COUNT') || '0', 10);
 }
 
 function incrementVisitCounter() {
@@ -176,7 +192,8 @@ function incrementVisitCounter() {
   }
 }
 
-// 기존 시트 데이터에서 카운터를 복구할 때 1회 실행
+// 시트의 VISIT 행 수를 단일 진실원으로 삼아 카운터를 재동기화한다.
+// 정합성이 틀어졌을 때(또는 정기적으로) 수동 실행하면 카운터를 정확한 값으로 복구한다.
 function migrateVisitCounter() {
   const ss = getSpreadsheet();
   const sheet = ss.getSheetByName(SHEET_NAME);
@@ -189,18 +206,37 @@ function migrateVisitCounter() {
   PropertiesService.getScriptProperties().setProperty('VISIT_COUNT', String(count));
 }
 
-// ---- Telegram 전송 ----
+// ---- Telegram 전송 (부가 기능 — 실패해도 요청 전체를 깨지 않는다) ----
 function sendTelegram(text) {
-  const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+  const token = getConfig('TELEGRAM_TOKEN');
+  const chatId = getConfig('CHAT_ID');
+
+  // 설정이 없으면 조용히 건너뛴다 (로깅/저장은 이미 끝난 상태).
+  if (!token || !chatId) {
+    console.error('sendTelegram skipped: TELEGRAM_TOKEN / CHAT_ID 스크립트 속성이 설정되지 않음');
+    return;
+  }
+
+  const url = `https://api.telegram.org/bot${token}/sendMessage`;
   const payload = {
-    chat_id: CHAT_ID,
+    chat_id: chatId,
     text: text,
     parse_mode: 'HTML'
   };
 
-  UrlFetchApp.fetch(url, {
-    method: 'post',
-    contentType: 'application/json',
-    payload: JSON.stringify(payload)
-  });
+  try {
+    const res = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true   // HTTP 오류로 예외가 던져지지 않게 → 호출부로 전파 차단
+    });
+    const code = res.getResponseCode();
+    if (code < 200 || code >= 300) {
+      console.error('Telegram API ' + code + ': ' + res.getContentText());
+    }
+  } catch (err) {
+    // 네트워크/타임아웃 등 — 알림 실패는 치명적이지 않으므로 로그만 남기고 삼킨다.
+    console.error('sendTelegram error: ' + (err && err.stack ? err.stack : err));
+  }
 }
