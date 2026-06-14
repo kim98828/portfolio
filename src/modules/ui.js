@@ -133,8 +133,8 @@ export function initUI() {
 
     // --- Lazy-load heavy data (blogData ~80KB, codeData ~48KB) ---
     // Defer until each consuming section approaches the viewport, then init.
-    // Classic-script globals (const blogData / codeData) are visible to this
-    // module via the shared global lexical environment — same as eager loading.
+    // Vite splits each dynamic import() into its own chunk, so the data is
+    // fetched on demand rather than bundled into the initial payload.
     lazyLoadOnView(document.getElementById('blog-grid'), () =>
         import('../data/blogData.js').then(m => initBlogCards(observer, m.blogData)).catch(() => {}));
 
