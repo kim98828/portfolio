@@ -11,6 +11,7 @@
     "lint:css": "stylelint \"src/**/*.css\""
   },
   "devDependencies": {
+    "sharp": "^0.35.1",
     "vite": "^5.4.10"
   },
   "engines": {
