@@ -2,19 +2,6 @@
 // UI Interactions — Nav, Scroll, Typing, Counters, Popups
 // ============================================
 
-/** Inject a classic script once; resolves when loaded (idempotent by src). */
-function loadScriptOnce(src) {
-    return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[data-lazy-src="${src}"]`)) return resolve();
-        const s = document.createElement('script');
-        s.src = src;
-        s.dataset.lazySrc = src;
-        s.onload = () => resolve();
-        s.onerror = () => reject(new Error(`Failed to load ${src}`));
-        document.head.appendChild(s);
-    });
-}
-
 /** Run `loader` once when `target` first nears the viewport (300px margin). */
 function lazyLoadOnView(target, loader) {
     if (!target) return;
@@ -149,10 +136,10 @@ export function initUI() {
     // Classic-script globals (const blogData / codeData) are visible to this
     // module via the shared global lexical environment — same as eager loading.
     lazyLoadOnView(document.getElementById('blog-grid'), () =>
-        loadScriptOnce('blogData.js').then(() => initBlogCards(observer)).catch(() => {}));
+        import('../data/blogData.js').then(m => initBlogCards(observer, m.blogData)).catch(() => {}));
 
     lazyLoadOnView(document.getElementById('skills'), () =>
-        loadScriptOnce('codeData.js').then(() => initCodePopup(observer)).catch(() => {}));
+        import('../data/codeData.js').then(m => initCodePopup(observer, m.codeData)).catch(() => {}));
 
     // --- Deep Dive Toggles ---
     document.querySelectorAll('.deepdive-toggle').forEach(btn => {
@@ -198,9 +185,9 @@ export function initUI() {
 }
 
 // --- Code Popup ---
-function initCodePopup(observer) {
+function initCodePopup(observer, codeData) {
     const popup = document.getElementById('code-popup');
-    if (!popup) return;
+    if (!popup || !codeData) return;
 
     const popupLabel = document.getElementById('code-popup-label');
     const popupLang = document.getElementById('code-popup-lang');
@@ -211,7 +198,6 @@ function initCodePopup(observer) {
     let hideTimeout = null;
 
     function showPopup(el, key) {
-        if (typeof codeData === 'undefined') return;
         const data = codeData[key];
         if (!data) return;
         popupLabel.textContent = data.label;
@@ -258,9 +244,9 @@ function initCodePopup(observer) {
 }
 
 // --- Blog Cards ---
-function initBlogCards(observer) {
+function initBlogCards(observer, blogData) {
     const blogGrid = document.getElementById('blog-grid');
-    if (!blogGrid || typeof blogData === 'undefined') return;
+    if (!blogGrid || !blogData) return;
 
     const FEATURED_COUNT = 3;
     const featured = blogData.slice(0, FEATURED_COUNT);

@@ -49,15 +49,10 @@ jobs:
       - name: Install & Run Stylelint
         run: |
           npm install stylelint stylelint-config-standard
-          npx stylelint "style.css" --formatter compact
-
-      - name: Syntax check JS (non-module)
-        run: |
-          node -c script.js
-          node -c codeData.js
+          npx stylelint "src/**/*.css" --formatter compact
 
       - name: Syntax check JS (ES modules)
         run: |
-          for f in modules/*.js; do
-            node --input-type=module -e "$(cat "$f")" 2>/dev/null && echo "OK: $f" || echo "WARN: $f (import resolution expected in browser)"
+          for f in src/main.js src/modules/*.js src/data/*.js; do
+            node --input-type=module -e "$(cat "$f")" 2>/dev/null && echo "OK: $f" || echo "WARN: $f (import.meta/resolution expected at build)"
           done

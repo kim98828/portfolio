@@ -1,7 +1,7 @@
 // ============================================
 // Blog Card Data — Problem-Solving Cards
 // ============================================
-const blogData = [
+export const blogData = [
     // ── Featured 3 ──
     {
         id: 'featured-toon-buffer',

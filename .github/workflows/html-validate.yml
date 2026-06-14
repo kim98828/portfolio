@@ -14,9 +14,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Validate HTML
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install & build
+        run: |
+          npm install
+          npm run build
+
+      - name: Validate built HTML (dist/)
         uses: anishathalye/proof-html@v2
         with:
-          directory: '.'
+          directory: 'dist'
           check_css: false
           ignore_url_re: 'fonts\.googleapis\.com|fonts\.gstatic\.com'

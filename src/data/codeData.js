@@ -1,7 +1,7 @@
 // ============================================
 // Code Popup Data — Extracted from script.js
 // ============================================
-const codeData = {
+export const codeData = {
     ue5: {
         label: 'UE5 Project Architecture',
         lang: 'Workflow',

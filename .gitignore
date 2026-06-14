@@ -3,3 +3,19 @@ tmp_b64.txt
 *.pdf
 *.b64
 .claude/settings.local.json
+
+# clasp (Apps Script) — .clasp.json 은 CI 워크플로우가 생성, 로컬 인증정보는 커밋 금지
+.clasp.json
+.clasprc.json
+
+# --- Vite / Node build (dev/prod 분리) ---
+node_modules/
+dist/
+.vite/
+# .env.development / .env.production 은 커밋 (비밀값 아님). 개인 오버라이드만 무시:
+.env.local
+.env.*.local
+# CI 가 생성하는 임시 설정 / 리포트
+.stylelintrc.json
+.lighthouserc.json
+.lighthouseci/
