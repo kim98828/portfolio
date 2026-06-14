@@ -2,6 +2,16 @@
 // UI Interactions — Nav, Scroll, Typing, Counters, Popups
 // ============================================
 
+import { archToSvg } from './arch-svg.js';
+
+/** Render a blog card's "Architecture": SVG for trees, <pre> for flow/box. */
+function renderArch(arch) {
+    const svg = archToSvg(arch);
+    return svg
+        ? `<div class="arch-svg">${svg}</div>`
+        : `<pre class="blog-detail-arch">${arch}</pre>`;
+}
+
 /** Run `loader` once when `target` first nears the viewport (300px margin). */
 function lazyLoadOnView(target, loader) {
     if (!target) return;
@@ -268,7 +278,7 @@ function initBlogCards(observer, blogData) {
                 <p class="blog-detail-text">${card.solution}</p>
                 <div class="blog-detail-label">Key Insight</div>
                 <div class="blog-detail-insight">${card.insight}</div>
-                ${card.arch ? `<div class="blog-detail-label">Architecture</div><pre class="blog-detail-arch">${card.arch}</pre>` : ''}
+                ${card.arch ? `<div class="blog-detail-label">Architecture</div>${renderArch(card.arch)}` : ''}
             </div>
         </div>
     `).join('');
