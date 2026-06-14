@@ -37,6 +37,7 @@ jobs:
               "keyframes-name-pattern": null,
               "value-keyword-case": null,
               "property-no-vendor-prefix": null,
+              "property-no-deprecated": null,
               "media-feature-range-notation": null,
               "rule-empty-line-before": null,
               "at-rule-empty-line-before": null,

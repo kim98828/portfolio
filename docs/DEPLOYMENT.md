@@ -65,10 +65,8 @@ npm run preview    # 빌드 결과 로컬 확인 (http://localhost:4173)
 - 구 `deploy.yml`(Pages)은 제거됨. **Cloudflare를 먼저 연결한 뒤 이 브랜치를 merge** 할 것.
 - merge 전까지 기존 Pages 사이트는 그대로 떠 있음(프로덕션 안전).
 
-## 이력서 PDF 주의
+## 이력서 PDF
 
-`*.pdf`가 `.gitignore`에 있어 `이력서_20260207.pdf`는 레포/배포에 포함되지 않는다(현행 정책 유지).
-배포본에서 다운로드 링크(`/이력서_20260207.pdf`)가 동작하려면 둘 중 하나:
-- `.gitignore`의 `*.pdf` 예외 처리 후 `public/`에 커밋, 또는
-- Cloudflare에 해당 파일만 별도 업로드.
-정책 변경은 사용자 결정 사항이라 보류함.
+`.gitignore`는 `*.pdf`를 무시하되 `!public/*.pdf` 예외를 둔다 → `public/이력서_20260207.pdf`만
+커밋되어 `dist/`로 복사되고 다운로드 링크(`/이력서_20260207.pdf`)가 배포본에서 동작한다.
+(다른 위치의 PDF는 여전히 무시됨.)

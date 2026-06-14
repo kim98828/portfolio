@@ -1,6 +1,7 @@
 tmp_api.json
 tmp_b64.txt
 *.pdf
+!public/*.pdf
 *.b64
 .claude/settings.local.json
 
