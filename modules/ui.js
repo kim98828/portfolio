@@ -2,6 +2,31 @@
 // UI Interactions — Nav, Scroll, Typing, Counters, Popups
 // ============================================
 
+/** Inject a classic script once; resolves when loaded (idempotent by src). */
+function loadScriptOnce(src) {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[data-lazy-src="${src}"]`)) return resolve();
+        const s = document.createElement('script');
+        s.src = src;
+        s.dataset.lazySrc = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(s);
+    });
+}
+
+/** Run `loader` once when `target` first nears the viewport (300px margin). */
+function lazyLoadOnView(target, loader) {
+    if (!target) return;
+    const io = new IntersectionObserver((entries, obs) => {
+        if (entries.some(e => e.isIntersecting)) {
+            obs.disconnect();
+            loader();
+        }
+    }, { rootMargin: '300px' });
+    io.observe(target);
+}
+
 /**
  * Initializes all non-canvas UI behaviors:
  * navigation, typing effect, scroll reveal, counters, code popups,
@@ -119,11 +144,15 @@ export function initUI() {
         });
     });
 
-    // --- Code Popup (Skill Hover) ---
-    initCodePopup(observer);
+    // --- Lazy-load heavy data (blogData ~80KB, codeData ~48KB) ---
+    // Defer until each consuming section approaches the viewport, then init.
+    // Classic-script globals (const blogData / codeData) are visible to this
+    // module via the shared global lexical environment — same as eager loading.
+    lazyLoadOnView(document.getElementById('blog-grid'), () =>
+        loadScriptOnce('blogData.js').then(() => initBlogCards(observer)).catch(() => {}));
 
-    // --- Blog Cards ---
-    initBlogCards(observer);
+    lazyLoadOnView(document.getElementById('skills'), () =>
+        loadScriptOnce('codeData.js').then(() => initCodePopup(observer)).catch(() => {}));
 
     // --- Deep Dive Toggles ---
     document.querySelectorAll('.deepdive-toggle').forEach(btn => {
