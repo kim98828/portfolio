@@ -3,12 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kim98828 | Real-time Systems Architect</title>
+    <title>kim98828 | Real-time Rendering & Broadcast Systems Architect</title>
     <meta name="description" content="실시간 렌더링 파이프라인 설계, 방송 시스템 아키텍처 구축. UE5 엔진 소스 레벨 엔지니어링.">
     <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="style.css">
-    <script src="blogData.js" defer></script>
+
+    <!-- Open Graph / Twitter — noindex는 유지(검색 비노출), 링크 공유 시 미리보기 카드만 표시.
+         배포 타깃 = Cloudflare Pages 루트(vite base '/'). 커스텀 도메인 연결 시 아래 절대 URL 3줄만 교체. -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="kim98828 | Real-time Rendering & Broadcast Systems Architect">
+    <meta property="og:description" content="UE5 엔진 소스 레벨 렌더링 파이프라인 · 실시간 방송 시스템 아키텍처. CES 혁신상 · 에디슨 어워드.">
+    <meta property="og:image" content="https://portfolio.pages.dev/images/dnable-cell-shading.jpg">
+    <meta property="og:url" content="https://portfolio.pages.dev/">
+    <meta property="og:locale" content="ko_KR">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="kim98828 | Real-time Rendering & Broadcast Systems Architect">
+    <meta name="twitter:description" content="UE5 엔진 소스 레벨 렌더링 · 실시간 방송 시스템 아키텍처. CES 혁신상 · 에디슨 어워드.">
+    <meta name="twitter:image" content="https://portfolio.pages.dev/images/dnable-cell-shading.jpg">
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/src/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
@@ -85,6 +98,10 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                     GitHub
                 </a>
+                <a href="/이력서_20260207.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline" download>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Resume
+                </a>
             </div>
         </div>
         <div class="scroll-indicator">
@@ -125,7 +142,7 @@
                         기술 트렌드를 즉각 테스트하되 잔파동은 걸러내고 <strong>킬링 피처만 선별</strong>합니다.
                         <strong>문제 정의부터 해결까지의 사이클을 최단으로 압축</strong>하는 것 — 그것이 제가 가진 가장 실질적인 역량입니다.
                     </p>
-                    <img src="images/about-growth-map.jpg" alt="Foundation → Architectural Maturity → Engineering Lead 성장 도식화" class="about-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/about-growth-map.jpg" alt="Foundation → Architectural Maturity → Engineering Lead 성장 도식화" class="about-image" loading="lazy">
                 </div>
                 <div class="about-info reveal">
                     <div class="info-card">
@@ -329,326 +346,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Skill Domains view removed, keeping only Career Timeline -->
-            <div style="display:none">
-                <!-- Radar Chart -->
-                <div class="radar-wrap reveal">
-                    <canvas id="radar-canvas" width="420" height="420"></canvas>
-                    <div class="radar-center-label">
-                        <span class="radar-center-name">Full Stack</span>
-                        <span class="radar-center-sub">Depth Map</span>
-                    </div>
-                </div>
-
-                <!-- Domain Cards -->
-                <div class="domain-cards">
-                    <!-- Engine -->
-                    <div class="domain-card reveal" data-domain="engine">
-                        <div class="domain-card-header">
-                            <div class="domain-icon engine">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
-                            </div>
-                            <div class="domain-card-title">
-                                <h3>Engine</h3>
-                                <span class="domain-card-sub">Source-Level Engineering</span>
-                            </div>
-                            <div class="domain-level">
-                                <span class="domain-level-bar" style="--level: 95%"></span>
-                            </div>
-                        </div>
-                        <div class="domain-card-metrics">
-                            <span class="domain-metric"><strong>8</strong> Rendering Modules</span>
-                            <span class="domain-metric"><strong>75+</strong> C++ Classes</span>
-                            <span class="domain-metric"><strong>NPR/PBR</strong> Hybrid</span>
-                        </div>
-                        <div class="domain-card-expand-btn">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                            <span>Deep Dive</span>
-                        </div>
-                        <div class="domain-detail">
-                            <div class="domain-detail-section">
-                                <h4>Core Capabilities</h4>
-                                <ul class="domain-detail-list">
-                                    <li><strong>Custom Shading Model</strong> — ShadingCommon.ush에 SHADINGMODELID_TOON 등록, Deferred Lighting에서 동작하는 NPR BxDF 구현</li>
-                                    <li><strong>GBuffer Extension</strong> — 반음영, 섀도우 채널 분리, 섀도우 블러, 다중 광원, GI, Fake GI를 커스텀 GBuffer에 매핑</li>
-                                    <li><strong>Post-Process Pipeline</strong> — 3-Band Cel Shading, 2종 Tonemapper(GranTurismo/Custom), Split Bloom/CG</li>
-                                    <li><strong>Lock-Free Concurrency</strong> — TSharedPtr Atomic Swap 기반 5인 모캡 스레드 안전 패턴</li>
-                                </ul>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Architecture</h4>
-                                <pre class="domain-arch">┌──── Custom Render Pipeline ─────┐
-│  Toon Shading Model (BxDF)     │
-│  SDF Face Shadow               │
-│  3-Band Cel + Split Bloom      │
-│  GranTurismo Tonemapper        │
-│  Outline / Rimlight / Alpha    │
-└─────────────────────────────────┘
-        ↓ Engine Source Mod
-  ShadingCommon.ush → GBuffer
-  DeferredLightPixelShaders.usf
-  MaterialTemplate.ush</pre>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Proven In</h4>
-                                <div class="domain-proof-tags">
-                                    <span class="proof-tag">DNABLE — NPR Toon Pipeline</span>
-                                    <span class="proof-tag">XROOM — Core Engine Systems</span>
-                                    <span class="proof-tag">960+ Commits</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Backend -->
-                    <div class="domain-card reveal" data-domain="backend">
-                        <div class="domain-card-header">
-                            <div class="domain-icon backend">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-                            </div>
-                            <div class="domain-card-title">
-                                <h3>Backend</h3>
-                                <span class="domain-card-sub">Server & Infrastructure</span>
-                            </div>
-                            <div class="domain-level">
-                                <span class="domain-level-bar" style="--level: 70%"></span>
-                            </div>
-                        </div>
-                        <div class="domain-card-metrics">
-                            <span class="domain-metric"><strong>AWS</strong> Infra</span>
-                            <span class="domain-metric"><strong>GAS</strong> Serverless</span>
-                            <span class="domain-metric"><strong>3ch</strong> Deploy</span>
-                        </div>
-                        <div class="domain-card-expand-btn">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                            <span>Deep Dive</span>
-                        </div>
-                        <div class="domain-detail">
-                            <div class="domain-detail-section">
-                                <h4>Core Capabilities</h4>
-                                <ul class="domain-detail-list">
-                                    <li><strong>Serverless Backend</strong> — Google Apps Script로 방문자 추적, 메시지 수신, Telegram 알림 전송 구현</li>
-                                    <li><strong>AWS Infrastructure</strong> — EC2, EFS→S3 마이그레이션, CloudFront CDN, SVN 서버 운영</li>
-                                    <li><strong>Version API Server</strong> — Steam/Electron/AWS 3채널 동시 배포를 위한 중앙 버전 관리 서버</li>
-                                    <li><strong>Firebase Auth</strong> — JWT 기반 사용자 인증 + Electron 런처 연동</li>
-                                    <li><strong>FastAPI Dashboard</strong> — 팀 상태 모니터링, Gitflow 시각화, Asset Audit 대시보드</li>
-                                </ul>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Architecture</h4>
-                                <pre class="domain-arch">[Google Apps Script]
-  POST /visit  → Spreadsheet + Telegram
-  POST /message → Email + Telegram
-  GET /count   → Visitor Stats
-
-[AWS Infrastructure]
-  EC2 → SVN Server → EFS/S3 Storage
-  CloudFront → Static CDN
-  Version API → 3-Channel Sync
-
-[FastAPI + NAS]
-  Dashboard → Team Status
-  n8n → Asset Automation
-  Reverse Proxy → Internal Tools</pre>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Proven In</h4>
-                                <div class="domain-proof-tags">
-                                    <span class="proof-tag">XROOM — 3채널 배포 시스템</span>
-                                    <span class="proof-tag">DNABLE — FastAPI 대시보드</span>
-                                    <span class="proof-tag">Portfolio — GAS Serverless</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Frontend -->
-                    <div class="domain-card reveal" data-domain="frontend">
-                        <div class="domain-card-header">
-                            <div class="domain-icon frontend">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                            </div>
-                            <div class="domain-card-title">
-                                <h3>Frontend</h3>
-                                <span class="domain-card-sub">Interactive UI & Visual</span>
-                            </div>
-                            <div class="domain-level">
-                                <span class="domain-level-bar" style="--level: 75%"></span>
-                            </div>
-                        </div>
-                        <div class="domain-card-metrics">
-                            <span class="domain-metric"><strong>React</strong> + Redux</span>
-                            <span class="domain-metric"><strong>Canvas</strong> Particle</span>
-                            <span class="domain-metric"><strong>Three.js</strong> WebGL</span>
-                        </div>
-                        <div class="domain-card-expand-btn">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                            <span>Deep Dive</span>
-                        </div>
-                        <div class="domain-detail">
-                            <div class="domain-detail-section">
-                                <h4>Core Capabilities</h4>
-                                <ul class="domain-detail-list">
-                                    <li><strong>Electron + React/Redux</strong> — IPC 통신, Blob 다운로드, 자동 업데이트, 카드 UI 아키텍처 설계부터 구현</li>
-                                    <li><strong>Canvas Particle System</strong> — 마우스 반응형 파티클 + 접선 궤도 물리 + 그라디언트 연결선 실시간 렌더링</li>
-                                    <li><strong>Three.js / WebGL</strong> — 인터랙티브 3D 홈페이지, WebGL 포토부스 개발</li>
-                                    <li><strong>Modern CSS</strong> — View Transitions API, scroll-driven animation, glassmorphism, 반응형 디자인</li>
-                                </ul>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Architecture</h4>
-                                <pre class="domain-arch">[Electron Launcher]
-  Main Process ← IPC → Renderer (React)
-  Redux Store → Download/Install State
-  Auto-Update → Version API Check
-  ZIP Extract → Delta Patching
-
-[This Portfolio]
-  Canvas Particle Constellation
-  Lock Screen (Wireframe + Aurora)
-  Scroll Reveal + Counter Animation
-  Code Popup on Skill Hover
-  View Transitions API</pre>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Proven In</h4>
-                                <div class="domain-proof-tags">
-                                    <span class="proof-tag">XROOM — Electron 런처</span>
-                                    <span class="proof-tag">SoulX — Three.js 홈페이지</span>
-                                    <span class="proof-tag">Portfolio — Canvas 파티클</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pipeline -->
-                    <div class="domain-card reveal" data-domain="pipeline">
-                        <div class="domain-card-header">
-                            <div class="domain-icon pipeline">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                            </div>
-                            <div class="domain-card-title">
-                                <h3>Pipeline</h3>
-                                <span class="domain-card-sub">DevOps & Team Automation</span>
-                            </div>
-                            <div class="domain-level">
-                                <span class="domain-level-bar" style="--level: 90%"></span>
-                            </div>
-                        </div>
-                        <div class="domain-card-metrics">
-                            <span class="domain-metric"><strong>30</strong>인 조직</span>
-                            <span class="domain-metric"><strong>15+</strong> 동시 배포</span>
-                            <span class="domain-metric"><strong>3</strong> Repo Gitflow</span>
-                        </div>
-                        <div class="domain-card-expand-btn">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                            <span>Deep Dive</span>
-                        </div>
-                        <div class="domain-detail">
-                            <div class="domain-detail-section">
-                                <h4>Core Capabilities</h4>
-                                <ul class="domain-detail-list">
-                                    <li><strong>StudioSetup v2.0</strong> — Python 기반 역할별 자동 셋업(Developer/Character/Level/Viewer), 환경 구축 1~2일 → 30분</li>
-                                    <li><strong>Gitflow Strategy</strong> — Engine/Setup/Project 3개 레포 통합 브랜치 전략 수립 및 운영</li>
-                                    <li><strong>Precompiled Engine Distribution</strong> — 개발자 빌드 → NAS 자동 업로드 → 아티스트 원클릭 동기화</li>
-                                    <li><strong>SVN Hook Control</strong> — 15인 이상 아티스트의 에셋 배포를 훅 기반으로 제어, 직군별 권한 분리</li>
-                                    <li><strong>GitHub Actions CI/CD</strong> — 릴리스 자동화, Steam/Electron/AWS 3채널 동시 배포</li>
-                                </ul>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Architecture</h4>
-                                <pre class="domain-arch">EpicGames/UnrealEngine (upstream)
-    ↓ fork
-VanillaUnrealEngine (5.5)
-    ↓ merge + // Custom Engine markers
-CustomEngine (studio-main → dev → feature/*)
-    ↓ prebuilt binaries → SVN NAS
-StudioProject ← SVN Content (아티스트)
-
-[Role-based Setup]
-  Developer : Git + Source Build
-  Character : SVN + Prebuilt (no maps)
-  Level     : SVN + Prebuilt + Maps
-  Viewer    : SVN + Prebuilt (read-only)</pre>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Proven In</h4>
-                                <div class="domain-proof-tags">
-                                    <span class="proof-tag">DNABLE — 30인 조직 DevOps</span>
-                                    <span class="proof-tag">XROOM — Steam 3채널 배포</span>
-                                    <span class="proof-tag">Portfolio — GitHub Actions CI</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- AI -->
-                    <div class="domain-card reveal" data-domain="ai">
-                        <div class="domain-card-header">
-                            <div class="domain-icon ai">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-                            </div>
-                            <div class="domain-card-title">
-                                <h3>AI</h3>
-                                <span class="domain-card-sub">Automation & Intelligence</span>
-                            </div>
-                            <div class="domain-level">
-                                <span class="domain-level-bar" style="--level: 85%"></span>
-                            </div>
-                        </div>
-                        <div class="domain-card-metrics">
-                            <span class="domain-metric"><strong>28</strong> Claude Cmds</span>
-                            <span class="domain-metric"><strong>3</strong> Repo Rules</span>
-                            <span class="domain-metric"><strong>n8n</strong> Workflows</span>
-                        </div>
-                        <div class="domain-card-expand-btn">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                            <span>Deep Dive</span>
-                        </div>
-                        <div class="domain-detail">
-                            <div class="domain-detail-section">
-                                <h4>Core Capabilities</h4>
-                                <ul class="domain-detail-list">
-                                    <li><strong>Claude Code Integration</strong> — 3개 레포에 CLAUDE.md 규칙 + 28개 슬래시 커맨드로 반복 워크플로우 캡슐화</li>
-                                    <li><strong>/done 원커맨드</strong> — 문서 정리 → 전체 커밋 → Notion 일일보고까지 자동 처리</li>
-                                    <li><strong>n8n Automation Server</strong> — 소품 변형 에셋 파이프라인, Notion API 일일/주간 보고서 자동 생성</li>
-                                    <li><strong>AI Image Pipeline</strong> — ComfyUI + Stable Diffusion을 프로덕션 워크플로우에 통합</li>
-                                    <li><strong>Progressive AI Adoption</strong> — 초기 ChatGPT부터 Claude Code까지, AI 기여 비율을 점진적으로 높여온 경험</li>
-                                </ul>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Workflow</h4>
-                                <pre class="domain-arch">[Claude Code — 28 Slash Commands]
-  /engine-modify → marker + docs update
-  /build         → checkpoint + compile
-  /commit        → convention + staging
-  /done          → docs → commit → Notion
-
-[CLAUDE.md Rules × 3 Repos]
-  Engine  : C++ conventions + marker policy
-  Setup   : Python conventions + role policy
-  Project : BP conventions + asset policy
-
-[n8n Automation]
-  Trigger → ComfyUI → Asset Transform
-  Notion API → Daily/Weekly Report
-  Webhook → Team Notification</pre>
-                            </div>
-                            <div class="domain-detail-section">
-                                <h4>Proven In</h4>
-                                <div class="domain-proof-tags">
-                                    <span class="proof-tag">DNABLE — 28 Claude Commands</span>
-                                    <span class="proof-tag">DNABLE — n8n 자동화 서버</span>
-                                    <span class="proof-tag">200+ 커밋 1인 일관 품질</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div><!-- /expertise-view domain -->
-        </div>
     </section>
 
     <!-- Projects Section -->
@@ -663,12 +360,12 @@ StudioProject ← SVN Content (아티스트)
             <div class="project-card reveal">
                 <div class="project-visual">
                     <div class="project-image-wrap">
-                        <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2616930/header.jpg?t=1736242917" alt="XROOM - Real-time Broadcast Platform" class="project-image" loading="lazy">
+                        <img width="460" height="215" src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2616930/header.jpg?t=1736242917" alt="XROOM - Real-time Broadcast Platform" class="project-image" loading="lazy">
                     </div>
                     <div class="project-gallery">
-                        <img src="images/xroom-arch2.jpg" alt="XROOM 시스템 아키텍처" loading="lazy">
-                        <img src="images/xroom-ai-webrtc.jpg" alt="AI/WebRTC 통합 도식화" loading="lazy">
-                        <img src="images/bci-process.jpg" alt="BCI 뇌파 프로세스 + 결과물" loading="lazy">
+                        <img width="1600" height="3100" src="/images/xroom-arch2.jpg" alt="XROOM 시스템 아키텍처" loading="lazy">
+                        <img width="1600" height="1567" src="/images/xroom-ai-webrtc.jpg" alt="AI/WebRTC 통합 도식화" loading="lazy">
+                        <img width="1600" height="644" src="/images/bci-process.jpg" alt="BCI 뇌파 프로세스 + 결과물" loading="lazy">
                     </div>
                     <div class="project-badge-container">
                         <span class="project-badge">UE 5.3</span>
@@ -736,18 +433,39 @@ StudioProject ← SVN Content (아티스트)
                         <div class="deepdive-content" id="xroom-deepdive">
                             <div class="arch-box">
                                 <div class="arch-label">System Architecture</div>
-                                <pre class="arch-flow">         [Plugin Layer]
-  NDI │ BlackMagic │ FFmpeg │ WebRTC
-                ↓
-          [Engine Core]
-  Scene Manager → Multi-Camera System
-             → Compositor → PostProcess
-                ↓
-          [Output Layer]
-  NDI Send │ Pixel Streaming │ DeckLink
-                ↓
-        [Distribution Layer]
-  Steam │ Electron Launcher │ AWS CDN</pre>
+                                <figure class="arch-svg" aria-label="Broadcast pipeline architecture diagram">
+<svg viewBox="0 0 760 334" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img">
+  <defs>
+    <linearGradient id="bcGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+    <marker id="bcArr" markerWidth="9" markerHeight="9" refX="4.5" refY="4.5" orient="auto"><path d="M1.5,1.5 L7,4.5 L1.5,7.5" fill="none" stroke="#71717a" stroke-width="1.3"/></marker>
+  </defs>
+  <g stroke="#3a3a4a" stroke-width="1.4" marker-end="url(#bcArr)">
+    <line x1="380" y1="72" x2="380" y2="96"/>
+    <line x1="380" y1="154" x2="380" y2="178"/>
+    <line x1="380" y1="236" x2="380" y2="260"/>
+  </g>
+  <g>
+    <rect x="150" y="16" width="460" height="56" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="380" y="40" text-anchor="middle" font-size="13" font-weight="600" fill="url(#bcGrad)">Plugin Layer</text>
+    <text x="380" y="59" text-anchor="middle" font-size="11.5" fill="#a1a1aa">NDI &#183; BlackMagic &#183; FFmpeg &#183; WebRTC</text>
+  </g>
+  <g>
+    <rect x="150" y="98" width="460" height="56" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="380" y="122" text-anchor="middle" font-size="13" font-weight="600" fill="url(#bcGrad)">Engine Core</text>
+    <text x="380" y="141" text-anchor="middle" font-size="11" fill="#a1a1aa">Scene Manager &#8594; Multi-Camera &#8594; Compositor &#8594; PostProcess</text>
+  </g>
+  <g>
+    <rect x="150" y="180" width="460" height="56" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="380" y="204" text-anchor="middle" font-size="13" font-weight="600" fill="url(#bcGrad)">Output Layer</text>
+    <text x="380" y="223" text-anchor="middle" font-size="11.5" fill="#a1a1aa">NDI Send &#183; Pixel Streaming &#183; DeckLink</text>
+  </g>
+  <g>
+    <rect x="150" y="262" width="460" height="56" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="380" y="286" text-anchor="middle" font-size="13" font-weight="600" fill="url(#bcGrad)">Distribution Layer</text>
+    <text x="380" y="305" text-anchor="middle" font-size="11.5" fill="#a1a1aa">Steam &#183; Electron Launcher &#183; AWS CDN</text>
+  </g>
+</svg>
+</figure>
                             </div>
                             <div class="challenges-grid">
                                 <div class="challenge-card">
@@ -793,9 +511,9 @@ StudioProject ← SVN Content (아티스트)
                         <img src="https://cdn.prod.website-files.com/6808b101a54828061a77e046/6895572b2ce457bf59c744af_%EB%B9%84%EA%B7%B8%EB%A6%BF%EC%B8%A0%20%EC%8B%A4%EB%A3%A8%EC%97%A3%2001.jpg" alt="DNABLE 버추얼 아이돌" class="project-image" loading="lazy">
                     </div>
                     <div class="project-gallery">
-                        <img src="images/dnable-dashboard.jpg" alt="Studio Pipeline 대시보드 — Gitflow 시각화 + Asset Audit" loading="lazy">
-                        <img src="images/dnable-debug-ui.jpg" alt="Studio Debug Settings — 엔진 커스텀 디버그 도구" loading="lazy">
-                        <img src="images/dnable-infra.jpg" alt="NAS 리버스 프록시 아키텍처 — 대시보드 + n8n 자동화" loading="lazy">
+                        <img width="1600" height="855" src="/images/dnable-dashboard.jpg" alt="Studio Pipeline 대시보드 — Gitflow 시각화 + Asset Audit" loading="lazy">
+                        <img width="1512" height="911" src="/images/dnable-debug-ui.jpg" alt="Studio Debug Settings — 엔진 커스텀 디버그 도구" loading="lazy">
+                        <img width="1600" height="858" src="/images/dnable-infra.jpg" alt="NAS 리버스 프록시 아키텍처 — 대시보드 + n8n 자동화" loading="lazy">
                     </div>
                     <div class="project-badge-container">
                         <span class="project-badge">UE 5.5</span>
@@ -869,19 +587,51 @@ StudioProject ← SVN Content (아티스트)
                         <div class="deepdive-content" id="dnable-deepdive">
                             <div class="arch-box">
                                 <div class="arch-label">System Architecture</div>
-                                <pre class="arch-flow">[ARKit Face]  [VICON Body x5]
-     └────── LiveLink Hub ──────┘
-                   ↓
-  Facial Remap → Retarget → VRM Character
-                   ↓
- ┌──── Custom Render Pipeline ─────┐
- │  Toon Shading Model (BxDF)     │
- │  SDF Face Shadow               │
- │  3-Band Cel + Split Bloom      │
- │  GranTurismo Tonemapper        │
- └─────────────────────────────────┘
-                   ↓
- NDI 1080p60 │ DeckLink 4ch SDI │ OSC</pre>
+                                <figure class="arch-svg" aria-label="MoCap to render pipeline diagram">
+<svg viewBox="0 0 760 450" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img">
+  <defs>
+    <linearGradient id="mcGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+    <marker id="mcArr" markerWidth="9" markerHeight="9" refX="4.5" refY="4.5" orient="auto"><path d="M1.5,1.5 L7,4.5 L1.5,7.5" fill="none" stroke="#71717a" stroke-width="1.3"/></marker>
+  </defs>
+  <g>
+    <rect x="150" y="16" width="210" height="44" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="255" y="43" text-anchor="middle" font-size="12.5" font-weight="600" fill="#e4e4e7">ARKit Face</text>
+  </g>
+  <g>
+    <rect x="400" y="16" width="210" height="44" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="505" y="43" text-anchor="middle" font-size="12.5" font-weight="600" fill="#e4e4e7">VICON Body &#215;5</text>
+  </g>
+  <g stroke="#3a3a4a" stroke-width="1.4" marker-end="url(#mcArr)">
+    <line x1="255" y1="60" x2="345" y2="94"/>
+    <line x1="505" y1="60" x2="415" y2="94"/>
+    <line x1="380" y1="140" x2="380" y2="164"/>
+    <line x1="380" y1="210" x2="380" y2="234"/>
+    <line x1="380" y1="364" x2="380" y2="388"/>
+  </g>
+  <g>
+    <rect x="255" y="96" width="250" height="44" rx="9" fill="#12121a" stroke="url(#mcGrad)" stroke-width="1.6"/>
+    <text x="380" y="123" text-anchor="middle" font-size="13" font-weight="600" fill="url(#mcGrad)">LiveLink Hub</text>
+  </g>
+  <g>
+    <rect x="150" y="166" width="460" height="44" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="380" y="193" text-anchor="middle" font-size="12" fill="#a1a1aa">Facial Remap &#8594; Retarget &#8594; VRM Character</text>
+  </g>
+  <g>
+    <rect x="150" y="234" width="460" height="130" rx="9" fill="#12121a" stroke="url(#mcGrad)" stroke-width="1.8"/>
+    <text x="380" y="258" text-anchor="middle" font-size="12.5" font-weight="600" fill="url(#mcGrad)">Custom Render Pipeline</text>
+    <g font-size="11.5" fill="#a1a1aa" text-anchor="middle">
+      <text x="380" y="285">Toon Shading Model (BxDF)</text>
+      <text x="380" y="307">SDF Face Shadow</text>
+      <text x="380" y="329">3-Band Cel + Split Bloom</text>
+      <text x="380" y="351">GranTurismo Tonemapper</text>
+    </g>
+  </g>
+  <g>
+    <rect x="150" y="388" width="460" height="44" rx="9" fill="#0d0d14" stroke="#27273a"/>
+    <text x="380" y="415" text-anchor="middle" font-size="12" fill="#a1a1aa">NDI 1080p60 &#183; DeckLink 4ch SDI &#183; OSC</text>
+  </g>
+</svg>
+</figure>
                             </div>
                             <div class="challenges-grid">
                                 <div class="challenge-card">
@@ -915,24 +665,74 @@ StudioProject ← SVN Content (아티스트)
                             </div>
                             <div class="arch-box" style="margin-top: 1.5rem;">
                                 <div class="arch-label">DevOps Pipeline Architecture</div>
-                                <pre class="arch-flow">EpicGames/UnrealEngine (upstream)
-        ↓ fork
-VanillaUnrealEngine (branch: 5.5)
-        ↓ merge + // Custom Engine Start/End 마커
-CustomEngine (branch: studio-main → dev → feature/*)
-        ↓ prebuilt binaries
-        ↓ upload-engine → SVN NAS
-StudioProject ← SVN Content (아티스트)
-        ↓
-[Role-based Setup]
-  Developer : Git clone → Source Build → Register
-  Character : SVN + Prebuilt Engine (no maps)
-  Level     : SVN + Prebuilt Engine + Maps
-  Viewer    : SVN + Prebuilt Engine (read-only)
-
-[AI Automation — 28 Claude Commands]
-  /engine-modify → /build → /commit → /done
-  /done = docs update + commit-all + Notion report</pre>
+                                <figure class="arch-svg" aria-label="DevOps Pipeline Architecture diagram">
+<svg viewBox="0 0 760 560" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" role="img">
+  <defs>
+    <linearGradient id="asGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+    <marker id="asArr" markerWidth="9" markerHeight="9" refX="4.5" refY="4.5" orient="auto">
+      <path d="M1.5,1.5 L7,4.5 L1.5,7.5" fill="none" stroke="#71717a" stroke-width="1.3"/>
+    </marker>
+  </defs>
+  <!-- connectors -->
+  <g stroke="#3a3a4a" stroke-width="1.4" marker-end="url(#asArr)">
+    <line x1="370" y1="62"  x2="370" y2="86"/>
+    <line x1="370" y1="134" x2="370" y2="158"/>
+    <line x1="370" y1="208" x2="370" y2="232"/>
+    <line x1="370" y1="278" x2="370" y2="302"/>
+    <line x1="370" y1="438" x2="370" y2="462"/>
+  </g>
+  <!-- arrow labels -->
+  <g font-size="11" fill="#818cf8">
+    <text x="384" y="78">fork</text>
+    <text x="384" y="150">merge · Custom Engine 마커</text>
+    <text x="384" y="224">prebuilt → SVN NAS</text>
+  </g>
+  <!-- Node A: upstream -->
+  <g>
+    <rect x="200" y="16" width="340" height="46" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="370" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#e4e4e7">EpicGames / UnrealEngine</text>
+    <text x="370" y="54" text-anchor="middle" font-size="11" fill="#71717a">upstream</text>
+  </g>
+  <!-- Node B: vanilla -->
+  <g>
+    <rect x="200" y="88" width="340" height="46" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="370" y="110" text-anchor="middle" font-size="14" font-weight="600" fill="#e4e4e7">VanillaUnrealEngine</text>
+    <text x="370" y="126" text-anchor="middle" font-size="11" fill="#a1a1aa">branch: 5.5</text>
+  </g>
+  <!-- Node C: custom engine (highlight) -->
+  <g>
+    <rect x="200" y="160" width="340" height="48" rx="9" fill="#12121a" stroke="url(#asGrad)" stroke-width="1.8"/>
+    <text x="370" y="183" text-anchor="middle" font-size="14" font-weight="600" fill="#e4e4e7">CustomEngine</text>
+    <text x="370" y="199" text-anchor="middle" font-size="11" fill="#a1a1aa">studio-main → dev → feature/*</text>
+  </g>
+  <!-- Node D: project -->
+  <g>
+    <rect x="200" y="234" width="340" height="44" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="370" y="255" text-anchor="middle" font-size="14" font-weight="600" fill="#e4e4e7">StudioProject</text>
+    <text x="370" y="270" text-anchor="middle" font-size="11" fill="#a1a1aa">← SVN Content (아티스트)</text>
+  </g>
+  <!-- Node E: role-based setup -->
+  <g>
+    <rect x="150" y="304" width="440" height="134" rx="9" fill="#12121a" stroke="#27273a"/>
+    <text x="370" y="326" text-anchor="middle" font-size="12.5" font-weight="600" fill="url(#asGrad)">Role-based Setup</text>
+    <g font-size="11.5">
+      <text x="172" y="352" fill="#818cf8">Developer</text><text x="262" y="352" fill="#a1a1aa">Git clone → Source Build → Register</text>
+      <text x="172" y="376" fill="#818cf8">Character</text><text x="262" y="376" fill="#a1a1aa">SVN + Prebuilt Engine (no maps)</text>
+      <text x="172" y="400" fill="#818cf8">Level</text>    <text x="262" y="400" fill="#a1a1aa">SVN + Prebuilt Engine + Maps</text>
+      <text x="172" y="424" fill="#818cf8">Viewer</text>   <text x="262" y="424" fill="#a1a1aa">SVN + Prebuilt Engine (read-only)</text>
+    </g>
+  </g>
+  <!-- Node F: AI automation -->
+  <g>
+    <rect x="150" y="464" width="440" height="72" rx="9" fill="#0d0d14" stroke="#27273a"/>
+    <text x="370" y="486" text-anchor="middle" font-size="12.5" font-weight="600" fill="url(#asGrad)">AI Automation — 28 Claude Commands</text>
+    <text x="370" y="507" text-anchor="middle" font-size="11" fill="#a1a1aa">/engine-modify → /build → /commit → /done</text>
+    <text x="370" y="524" text-anchor="middle" font-size="11" fill="#71717a">/done = docs update + commit-all + Notion report</text>
+  </g>
+</svg>
+                                </figure>
                             </div>
                         </div>
                     </div>
@@ -980,7 +780,7 @@ StudioProject ← SVN Content (아티스트)
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                     </div>
                     <h3 class="insight-title">왜 Post-Process가 아닌 엔진 소스를 수정했는가</h3>
-                    <img src="images/dnable-cell-shading.jpg" alt="Post-Process vs Engine Source Modification 비교 도식화" class="insight-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/dnable-cell-shading.jpg" alt="Post-Process vs Engine Source Modification 비교 도식화" class="insight-image" loading="lazy">
                     <div class="insight-body">
                         <p>Post-Process Material로도 셀 셰이딩 <em>효과</em>는 낼 수 있다. 하지만 <strong>Deferred Shading의 GBuffer에 커스텀 데이터를 기록할 수 없어</strong>, 조명 모델 자체를 NPR로 전환하는 것은 불가능하다고 판단했다.</p>
                         <p>엔진의 Shading Model을 직접 추가하면 Deferred Lighting 단계에서 NPR BxDF가 동작하여, 모든 라이트 소스에 대해 올바른 셀 셰이딩이 구현되는 편이 낫다고 생각했다. Post-Process 방식 대비 <strong>성능 오버헤드 없이</strong> 정확한 라이팅 결과를 얻을 수 있을 것이라 판단했다.</p>
@@ -1001,7 +801,7 @@ StudioProject ← SVN Content (아티스트)
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     </div>
                     <h3 class="insight-title">프리뷰 vs 송출 — 프로토콜과 하드웨어의 역할 분리</h3>
-                    <img src="images/dnable-ndi-sdi.jpg" alt="NDI vs DeckLink SDI — 프리뷰/송출 역할 분리 도식화" class="insight-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/dnable-ndi-sdi.jpg" alt="NDI vs DeckLink SDI — 프리뷰/송출 역할 분리 도식화" class="insight-image" loading="lazy">
                     <div class="insight-body">
                         <p>실시간 방송 시스템에서 <strong>"모니터링"과 "본방송 송출"은 요구사항이 다르다</strong>고 판단했다. 프리뷰는 유연성과 편의성이 중요하고, 본방송은 프레임 단위의 확실성이 필요하다.</p>
                         <div class="insight-comparison">
@@ -1022,7 +822,7 @@ StudioProject ← SVN Content (아티스트)
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
                     </div>
                     <h3 class="insight-title">실시간 스레드 안전 — Lock vs Lock-Free 패턴</h3>
-                    <img src="images/dnable-thread-safety.jpg" alt="Mutex Lock vs TSharedPtr Atomic Swap — Lock-Free 스냅샷 패턴 비교" class="insight-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/dnable-thread-safety.jpg" alt="Mutex Lock vs TSharedPtr Atomic Swap — Lock-Free 스냅샷 패턴 비교" class="insight-image" loading="lazy">
                     <div class="insight-body">
                         <p>UE5의 GameThread와 AnimationThread는 병렬 실행된다. 5인 모캡 데이터를 공유할 때 <strong>Mutex를 사용하면 한쪽 스레드가 대기</strong>하며 프레임 드롭이 발생할 수 있다고 판단했다.</p>
                         <p><code>TSharedPtr</code>의 Atomic Swap을 활용한 <strong>스냅샷 패턴</strong>이 적합하다고 생각했다. 쓰기 스레드가 새 데이터 객체를 만들고 포인터만 원자적으로 교체하면, 읽기 스레드는 이전 객체를 안전하게 계속 사용한다.</p>
@@ -1043,7 +843,7 @@ StudioProject ← SVN Content (아티스트)
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                     </div>
                     <h3 class="insight-title">왜 프리컴파일 엔진 배포 전략을 설계했는가</h3>
-                    <img src="images/dnable-prebuilt-engine.jpg" alt="프리컴파일 엔진 배포 전략 — 소스 빌드 → NAS → 아티스트 원클릭 동기화" class="insight-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/dnable-prebuilt-engine.jpg" alt="프리컴파일 엔진 배포 전략 — 소스 빌드 → NAS → 아티스트 원클릭 동기화" class="insight-image" loading="lazy">
                     <div class="insight-body">
                         <p>UE5 엔진 소스 빌드는 <strong>고사양 PC에서도 40분 이상</strong> 소요된다. 캐릭터 모델러, 애니메이터 등 아티스트가 엔진을 직접 빌드하는 것은 비현실적이었다.</p>
                         <p>해결책으로 <strong>역할 기반 배포 전략</strong>을 설계했다. 개발자가 커스텀 엔진을 소스에서 빌드하면, 프리컴파일된 바이너리가 SVN NAS로 자동 업로드된다. 아티스트는 <code>SyncPrebuiltEngine</code> 한 번이면 최신 엔진을 받는다.</p>
@@ -1065,7 +865,7 @@ StudioProject ← SVN Content (아티스트)
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
                     </div>
                     <h3 class="insight-title">AI 코딩 자동화 — Claude Code를 팀 워크플로우에 통합한 이유</h3>
-                    <img src="images/dnable-ai-automation.jpg" alt="Claude Code AI 자동화 — CLAUDE.md + 28개 슬래시 커맨드 워크플로우" class="insight-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/dnable-ai-automation.jpg" alt="Claude Code AI 자동화 — CLAUDE.md + 28개 슬래시 커맨드 워크플로우" class="insight-image" loading="lazy">
                     <div class="insight-body">
                         <p>3개 레포(Engine/Setup/Project)에 걸친 작업을 혼자서 관리하려면 <strong>반복 작업을 극도로 줄여야 했다</strong>. CLAUDE.md로 각 레포의 코딩 규칙을 정의하고, 28개 슬래시 커맨드로 반복 워크플로우를 자동화했다.</p>
                         <p><code>/engine-modify</code>는 마커 삽입 + 문서 업데이트를 보장하고, <code>/done</code>은 하루의 마무리(문서 정리 → 전체 커밋 → Notion 일일보고)를 원커맨드로 처리한다. 결과적으로 <strong>200커밋을 1인이 3개 레포에 걸쳐 일관된 품질로</strong> 유지할 수 있었다.</p>
@@ -1135,7 +935,7 @@ StudioProject ← SVN Content (아티스트)
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                     </div>
                     <h3 class="insight-title">XROOM — Viewport 오버로드 기반 실시간 컴포지팅</h3>
-                    <img src="images/xroom-viewport-compositing.jpg" alt="3D Plane Mapping vs 2D Direct Draw — Viewport Overload 컴포지팅" class="insight-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/xroom-viewport-compositing.jpg" alt="3D Plane Mapping vs 2D Direct Draw — Viewport Overload 컴포지팅" class="insight-image" loading="lazy">
                     <div class="insight-body">
                         <p>실시간 합성(Compositing)을 위해 <strong>Viewport를 오버로드하여 전경·렌더·후경을 레이어별로 분리 렌더링</strong>했다. 핵심 문제는 3D Plane에 머티리얼을 매핑하면 해상도 저하가 발생한다는 점이었다.</p>
                         <p>Plane 크기와 정확히 일치하는 위치에 <strong>2D로 직접 드로잉</strong>하여 3D 경유 없이 원본 화질을 유지하는 방식으로 해결했다. 이 경험이 DNABLE에서 후경 렌더링에 그대로 이어졌다 — <strong>미디어 텍스처를 정확하고 향상된 품질로 출력</strong>하고, 추후 스튜디오 맵에서도 동일한 방식으로 동작하도록 확장 가능한 구조를 미리 준비할 수 있었다.</p>
@@ -1156,7 +956,7 @@ StudioProject ← SVN Content (아티스트)
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                     </div>
                     <h3 class="insight-title">DNABLE — Clear Coat 하이잭에서 커스텀 엔진까지</h3>
-                    <img src="images/dnable-clearcoat-custom.jpg" alt="Clear Coat 하이잭 → 커스텀 GBuffer + NPR BxDF 파이프라인" class="insight-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/dnable-clearcoat-custom.jpg" alt="Clear Coat 하이잭 → 커스텀 GBuffer + NPR BxDF 파이프라인" class="insight-image" loading="lazy">
                     <div class="insight-body">
                         <p>시간 제약 속에서 <strong>Clear Coat 채널을 하이잭하여 Toon 렌더링을 먼저 구현</strong>하고, 동시에 엔진 소스를 공부하며 배포 전략을 수립했다. 이후 커스텀 엔진으로 전환하여 필요한 버퍼들을 통합하고 우리만의 셰이딩 파이프라인을 완성했다.</p>
                         <p>상용·오픈소스 커스텀 엔진들을 분석하여 <strong>반음영, 섀도우 채널 분리, 섀도우 블러, 다중 광원, GI, Fake GI</strong>를 구현하고, 추가로 <strong>아웃라인, 림라이트, 반투명</strong>까지 확장했다. 모든 기능을 성능 저하 없이 매핑하여 <strong>실제 송출 테스트까지 완전히 마쳤다</strong>.</p>
@@ -1177,7 +977,7 @@ StudioProject ← SVN Content (아티스트)
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
                     </div>
                     <h3 class="insight-title">공통 — 다중 프로토콜 출력과 XR 스튜디오 경험</h3>
-                    <img src="images/xroom-multi-protocol.jpg" alt="멀티 프로토콜 방송 아키텍처 — SDI/NDI/SRT/WebRTC/OSC 통합" class="insight-image" loading="lazy">
+                    <img width="1408" height="768" src="/images/xroom-multi-protocol.jpg" alt="멀티 프로토콜 방송 아키텍처 — SDI/NDI/SRT/WebRTC/OSC 통합" class="insight-image" loading="lazy">
                     <div class="insight-body">
                         <p>XROOM과 DNABLE 모두에서 최종 출력을 <strong>SDI · NDI · SRT · OSC · WebRTC</strong> 등 다양한 포맷으로 동시에 내보내는 시스템을 구현했다. 각 프로토콜의 특성(지연시간, 대역폭, 동기화 방식)을 이해하고 용도에 맞게 라우팅하는 것이 핵심이었다.</p>
                         <p>이 역량은 XR 스튜디오에서의 실무 경험에서 시작되었다. 가상·실사 합성 환경에서 <strong>카메라 트래킹, 타임코드 동기화, 멀티 채널 송출</strong>을 직접 운용한 경험이 두 프로젝트 모두에서 프로토콜 설계의 기반이 되었다.</p>
@@ -1200,7 +1000,7 @@ StudioProject ← SVN Content (아티스트)
             </div>
             <!-- ── Problem Solving ── -->
             <h3 class="depth-sub-title" style="margin-top: 60px;">Problem Solving</h3>
-            <img src="images/problem-solving-map.jpg" alt="DNABLE · XROOM 문제 해결의 거대한 여정 — 전체 기술 맵" class="section-hero-image" loading="lazy" style="margin-bottom: 2rem;">
+            <img width="1408" height="768" src="/images/problem-solving-map.jpg" alt="DNABLE · XROOM 문제 해결의 거대한 여정 — 전체 기술 맵" class="section-hero-image" loading="lazy" style="margin-bottom: 2rem;">
             <div class="blog-grid" id="blog-grid">
                 <!-- Cards rendered by JS from blogData.js -->
             </div>
@@ -1463,10 +1263,18 @@ StudioProject ← SVN Content (아티스트)
                     <p class="message-form-desc">메시지를 보내시면 Telegram으로 바로 전달됩니다.</p>
                     <form id="contact-form" class="message-form">
                         <div class="form-row">
-                            <input type="text" id="msg-name" class="form-input" placeholder="Name" required>
-                            <input type="email" id="msg-email" class="form-input" placeholder="Email" required>
+                            <label class="sr-only" for="msg-name">Name</label>
+                            <input type="text" id="msg-name" class="form-input" placeholder="Name" autocomplete="name" required>
+                            <label class="sr-only" for="msg-email">Email</label>
+                            <input type="email" id="msg-email" class="form-input" placeholder="Email" autocomplete="email" required>
                         </div>
+                        <label class="sr-only" for="msg-text">Message</label>
                         <textarea id="msg-text" class="form-input form-textarea" placeholder="Message" rows="4" required></textarea>
+                        <!-- Honeypot: 사람에겐 숨김, 봇이 채우면 전송 차단 -->
+                        <div class="hp-field" aria-hidden="true">
+                            <label for="msg-company">Company</label>
+                            <input type="text" id="msg-company" name="company" tabindex="-1" autocomplete="off">
+                        </div>
                         <button type="submit" id="msg-submit" class="lock-btn msg-btn">
                             <span id="msg-btn-text">Send Message</span>
                             <span id="msg-btn-loading" class="msg-loading" style="display:none;">Sending...</span>
@@ -1514,9 +1322,7 @@ StudioProject ← SVN Content (아티스트)
         </div>
     </footer>
 
-    <script src="codeData.js"></script>
-    <script type="module" src="modules/main.js"></script>
-    <!-- Fallback for file:// protocol where ES modules are blocked by CORS -->
-    <script nomodule src="script.js"></script>
+    <!-- Vite entry — modules + data (code-split, lazy) bundled from /src -->
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>

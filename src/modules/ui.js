@@ -2,6 +2,18 @@
 // UI Interactions — Nav, Scroll, Typing, Counters, Popups
 // ============================================
 
+/** Run `loader` once when `target` first nears the viewport (300px margin). */
+function lazyLoadOnView(target, loader) {
+    if (!target) return;
+    const io = new IntersectionObserver((entries, obs) => {
+        if (entries.some(e => e.isIntersecting)) {
+            obs.disconnect();
+            loader();
+        }
+    }, { rootMargin: '300px' });
+    io.observe(target);
+}
+
 /**
  * Initializes all non-canvas UI behaviors:
  * navigation, typing effect, scroll reveal, counters, code popups,
@@ -119,11 +131,15 @@ export function initUI() {
         });
     });
 
-    // --- Code Popup (Skill Hover) ---
-    initCodePopup(observer);
+    // --- Lazy-load heavy data (blogData ~80KB, codeData ~48KB) ---
+    // Defer until each consuming section approaches the viewport, then init.
+    // Vite splits each dynamic import() into its own chunk, so the data is
+    // fetched on demand rather than bundled into the initial payload.
+    lazyLoadOnView(document.getElementById('blog-grid'), () =>
+        import('../data/blogData.js').then(m => initBlogCards(observer, m.blogData)).catch(() => {}));
 
-    // --- Blog Cards ---
-    initBlogCards(observer);
+    lazyLoadOnView(document.getElementById('skills'), () =>
+        import('../data/codeData.js').then(m => initCodePopup(observer, m.codeData)).catch(() => {}));
 
     // --- Deep Dive Toggles ---
     document.querySelectorAll('.deepdive-toggle').forEach(btn => {
@@ -169,9 +185,9 @@ export function initUI() {
 }
 
 // --- Code Popup ---
-function initCodePopup(observer) {
+function initCodePopup(observer, codeData) {
     const popup = document.getElementById('code-popup');
-    if (!popup) return;
+    if (!popup || !codeData) return;
 
     const popupLabel = document.getElementById('code-popup-label');
     const popupLang = document.getElementById('code-popup-lang');
@@ -182,7 +198,6 @@ function initCodePopup(observer) {
     let hideTimeout = null;
 
     function showPopup(el, key) {
-        if (typeof codeData === 'undefined') return;
         const data = codeData[key];
         if (!data) return;
         popupLabel.textContent = data.label;
@@ -229,9 +244,9 @@ function initCodePopup(observer) {
 }
 
 // --- Blog Cards ---
-function initBlogCards(observer) {
+function initBlogCards(observer, blogData) {
     const blogGrid = document.getElementById('blog-grid');
-    if (!blogGrid || typeof blogData === 'undefined') return;
+    if (!blogGrid || !blogData) return;
 
     const FEATURED_COUNT = 3;
     const featured = blogData.slice(0, FEATURED_COUNT);

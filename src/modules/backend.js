@@ -55,12 +55,17 @@ export function initContactForm() {
     const contactForm = document.getElementById('contact-form');
     if (!contactForm) return;
 
+    // Anti-spam: timestamp the form load to reject near-instant bot submits.
+    const formLoadedAt = Date.now();
+    const MIN_FILL_MS = 2000;
+
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const nameInput = document.getElementById('msg-name');
         const emailInput = document.getElementById('msg-email');
         const textInput = document.getElementById('msg-text');
+        const honeypot = document.getElementById('msg-company');
         const submitBtn = document.getElementById('msg-submit');
         const btnText = document.getElementById('msg-btn-text');
         const btnLoading = document.getElementById('msg-btn-loading');
@@ -71,6 +76,15 @@ export function initContactForm() {
         const message = textInput.value.trim();
 
         if (!name || !email || !message) return;
+
+        // Spam gate: honeypot filled, or submitted too fast → silently drop
+        // (optimistic "success" so bots get no signal that they were blocked).
+        if ((honeypot && honeypot.value) || Date.now() - formLoadedAt < MIN_FILL_MS) {
+            statusEl.textContent = 'Message sent successfully!';
+            statusEl.className = 'msg-status success';
+            contactForm.reset();
+            return;
+        }
 
         // Loading state
         submitBtn.disabled = true;

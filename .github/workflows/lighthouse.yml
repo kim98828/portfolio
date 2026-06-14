@@ -19,6 +19,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install & build
+        run: |
+          npm install
+          npm run build
+
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli
 
@@ -28,7 +33,7 @@ jobs:
           {
             "ci": {
               "collect": {
-                "staticDistDir": ".",
+                "staticDistDir": "dist",
                 "url": ["http://localhost/index.html"]
               },
               "assert": {

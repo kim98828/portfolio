@@ -2,11 +2,14 @@
 // Global Configuration & Shared Constants
 // ============================================
 
-/** @type {string} Google Apps Script backend endpoint */
-export const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwjybNykq_dgtRSKpq5eVd2xEplXI0cx92e9Xau7ehIwDmWnYvhiW-rnxxvGU0yYt22Rw/exec';
+/** @type {string} Current environment ('development' | 'production') */
+export const APP_ENV = import.meta.env.VITE_APP_ENV ?? import.meta.env.MODE;
 
-/** @type {string} Pre-computed SHA-256 of the unlock password */
-export const EXPECTED_HASH = 'ab6b0c493017fb5b5195a89d9e235a2cce22e5ce2eb605e3b2b642efa4bd2851';
+/** @type {string} Google Apps Script backend endpoint (per-environment via .env) */
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+/** @type {string} Pre-computed SHA-256 of the unlock password (per-environment via .env) */
+export const EXPECTED_HASH = import.meta.env.VITE_UNLOCK_HASH ?? '';
 
 /** @type {number} Mobile breakpoint in pixels */
 export const MOBILE_BREAKPOINT = 768;

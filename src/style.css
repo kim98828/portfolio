@@ -831,6 +831,20 @@ img {
     white-space: pre;
 }
 
+/* SVG architecture diagram (developed from ASCII arch-flow) */
+.arch-svg {
+    margin: 0;
+    padding: 14px;
+    overflow-x: auto;
+}
+.arch-svg svg {
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+    display: block;
+    margin: 0 auto;
+}
+
 /* Challenges Grid */
 .challenges-grid {
     display: flex;
@@ -3077,5 +3091,100 @@ img {
         justify-content: center;
         font-size: 0.8rem;
         padding: 0.5rem 0.8rem;
+    }
+}
+
+/* Accessibility: visually-hidden label, still read by screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Honeypot field — off-screen, never shown to or focusable by real users */
+.hp-field {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Keyboard accessibility: visible focus ring on interactive elements (WCAG 2.4.7).
+   :focus-visible so mouse clicks don't show the ring, only keyboard navigation. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+.skill-item:focus-visible,
+.blog-card:focus-visible,
+.deepdive-toggle:focus-visible,
+.domain-filter-btn:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--accent-2, #06b6d4);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Print / Save-as-PDF: strip interactive + decorative chrome, force a light,
+   ink-friendly layout so the page itself reads as a one-page resume. */
+@media print {
+    *,
+    *::before,
+    *::after {
+        background: #fff !important;
+        color: #111 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    .nav,
+    .nav-toggle,
+    .scroll-progress,
+    .scroll-indicator,
+    #hero-canvas,
+    .hero-bg,
+    .hero-grid,
+    #code-popup,
+    .hero-cta,
+    .visitor-count-wrap,
+    .message-form-wrap {
+        display: none !important;
+    }
+
+    body {
+        font-size: 11pt;
+        line-height: 1.4;
+    }
+
+    .section,
+    .hero {
+        padding: 12pt 0 !important;
+        page-break-inside: avoid;
+    }
+
+    .blog-card-detail,
+    .deepdive-content,
+    .domain-detail {
+        display: block !important;
+        max-height: none !important;
+    }
+
+    a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: 8pt;
+        color: #555 !important;
+    }
+
+    img {
+        max-width: 100% !important;
+        page-break-inside: avoid;
     }
 }
