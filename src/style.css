@@ -845,6 +845,13 @@ img {
     margin: 0 auto;
 }
 
+/* Blog-card arch trees: render at intrinsic size, never upscale narrow trees */
+.arch-svg svg.arch-tree-svg {
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+}
+
 /* Challenges Grid */
 .challenges-grid {
     display: flex;
