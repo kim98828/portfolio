@@ -2149,23 +2149,6 @@ img {
         display: none;
     }
 
-    /* Lock screen mobile */
-    .lock-container {
-        padding: 24px 20px;
-    }
-
-    .lock-form {
-        flex-direction: column;
-    }
-
-    .lock-input, .lock-btn {
-        width: 100%;
-    }
-
-    .lock-icon-wrap {
-        width: 80px;
-        height: 80px;
-    }
 
     /* Contact grid mobile */
     .contact-grid {
@@ -2334,8 +2317,7 @@ img {
     }
     .hero-cursor { animation: none; }
     .scroll-indicator { animation: none; }
-    .lock-ring { animation: none; }
-    #hero-canvas, #lock-canvas, #radar-canvas { display: none; }
+    #hero-canvas { display: none; }
 }
 
 /* ============================================
