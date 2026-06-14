@@ -25,8 +25,10 @@ ERROR="$STDERR $STDOUT"
 MATCHED=0
 
 # ── 패턴 1: Windows 명령을 bash 에서 실행 ──
-if echo "$ERROR" | grep -qi "command not found"; then
-  CMD_NAME=$(echo "$ERROR" | grep -oiE "command not found: [a-z]+|[a-z]+: command not found" | grep -oiE "dir|type|findstr|del|rmdir|cls|copy|move|nul" | head -1)
+# grep -i 는 한글 줄에서 abort 하므로 사용하지 않는다 (memory: gitbash-grep-i-korean-abort).
+# "command not found" 와 명령어는 케이스 고정 → -i 불필요.
+if echo "$ERROR" | grep -q "command not found"; then
+  CMD_NAME=$(echo "$ERROR" | grep -oE "command not found: [a-z]+|[a-z]+: command not found" | grep -oE "dir|type|findstr|del|rmdir|cls|copy|move|nul" | head -1)
   if [ -n "$CMD_NAME" ]; then
     echo "[Harness] 실패 패턴: Windows 명령 '$CMD_NAME' 을 bash 에서 실행"
     echo "수정: 셸은 bash 입니다. Unix 명령을 쓰세요."
@@ -64,7 +66,7 @@ if echo "$ERROR$STDOUT" | grep -q "nothing to commit"; then
 fi
 
 # ── 패턴 6: gh / 인증 ──
-if echo "$ERROR" | grep -qiE "gh auth|authentication|not logged|HTTP 401|HTTP 403"; then
+if echo "$ERROR" | grep -qE "gh auth|[Aa]uthentication|[Nn]ot logged|HTTP 401|HTTP 403"; then
   echo "[Harness] 실패 패턴: GitHub 인증/권한 문제"
   echo "수정: gh auth status 확인. 로그인 필요 시 사용자에게 '! gh auth login' 안내."
   MATCHED=1

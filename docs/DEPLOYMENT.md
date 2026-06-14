@@ -19,16 +19,23 @@ vite.config.js
 package.json
 ```
 
-## 로컬 개발 (Node 18+ 필요)
+## 로컬 미리보기
 
-> **선결**: 이 PC에 Node가 설치돼 있지 않습니다. https://nodejs.org (LTS) 설치 필수.
+> ⚠️ **`index.html`을 더블클릭(file://)하면 안 됩니다.** Vite는 서버로만 열립니다(절대경로·ES모듈). file://에선 CSS/JS가 다 깨져 보입니다.
+
+**가장 쉬운 방법 — `start-dev.bat` 더블클릭** → `npm install` + dev 서버 실행, 브라우저가 http://localhost:5173 로 자동 오픈. 종료는 창에서 Ctrl+C.
+(이 .bat은 PATH에 npm이 없어도 `C:\Program Files\nodejs\npm.cmd`로 폴백하므로 재부팅 전에도 작동.)
+
+**터미널로 직접** (Node 18+ 필요, 새 터미널 권장 — PATH 갱신 반영):
 
 ```bash
-npm install        # 최초 1회 (package-lock.json 생성됨 — 커밋 권장)
+npm install        # 최초 1회 (package-lock.json 커밋됨)
 npm run dev        # http://localhost:5173  ← file:// 문제 해결
 npm run build      # dist/ 생성 (.env.production 적용)
 npm run preview    # 빌드 결과 로컬 확인 (http://localhost:4173)
 ```
+
+> Node는 `C:\Program Files\nodejs`에 설치돼 있고 User PATH에 등록됨. 기존에 열려있던 터미널엔 안 잡히니 **새 터미널**을 열거나, 안 되면 `start-dev.bat`을 쓰세요.
 
 ## 환경 변수
 
