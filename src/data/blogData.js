@@ -1112,5 +1112,219 @@ Escalation: 🆕 즉시 · 09시 일일 · 금 17시 주간
         solution: 'TypeScript/Node 기반 Stream Deck 커스텀 플러그인 제작. FreeCam 채널 라우팅 + Property Inspector로 버튼별 파라미터 설정. 팔로우캠은 타겟 캐릭터별 색상으로 구분해 시인성 확보. 명시적 ON/OFF 가시성 토글 + 초기 상태 설정. OSC로 UE 엔진에 직접 전송.',
         insight: '방송 현장 UI의 핵심은 "버튼을 보면 무슨 일이 일어날지 안다"이다. 캐릭터별 색상과 명시적 상태 표시가 생방송 중 오조작을 막는다.',
         arch: null
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — Engine
+    // ══════════════════════════════════════
+    {
+        id: 'toon-light-params',
+        tag: 'Rendering',
+        title: 'DNABLE — 광원마다 25개 파라미터를 갖는 톤 라이팅',
+        problem: 'PBR 광원은 세기·색만 있으면 되지만, 셀 셰이딩은 광원별로 셰이딩 경계의 부드러움·오프셋·림라이트·반음영 색을 아티스트가 개별 제어해야 한다. 엔진 기본 라이트 구조로는 이 데이터를 픽셀까지 전달할 방법이 없었다.',
+        solution: 'Directional/Point/Spot/Rect 모든 광원에 25개 톤 파라미터(5개 그룹: 기본 라이팅·셰이딩 형태·FlatNormal 거리·림라이트·페넘브라 틴트)를 추가. LightComponent → ShaderParameters → DeferredLightData → BxDF로 전파. smoothstep 기반 셰이딩 경계, 백페이스 반전 방지(NoL<0 클램프), 17개 Blueprint 세터로 시퀀서 키프레임까지 지원.',
+        insight: '조명을 "물리량"이 아니라 "아트 파라미터"로 재정의하면, 라이팅 아티스트가 프로그래머 없이 광원 하나하나의 셀 룩을 조각할 수 있다. 핵심은 그 25개 값을 렌더 스레드 끝(BxDF)까지 손실 없이 흘려보내는 데이터 배관이다.',
+        arch: `Per-Light Toon Parameters (25)
+├── 기본 라이팅 (4)   — Default/Base Lighting on·intensity
+├── 셰이딩 형태 (4)   — Smooth(0~1), Offset(-1~1), FlatNormal
+├── FlatNormal 거리 (3) — Distance, RangeMode, Offset
+├── 림라이트 (9)      — Intensity, Color, Width, Threshold,
+│                       ScreenSpace/Fresnel Contribute, Exponent
+└── 페넘브라 틴트 (5) — Mode(None/Solid/Ramp), Color, Ramp texture
+      │
+LightComponent → ShaderParameters → DeferredLightData
+             → AreaLight.ToonLight → ToonBxDF (픽셀)`
+    },
+    {
+        id: 'toon-shadow-blur',
+        tag: 'Rendering',
+        title: 'DNABLE — 셀 경계를 부드럽게, sqrt로 대비를 되살린 섀도우 블러',
+        problem: '셀 셰이딩의 딱딱한 그림자 경계(step 함수)를 부드럽게 하려고 가우시안 블러를 걸면, 평균화 때문에 값이 0.5 근처로 뭉쳐 대비가 죽고 흐리멍덩해진다.',
+        solution: '전용 ToonShadow 타깃(R16F 단일 채널)에 다단계 가우시안 블러(Q1~Q5, 3~6 mip 다운샘플)를 적용한 뒤 sqrt()로 중간값 대비를 복원(sqrt(0.5)≈0.71). BO_Min 블렌드로 합성하고, 하드 마스크(ForceShadow/ForceLit)는 블러 이후에 적용해 우선순위를 보장. PPV 게이팅으로 끄면 GPU 비용 0.',
+        insight: '가우시안은 값을 0.5로 수렴시키므로 그대로 쓰면 대비가 사라진다. sqrt 한 번이 평균화된 분포를 다시 밝은 쪽으로 밀어 셀 셰이딩 특유의 대비를 되살린다 — 1080p Q5에서 0.5~1.5ms로 블룸보다 가볍다.',
+        arch: `ToonShadow (R16F) 파이프라인
+1. Clear → (0,0,0,1)  alpha seed (BO_Min용)
+2. Setup → ToonShadow.r 단일 채널
+3. Multi-Stage Gaussian (Q1=3 … Q5=6 stage)
+4. sqrt(blur) → alpha, BO_Min 합성
+5. ShadowOverride: lerp(cel,0,Force) → lerp(_,1,Lit)
+   (하드 마스크가 소프트 경계보다 우선)`
+    },
+    {
+        id: 'toonactor-pivot',
+        tag: 'Rendering',
+        title: 'DNABLE — 16×16 GPU 텍스처로 광원별 얼굴 평탄화 피벗 전파',
+        problem: '캐릭터 얼굴을 평평하게(FlatNormal) 셰이딩하려면 "어느 지점을 기준으로 노멀을 평탄화할지" 피벗이 필요한데, 이 피벗이 캐릭터마다·광원마다 다르다. Directional 광원은 픽셀별 피벗까지 알아야 한다.',
+        solution: 'ToonActorComponent가 씬에 피벗을 등록하면 16×16 RGBA32F 텍스처(픽셀당 피벗 8개)에 컴퓨트 셰이더로 기록. 라이트 패스가 이 텍스처를 샘플해 광원-피벗 거리를 계산하고, RangeMode(Relative/Absolute)로 거리 기반 평탄화 강도를 조절. Directional은 픽셀별 피벗을 RT에 출력해 재사용.',
+        insight: '"어느 캐릭터의 어느 부위를 어느 광원 기준으로 평탄화하나"는 CPU에서 풀면 프레임마다 순회 비용이 든다. 피벗을 GPU 텍스처로 올려 셰이더가 직접 룩업하면, 광원 수·캐릭터 수와 무관하게 상수 비용이 된다.',
+        arch: null
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — Project
+    // ══════════════════════════════════════
+    {
+        id: 'vcam-arkit',
+        tag: 'Camera',
+        title: 'DNABLE — 아이폰 6대를 가상 카메라로: LiveLink VCam 리그',
+        problem: '버추얼 아이돌 라이브에서 감독이 실제 카메라를 들고 움직이듯 가상 카메라를 손으로 조종하고 싶었다. 그것도 6대를 동시에, 각각 다른 조준 방식으로.',
+        solution: 'VCam 카메라 액터가 아이폰 ARKit LiveLink로 실시간 구동되며 기존 넘패드/퀵세이브 카메라 시스템에 통합. 3가지 조준 모드(FollowPhone=폰 방향 그대로 / Selfie=롤 +180° / LookAtTarget=캐릭터 소켓 추적). Tick에서 VCamComponent를 직접 업데이트해 에디터 한계를 우회, PixelStreaming으로 폰 입력을 수신. 프리셋으로 6대 일괄 스폰.',
+        insight: '가상 프로덕션의 몰입은 "손맛"에서 온다. 스마트폰의 ARKit 트래킹을 LiveLink 카메라로 바인딩하면, 전용 짐벌 없이도 6대의 핸드헬드 가상 카메라를 라이브로 운용할 수 있다.',
+        arch: `iPhone ×6 ──ARKit LiveLink──→ VCamComponent
+                                    │
+                          VCam Camera Actor
+                          ├── FollowPhone (폰 방향 raw)
+                          ├── Selfie (Roll +180°)
+                          └── LookAtTarget (캐릭터 소켓 추적)
+                                    │
+              기존 카메라 시스템(NumPad/QuickSave) 통합
+              PixelStreaming ← 폰 입력 수신`
+    },
+    {
+        id: 'mosaic-ndi',
+        tag: 'Broadcast',
+        title: 'DNABLE — 카메라 30대를 단일 NDI로: Mosaic 라운드로빈 컴포지터',
+        problem: '방송 감독이 30대 카메라를 한 화면으로 모니터링하려면, 30개를 개별 캡처·인코딩하는 순간 GPU와 네트워크가 무너진다.',
+        solution: 'Mosaic 컴포지터가 30대를 6×5 그리드(셀당 320×180 = 1920×1080)로 합성해 단일 NDI 스트림으로 송출. 매 프레임 5개 소스만 라운드로빈 갱신(소스당 6fps)해 캡처 부하를 분산. 채널별 색상 오버레이(CH1~4)로 식별, 30대 초과 시 페이지 네비게이션. 개별 스트림 대비 인코딩 부하 1/30, GPU 약 0.7배.',
+        insight: '모니터링은 매 프레임 모든 소스가 최신일 필요가 없다. 라운드로빈으로 프레임당 일부만 갱신하면, 사람 눈에는 충분히 실시간이면서 인코딩 비용은 소스 수에 비례하지 않게 된다.',
+        arch: `30 Cameras → Mosaic Compositor
+├── 6×5 Grid (320×180 cell = 1920×1080)
+├── Round-Robin: 5 sources/frame (소스당 6fps)
+├── Channel Overlay: CH1~4 색상 식별
+├── Paging: 30대 초과 시 페이지 전환
+└── 단일 NDI 출력 (인코딩 부하 1/30, GPU ~0.7×)`
+    },
+    {
+        id: 'prop-variation-csv',
+        tag: 'Tool',
+        title: 'DNABLE — CSV로 굴리는 프롭 배리에이션 2계층 DataTable',
+        problem: '소품 하나에 색·재질·형태 배리에이션이 수십 개씩 붙는다. 이걸 전부 개별 에셋으로 만들면 관리 불가능하고, 아티스트가 언리얼 에디터에서 매번 손으로 세팅하는 것도 비현실적.',
+        solution: '2계층 DataTable 설계 — 마스터(프롭 카탈로그: 기본 메시·배리에이션 테이블 참조·PCG 가중치)와 개별(배리에이션별: 메시·머티리얼·아웃라인·스케일·오프셋·가중치). 아티스트는 CSV만 편집하면 임포트 툴이 DataTable을 생성/갱신(경로·중복·누락 검증). BeginPlay 가중치 랜덤 선택, PCG 스캐터 연동, OSC `/studio/prop/{id}/variation`로 실시간 교체.',
+        insight: '아티스트에게 언리얼 에디터를 열게 하지 말고 CSV를 주면, 데이터 입력 속도가 몇 배 빨라진다. 2계층(카탈로그+배리에이션)으로 나누면 프롭 종류와 배리에이션이 독립적으로 늘어난다.',
+        arch: `DT_Prop_Master (카탈로그)
+├── DisplayName, Category, DefaultMesh
+├── VariationTable ref, VariationCount
+└── PCG: Weight, Tags, Min/MaxScale, AttachBone
+        │
+DT_Prop_<Item> (개별 배리에이션)
+├── V00/V01/… : Mesh, Materials[], Outline[]
+├── ScaleOverride, Offset, Weight
+        │
+CSV 편집 → 임포트 툴(검증) → DataTable 생성
+BeginPlay 가중치 랜덤 · PCG 스캐터 · OSC 실시간 교체`
+    },
+    {
+        id: 'output-profile',
+        tag: 'Broadcast',
+        title: 'DNABLE — 채널마다 해상도·포맷·감마가 다른 Output Profile',
+        problem: 'SDI는 Rec.709 YUV, 디스플레이는 RGB 패스스루, 유튜브 쇼츠는 9:16 세로 — 방송 출력 채널마다 요구 해상도·픽셀 포맷·감마가 전부 다른데, 하나의 렌더 설정으로는 대응할 수 없다.',
+        solution: '채널별 독립 Output Profile — 해상도(HD/QHD/UHD/DCI4K) × 픽셀포맷(RGBA16f HDR / 10bit / 8bit) × 출력종류(SDI_YUV / Display_RGB / NDI_RGB) × 감마모드. SceneCapture가 카메라의 노출·컬러그레이딩·필름커브·비네트를 미러링하고, 프로파일 변경 시 렌더타깃을 자동 재생성(활성 채널 정지→재생성→재시작). 포탈 모드는 전 카메라 롤 +90°로 세로 쇼츠 출력.',
+        insight: '방송 출력은 "하나 만들어 여러 곳에 보내기"가 아니라 "채널마다 다른 규격으로 인코딩하기"다. 채널을 독립 프로파일로 분리하면 SDI·모니터·쇼츠를 동시에, 각자의 정확한 규격으로 뽑을 수 있다.',
+        arch: null
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — DCC / Pipeline
+    // ══════════════════════════════════════
+    {
+        id: 'material-chain',
+        tag: 'Pipeline',
+        title: '3-체인 에셋 아키텍처 — 재사용은 최대로, 얽힘은 제로로',
+        problem: '텍스처→머티리얼→메시로 이어지는 에셋 체인을 자유롭게 공유하게 두면, 배경 에셋이 캐릭터 텍스처를 참조하는 식의 순환·교차 참조가 생겨 유지보수가 지옥이 된다.',
+        solution: '3가지 공유 패턴을 명시적으로 설계 — Independent(1:1:1 전용 소유), Share(하나의 MI를 여러 메시가 참조하는 1:N), Mixed(둘의 혼재). `Share##`를 에셋 타입별 네임스페이스로 스코핑(텍스처 Share01 ≠ 머티리얼 Share01)하고, 공유 범위를 에셋 경계(캐릭터/프롭/배경) 안으로 가둬 교차 참조를 원천 차단. drawio 다이어그램으로 각 패턴의 토폴로지를 시각화.',
+        insight: '재사용과 결합도는 상충한다. 공유를 금지하면 중복이, 방치하면 스파게티가 생긴다. 답은 "공유하되 경계를 넘지 않는" 네임스페이스 규칙 — `Share##`가 관계를 선언하되 에셋 경계를 벗어나지 못하게 하는 것이다.',
+        arch: `3-Chain Patterns (BG/CH/Prop)
+├── Independent (1:1:1)
+│     T_..._Lamp_DIF → MI_..._Lamp → SM_..._Lamp
+├── Share (1:N)
+│     MI_..._Share01 ← Chair, Desk 공유
+└── Mixed (혼재, 多대多 허용)
+      T_Share02 ← 공유 MI + 독립 MI 양쪽
+Share## = 에셋 타입별 네임스페이스 (경계 밖 참조 금지)`
+    },
+    {
+        id: 'filesystem-db',
+        tag: 'DevOps',
+        title: '파일시스템이 곧 데이터베이스 — DB가 죽어도 이력은 산다',
+        problem: '에셋 버전·리테이크 이력을 메타데이터 DB에 의존하면, DB가 손상되거나 마이그레이션 실패 시 프로젝트 전체의 작업 이력이 날아간다.',
+        solution: '디렉토리 구조 자체를 권위 있는 진실로 삼는 설계 — `Revision/vXXX/`에 모든 제출 시도를, `Publish/vXXX/`에 승인 버전만(불변·가산). DCC 파일명에는 버전 토큰을 넣지 않고 디렉토리 카운터가 계보를 관리. 리깅만 예외로 UE `Rig/v00x/`가 퍼블리시 버전을 추종(스켈레탈 에셋은 버전 바인딩이 필요하므로).',
+        insight: '메타데이터는 유실되지만 파일시스템은 남는다. 버전·승인·리테이크를 디렉토리 구조로 인코딩하면, DB 없이도 이력이 복구되고 구조 자체가 "언제 무엇이 승인됐는지"를 스스로 설명한다.',
+        arch: `Asset/Category/Name/Variation/Discipline/
+├── Revision/
+│     ├── v001  (첫 제출)
+│     ├── v002  (리테이크 재제출)
+│     └── v003  … 모든 시도 = KPI 이력
+└── Publish/
+      └── vXXX  (승인본만, 불변·가산)
+DCC 파일명: 버전 토큰 없음 (디렉토리가 계보 관리)
+예외: Rig/v00x/ 만 퍼블리시 버전 추종`
+    },
+    {
+        id: 'task-state-machine',
+        tag: 'Pipeline',
+        title: '9-state 태스크 머신 — 퀄리티와 일정의 결재권을 분리하다',
+        problem: '작업 승인 워크플로우에서 일정 압박이 퀄리티 게이팅을 무너뜨리는 일이 반복됐다. PM이 "일단 통과"를 강제하면 검수가 형식화된다.',
+        solution: '9개 상태(Assign→WIP→Pending→Confirm→Final, +Retake/OnHold/Postpone/Cancel) 머신을 설계하고, 퀄리티 컨펌(디렉터)과 일정 컨펌(PD)의 결재권을 구조적으로 분리 — PM은 Final을 강제할 수 없고 리뷰어 연결만 한다. 상류→하류 Lock/Unlock 게이팅으로 재작업 폭포를 방지, 리테이크 이력(횟수·주체·사유)을 정량 KPI로 축적. 승인/반려는 태스크별 자동생성 Confirm 공간에서만 유효.',
+        insight: '"공간에 없는 결정은 인정되지 않는다" — 문화가 아니라 시스템으로 권한을 강제해야 일정 압박이 퀄리티를 침범하지 못한다. 상태 머신과 결재권 분리가 그 강제 장치다.',
+        arch: `Assign → WIP → Pending(검증) → Confirm → Final
+                          ↑            │
+                      (재검증)      Retake → WIP
+결재권 분리
+├── 퀄리티 컨펌 → Art Director / Director
+├── 일정 컨펌   → PD (포맷 검증만)
+└── PM: Final 강제 불가 (연결·중재만)
+Lock/Unlock: 상류가 하류를 열어줌 (재작업 폭포 차단)`
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — Setup
+    // ══════════════════════════════════════
+    {
+        id: 'pipeline-orchestration',
+        tag: 'DevOps',
+        title: 'StudioSetup — 10단계 역할 라우팅 + 재개형 빌드 오케스트레이션',
+        problem: '엔진 개발자·캐릭터·레벨·뷰어 4개 역할이 각자 다른 도구·저장소·빌드 절차를 필요로 하는데, 신규 인원이 환경을 세팅하다 중간에 실패하면 처음부터 다시 해야 했다.',
+        solution: '00~10 단계 파이프라인을 역할별로 라우팅 — winget으로 사전 도구 자동 설치, 레지스트리 엔진 연결, 역할 전환 시 .svn↔.git 자동 정리. 엔진 빌드는 3-phase(Setup→GenerateProjectFiles→Build) 체크포인트로 중단 지점부터 재개(1~3시간 빌드를 처음부터 다시 안 함). 실패 시 `<FAILED step=01 idx=2 total=8>` 마커를 파싱해 "관리자 권한으로 재실행" 같은 다음 행동을 UI에 주입.',
+        insight: '긴 셋업의 스트레스는 "어디서 실패했고 뭘 해야 하는지 모름"에서 온다. 체크포인트로 재개 가능하게 하고, 실패마다 다음 행동을 명시하면, 셋업이 도박이 아니라 절차가 된다.',
+        arch: `Developer : 00→01→02→03→04→05→06→09 (Git+Build)
+Artist    : 00a→10→05→06s (SVN+Prebuilt)
+       │
+Prereq: winget 자동설치 · 레지스트리 엔진연결
+Build : Setup→GenProjectFiles→Build (3-phase 체크포인트)
+        └ 중단 시 checkpoint.json 에서 재개
+Fail  : <FAILED step=… idx=…> 파싱 → 다음행동 주입`
+    },
+    {
+        id: 'rbac-dashboard',
+        tag: 'Tool',
+        title: 'StudioSetup — 역할 기반 접근제어 파이프라인 대시보드 API',
+        problem: '30인 팀에 파이프라인 실행 권한을 열어주면, 아티스트가 실수로 개발자 전용 빌드 스텝을 돌리거나 같은 작업을 중복 실행해 상태가 꼬인다.',
+        solution: 'FastAPI 대시보드에 역할×스텝 접근 매트릭스를 구현 — 개발자는 00·01~06·08·09·업로드, 아티스트는 00a·10·05·06s 서브셋만. `POST /api/run/{script}`가 사용자 역할을 검사하고 거부 시 감사 로그에 기록. 이미 실행 중이면 409 Conflict(더블클릭 가드, `force=true`로만 강제 종료), IP당 10req/60s 레이트리밋.',
+        insight: '팀 도구의 안정성은 "할 수 있는 것"이 아니라 "할 수 없게 막은 것"에서 온다. 역할 매트릭스로 권한을 게이트하고 중복 실행을 구조적으로 막으면, 사람의 실수가 시스템을 깨뜨리지 못한다.',
+        arch: null
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — AI / Tool
+    // ══════════════════════════════════════
+    {
+        id: 'knowledge-harness',
+        tag: 'Pipeline',
+        title: '자가 유지되는 지식 하네스 — 피드백이 규칙이 되고 문서가 스스로 갱신되는',
+        problem: 'AI로 대규모 코드베이스를 개발하면, 같은 교정을 반복해서 알려줘야 하고 185개 문서·수백 개 클래스의 인덱스는 금세 낡는다. 지식이 사람 머릿속에만 있으면 확장되지 않는다.',
+        solution: '피드백을 신뢰도로 축적하는 루프 — 사용자 교정/확인을 카테고리별(엔진/렌더링/파이프라인/워크플로) 엔트리로 쌓고, 1/5→5/5로 신뢰도가 오르면 CLAUDE.md 규칙으로 자동 승격. 동시에 185개 문서를 자동 인덱싱하고 소스 스캔으로 클래스 목록 문서를 자동 생성해, 지식 베이스가 코드와 함께 스스로 갱신되게 구성.',
+        insight: 'AI 개발의 진짜 자산은 생성된 코드가 아니라 "축적되는 규칙과 최신 상태의 지식 베이스"다. 피드백이 자동으로 규칙이 되고 문서가 스스로 갱신되면, 하네스가 쓸수록 똑똑해진다.',
+        arch: `Feedback Loop
+사용자 교정/확인 → 카테고리 엔트리(신뢰도 1/5)
+   → 반복 확인 → 3/5 (검증자 명단) → 5/5
+   → CLAUDE.md 규칙 자동 승격
+Living Docs
+├── 185 문서 자동 인덱싱
+└── 소스 스캔 → 클래스 목록 문서 자동 생성
+결과: 코드와 함께 스스로 갱신되는 지식 베이스`
+    },
+    {
+        id: 'appsscript-actionlist',
+        tag: 'Tool',
+        title: '"액션 리스트" 시트 엔진 — 해결되면 스스로 사라지는 검증 현황',
+        problem: '팀 에셋 검증 위반을 스프레드시트로 관리하면, 해결된 항목이 계속 쌓여 "지금 봐야 할 게 뭔지"가 묻힌다. 사람이 수동으로 지우면 또 실수한다.',
+        solution: 'Apps Script 멀티파일 웹앱(코어 웹훅·카탈로그·태스크·공통 헬퍼)을 clasp로 GitHub Actions 자동 배포. 검증 소스가 현재 위반 목록을 POST하면 방(카테고리)별 스프레드시트를 자동 생성/갱신하고, 해결된 항목은 다음 동기화 때 행에서 자동 소멸(액션 리스트 패러다임). 헤더 고정·방별 라우팅·익명 POST 지원.',
+        insight: '현황판은 "쌓이는 로그"가 아니라 "지금 할 일 목록"이어야 한다. 해결된 항목이 스스로 사라지게 만들면, 시트를 여는 순간 남은 위반만 보인다 — 관리 비용이 0으로 수렴한다.',
+        arch: null
     }
 ];

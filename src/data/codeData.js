@@ -937,5 +937,77 @@ svn-resolver     → Git 오버레이 충돌 분석 (비수정)
         <span class="code-key">this</span>.osc.<span class="code-fn">send</span>(<span class="code-str">'/studio/overlay/visible'</span>, visible ? <span class="code-num">1</span> : <span class="code-num">0</span>);
     }
 }`
+    },
+    tonemap3: {
+        label: 'DNABLE — 3-Tonemapper Selector',
+        lang: 'HLSL',
+        desc: 'ToneCurveAmount 범위로 Film/GT7 CVM/Khronos PBR Neutral 톤매퍼를 선택. 캐릭터/배경 픽셀별 노출 분리',
+        code: `<span class="code-comment">// ToneCurveAmount 범위로 톤매퍼 3종 분기</span>
+<span class="code-key">float3</span> <span class="code-fn">ApplyToneCurve</span>(<span class="code-key">float3</span> Color, <span class="code-key">float</span> Amount) {
+    <span class="code-key">if</span> (Amount &lt; <span class="code-num">1.0</span>)
+        <span class="code-key">return</span> <span class="code-fn">FilmToneMap</span>(Color);              <span class="code-comment">// 0~1: UE Film</span>
+    <span class="code-key">else if</span> (Amount &lt; <span class="code-num">2.0</span>)
+        <span class="code-key">return</span> <span class="code-fn">GT7_CVM</span>(Color);                 <span class="code-comment">// 1~2: GT7 CVM</span>
+    <span class="code-key">else</span>
+        <span class="code-key">return</span> <span class="code-fn">KhronosPBRNeutral</span>(Color);       <span class="code-comment">// 2~3: PBR Neutral</span>
+}
+
+<span class="code-comment">// GT7 CVM: ICtCp 색공간에서 Chroma 보존</span>
+<span class="code-key">float3</span> <span class="code-fn">GT7_CVM</span>(<span class="code-key">float3</span> RGB) {
+    <span class="code-key">float3</span> ICtCp = <span class="code-fn">RGBtoICtCp</span>(RGB);
+    ICtCp.x = <span class="code-fn">ConvergentShoulderCurve</span>(ICtCp.x);  <span class="code-comment">// 밝기만 압축</span>
+    ICtCp.yz *= <span class="code-fn">ChromaFade</span>(ICtCp.x);            <span class="code-comment">// 하이라이트 채도 페이드</span>
+    <span class="code-key">return</span> <span class="code-fn">ICtCptoRGB</span>(ICtCp);                 <span class="code-comment">// Hue 안정</span>
+}
+
+<span class="code-comment">// 픽셀별 노출 분리 (GBuffer ShadingModelID 판독)</span>
+<span class="code-key">float</span> Exposure = (ShadingModelID == SHADINGMODEL_TOON)
+    ? CharTonemapIntensity : BGTonemapIntensity;`
+    },
+    dolly: {
+        label: 'DNABLE — Dolly Path Waypoint Camera',
+        lang: 'C++',
+        desc: '뷰포트에서 캡처한 웨이포인트를 선형 보간으로 재생하는 카메라 돌리. Loop/PingPong + FOV 보간',
+        code: `<span class="code-type">void</span> <span class="code-type">UDollyPathComponent</span>::<span class="code-fn">CaptureWaypoint</span>() {
+    <span class="code-type">FDollyWaypoint</span> WP;
+    WP.Transform = <span class="code-fn">GetEditorViewportTransform</span>();  <span class="code-comment">// 에디터 카메라 → 웨이포인트</span>
+    WP.FOV = CurrentFOV;
+    <span class="code-fn">Modify</span>();                <span class="code-comment">// Undo 스택 등록</span>
+    Waypoints.<span class="code-fn">Add</span>(WP);
+}
+
+<span class="code-type">void</span> <span class="code-type">UDollyPathComponent</span>::<span class="code-fn">TickPlayback</span>(<span class="code-type">float</span> Dt) {
+    Progress += Dt * PlaybackSpeed / SegmentDuration;
+    <span class="code-key">const</span> <span class="code-type">FDollyWaypoint</span>&amp; A = Waypoints[Index];
+    <span class="code-key">const</span> <span class="code-type">FDollyWaypoint</span>&amp; B = Waypoints[Index + <span class="code-num">1</span>];
+
+    <span class="code-comment">// 위치 Lerp + 회전 Slerp + FOV 보간</span>
+    <span class="code-type">FVector</span> Pos = <span class="code-type">FMath</span>::<span class="code-fn">Lerp</span>(A.Location, B.Location, Progress);
+    <span class="code-type">FQuat</span>  Rot = <span class="code-type">FQuat</span>::<span class="code-fn">Slerp</span>(A.Rotation, B.Rotation, Progress);
+    <span class="code-fn">SetFOV</span>(<span class="code-type">FMath</span>::<span class="code-fn">Lerp</span>(A.FOV, B.FOV, Progress));
+
+    <span class="code-key">if</span> (Progress &gt;= <span class="code-num">1.0f</span>) <span class="code-fn">AdvanceSegment</span>();  <span class="code-comment">// Stop/Loop/PingPong</span>
+}`
+    },
+    channelhijack: {
+        label: 'DNABLE — Toon Texture Channel Hijacking',
+        lang: 'Workflow / HLSL',
+        desc: '파이프라인 호환을 위해 접미사는 그대로 두고, 셰이더에서 Roughness→림라이트 / Specular→하이라이트로 재해석',
+        code: `<span class="code-comment"># 텍스처 접미사는 표준 유지 (파이프라인 호환)</span>
+_DIF  → sRGB ON   (Diffuse, 색 데이터)
+_EMS  → sRGB ON   (Emissive)
+_NOR _ROG _SPC _AO _ORM _MSK → sRGB OFF (데이터)
+
+<span class="code-comment"># 그러나 셰이더 레벨에서 채널을 재해석 (하이재킹)</span>
+_ROG (원래 Roughness)  → <span class="code-key">Rim Light Mask</span>로 사용
+_SPC (원래 Specular)   → <span class="code-key">Highlight Mask</span>로 사용
+_ORM 의 G채널          → Roughness 아님, Rim 데이터
+
+<span class="code-comment">// 셰이더에서 재매핑</span>
+<span class="code-key">half</span> RimMask       = Tex_ROG.<span class="code-fn">Sample</span>(uv).r;  <span class="code-comment">// not roughness</span>
+<span class="code-key">half</span> HighlightMask = Tex_SPC.<span class="code-fn">Sample</span>(uv).r;  <span class="code-comment">// not specular</span>
+
+<span class="code-comment"># 결과: DCC 파이프라인은 표준 PBR 접미사 그대로,</span>
+<span class="code-comment">#       NPR 룩은 셰이더가 채널 의미만 바꿔 구현</span>`
     }
 };
