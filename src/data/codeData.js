@@ -866,5 +866,76 @@ app = FastAPI(title=<span class="code-str">"Studio Dashboard"</span>)
     <span class="code-comment"># Execute pipeline step (00~10)</span>
     result = <span class="code-key">await</span> pipeline.<span class="code-fn">execute</span>(step, user)
     <span class="code-key">return</span> {<span class="code-str">"status"</span>: <span class="code-str">"ok"</span>, <span class="code-str">"log"</span>: result}`
+    },
+    port57: {
+        label: 'DNABLE — UE 5.7 Engine Port Automation',
+        lang: 'Bash / Python',
+        desc: '762개 엔진 수정 마커를 459개 패치로 추출 후 클린 5.7 베이스라인에 3-way 머지로 자동 재적용',
+        code: `<span class="code-comment"># extract_patches.sh — 마커 블록 → 패치 추출</span>
+<span class="code-key">while</span> IFS= read -r file; do
+  <span class="code-comment"># // Custom Engine Start YYYY-MM-DD ~ End 블록 파싱</span>
+  <span class="code-fn">awk</span> '/Custom Engine Start/{f=1} f{print} /Custom Engine End/{f=0}' \\
+    "$file" &gt; "patches/\${file//\\//_}.patch"
+<span class="code-key">done</span> &lt; modified_files.txt   <span class="code-comment"># 158 files → 762 blocks</span>
+
+<span class="code-comment"># apply.py — 3-way 머지 재적용</span>
+<span class="code-key">for</span> patch <span class="code-key">in</span> load_patches():   <span class="code-comment"># 387 marked + 72 orphan</span>
+    result = <span class="code-fn">three_way_merge</span>(base_57, patch.hunk, patch.context)
+    <span class="code-key">if</span> result.clean:
+        applied += <span class="code-num">1</span>       <span class="code-comment"># 98.5% 자동</span>
+    <span class="code-key">else</span>:
+        conflict_queue.<span class="code-fn">append</span>(patch)   <span class="code-comment"># 50 파일 수작업</span>
+
+<span class="code-comment"># 결과: 762 마커 → 459 패치 → 98.5% 자동 재적용</span>
+<span class="code-comment">#       3 파일만 재구현 (IR 시스템 마이그레이션 등)</span>`
+    },
+    harness: {
+        label: 'StudioSetup — Claude Code Production Harness',
+        lang: 'Shell / Markdown',
+        desc: '파일 경로 기반 규칙 라우터 + 엔진 수정 마커 검증 훅. 3개 저장소에 컨텍스트별 규칙 자동 적용',
+        code: `<span class="code-comment"># Context Router — 파일 경로 → 규칙 자동 분기</span>
+CustomEngine/*   → C++ Epic 표준 + 수정 마커 필수
+StudioProject/*  → UE5 프로젝트 규칙 (변수명 축약 금지)
+src/pipeline/*   → Python 파이프라인 규칙
+
+<span class="code-comment"># check-engine-marker.sh (PreToolUse 훅)</span>
+<span class="code-key">if</span> [[ "$FILE" == CustomEngine/Engine/Source/* ]]; <span class="code-key">then</span>
+  <span class="code-key">if</span> ! <span class="code-fn">grep</span> -q "Custom Engine Start $(date +%Y)" "$FILE"; <span class="code-key">then</span>
+    <span class="code-fn">echo</span> "차단: 엔진 수정에는 날짜 마커가 필요합니다" &gt;&amp;2
+    <span class="code-key">exit</span> <span class="code-num">2</span>   <span class="code-comment"># 저장 자체를 막음</span>
+  <span class="code-key">fi</span>
+<span class="code-key">fi</span>
+
+<span class="code-comment"># Custom Sub-Agents (3종)</span>
+engine-reviewer  → 마커 날짜/Epic 표준 감사
+shader-debugger  → 톤 셰이더 채널 격리 진단
+svn-resolver     → Git 오버레이 충돌 분석 (비수정)
+
+<span class="code-comment"># Feedback Loop — 신뢰도 축적 → 자동 승격</span>
+사용자 교정/확인 → confidence +1 → 5/5 → 규칙 승격`
+    },
+    streamdeck: {
+        label: 'DNABLE — Stream Deck Broadcast Plugin',
+        lang: 'TypeScript',
+        desc: 'Stream Deck 물리 버튼으로 UE 4채널 방송 제어. OSC 전송 + Property Inspector + 캐릭터별 팔로우캠 색상',
+        code: `<span class="code-key">class</span> <span class="code-type">CameraSwitchAction</span> <span class="code-key">extends</span> <span class="code-type">SingletonAction</span> {
+    <span class="code-fn">onKeyDown</span>(ev: <span class="code-type">KeyDownEvent</span>&lt;<span class="code-type">Settings</span>&gt;) {
+        <span class="code-key">const</span> { channel, character } = ev.payload.settings;
+
+        <span class="code-comment">// FreeCam 채널 라우팅 → OSC 전송</span>
+        <span class="code-key">this</span>.osc.<span class="code-fn">send</span>(<span class="code-str">\`/studio/channel/\${channel}/source\`</span>, character);
+
+        <span class="code-comment">// 팔로우캠: 타겟 캐릭터별 버튼 색상</span>
+        <span class="code-key">this</span>.<span class="code-fn">setImage</span>(<span class="code-type">CHARACTER_COLORS</span>[character]);
+        <span class="code-key">this</span>.<span class="code-fn">setTitle</span>(<span class="code-str">\`CH\${channel}\\n\${character}\`</span>);
+    }
+
+    <span class="code-comment">// Property Inspector — 버튼별 파라미터 설정</span>
+    <span class="code-fn">onDidReceiveSettings</span>(ev: <span class="code-type">DidReceiveSettingsEvent</span>) {
+        <span class="code-key">const</span> { visible } = ev.payload.settings;
+        <span class="code-comment">// 명시적 ON/OFF 가시성 토글</span>
+        <span class="code-key">this</span>.osc.<span class="code-fn">send</span>(<span class="code-str">'/studio/overlay/visible'</span>, visible ? <span class="code-num">1</span> : <span class="code-num">0</span>);
+    }
+}`
     }
 };

@@ -424,7 +424,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
         arch: `PPT Sequencer
 ├── Slot[N]  — Camera, Visibility, Media, Effects
 ├── Transition — Fade, Dissolve, Camera Shake
-├── Playback  — Auto/Manual, Loop, Duration
+├── Playback  — Auto/수동, Loop, Duration
 └── Integration — Save/Load, Multi-Camera, MediaPlane`
     },
     // ── MediaPlane ──
@@ -720,7 +720,7 @@ FootTiptoeFixComponent
 │   ├── Timecode Sync (LTC/MTC)
 │   └── Failover Testing
 └── Training
-    ├── Operator Manual (현지어)
+    ├── Operator 매뉴얼 (현지어)
     ├── Hands-on Workshop (3일)
     └── Remote Support Channel`
     },
@@ -1005,5 +1005,112 @@ FootTiptoeFixComponent
 └── Media
     ├── P2P (소규모)
     └── SFU 옵션 (대규모)`
+    },
+    // ══════════════════════════════════════
+    // StudioSetup v1.16.x — 최신 개발 동기화
+    // ══════════════════════════════════════
+    // ── Setup ──
+    {
+        id: 'delta-prebuilt',
+        tag: 'DevOps',
+        title: '델타 인코딩 프리빌트 배포 — 100GB 엔진을 변경분만 전송',
+        problem: '100GB 프리컴파일 엔진을 매 업데이트마다 통째로 SVN에 올리면 대역폭·디스크·시간이 폭발한다. 아티스트 30명이 매번 전체를 다시 받아야 하는 구조.',
+        solution: '엔진을 6개 카테고리(Binaries/Plugins/Content/Config/Source/Programs) ZIP으로 나누고, 직전 SVN 스테이징과 SHA-256을 비교해 변경된 파일만 커밋. 업로드 후 스테이징을 자동 정리해 디스크를 회수. 역할 전환 시 .svn↔.git 을 자동 감지·정리하여 혼합 VCS 상태로 빌드가 깨지는 것을 원천 차단.',
+        insight: '대용량 바이너리 배포는 결국 "전체 vs 증분"의 문제다. SHA-256 델타 비교 한 겹이면 100GB 전송이 실제 변경분(대개 수 GB)으로 줄어든다.',
+        arch: null
+    },
+    // ── AI ──
+    {
+        id: 'claude-harness',
+        tag: 'Pipeline',
+        title: '3개 레포를 지휘하는 Claude Code 프로덕션 하네스',
+        problem: '커스텀 엔진 + 프로젝트 + 셋업 3개 저장소를 AI로 개발하면, 파일마다 규칙(엔진=C++ Epic 표준+수정 마커, 프로젝트=UE 규칙, 파이프라인=Python)이 달라 컨텍스트가 섞이는 순간 잘못된 규칙이 적용된다.',
+        solution: '파일 경로 패턴으로 규칙을 자동 분기하는 Context Router. 엔진 소스 수정 시 날짜 마커가 없으면 저장을 차단하는 훅. 커밋 한국어 태그 강제. 커스텀 서브에이전트 3종(엔진 리뷰어 / 셰이더 디버거 / SVN 충돌 분석). 사용자 교정·확인을 신뢰도로 축적해 5/5 도달 시 규칙으로 자동 승격하는 피드백 루프까지 구축.',
+        insight: 'AI 페어 프로그래밍의 확장성은 "모델 성능"이 아니라 "규칙을 코드로 강제하는 하네스"에서 나온다. 훅이 마커 없는 수정을 물리적으로 막으면, 실수가 리뷰가 아니라 저장 시점에 걸린다.',
+        arch: `Context Router (파일 경로 → 규칙 분기)
+CustomEngine/  → C++ Epic 표준 + 수정 마커 훅
+StudioProject/ → UE5 프로젝트 규칙
+src/pipeline/  → Python 규칙
+       │
+Custom Sub-Agents
+├── Engine Reviewer  — 마커 날짜/표준 감사
+├── Shader Debugger  — 톤 셰이더 채널 격리
+└── SVN Resolver     — Git 오버레이 충돌 진단
+       │
+Feedback Loop → 신뢰도 5/5 → 규칙 자동 승격`
+    },
+    // ── Engine ──
+    {
+        id: 'engine-57-port',
+        tag: 'Rendering',
+        title: 'UE 5.7 엔진 포팅 — 762개 수정 마커를 459개 패치로 자동 재적용',
+        problem: '2년간 5.5.4 커스텀 엔진에 누적된 762개의 // Custom Engine 마커(158개 파일). 엔진 메이저 업그레이드 때 이걸 수작업으로 재적용하면 수 주가 걸리고 누락 위험이 크다.',
+        solution: '마커 블록을 파서로 추출해 459개 패치(387 marked block + 72 orphan hunk)로 분해. 클린 5.7 베이스라인에 3-way 머지로 재적용하여 98.5% 자동화. 충돌 50개 파일만 수작업, IR 시스템 마이그레이션 등 3개 파일만 재구현.',
+        insight: '엔진 포크의 진짜 자산은 코드가 아니라 "무엇을 왜 바꿨는지"의 메타데이터다. 마커+레지스트리를 규율로 강제하면 메이저 업그레이드가 고고학이 아니라 패치 재적용 문제로 바뀐다.',
+        arch: `762 마커 블록 (158 파일, 5.5.4 base)
+    → 파서 추출 → 459 패치
+        ├── 387 marked_blocks
+        └── 72 orphan_hunks
+    → 클린 5.7 베이스라인 3-way 머지
+        ├── 98.5% 자동 재적용
+        ├── 50 파일 수작업 충돌 해결
+        └── 3 파일 재구현 (IR 마이그레이션 등)`
+    },
+    // ── Project ──
+    {
+        id: 'broadcast-ready',
+        tag: 'Broadcast',
+        title: '방송 준비 검사 — 생방송 직전 5개 카테고리 프리플라이트 + 원클릭 수정',
+        problem: '라이브 방송 직전 카메라 커버리지·조명·캐릭터 상태·오디오 싱크·오버레이 중 하나만 빠져도 사고로 이어진다. 사람이 체크리스트로 확인하면 반드시 놓친다.',
+        solution: 'BroadcastReadyConfig 구조체 기반 5개 카테고리 자동 프리플라이트. 실패 항목을 원클릭 "Fix All"로 자동 보정. 이전 방송에서 실패했던 항목의 리그레션 감지. 방송용 GameMode Override를 필수 전제로 강제해 잘못된 초기화 자체를 차단.',
+        insight: '생방송은 되돌릴 수 없으므로 "검사"보다 "자동 교정"이 답이다. 체크만 하면 여전히 사람이 고쳐야 하지만, 검사가 곧 수정을 트리거하면 실수 표면이 사라진다.',
+        arch: null
+    },
+    {
+        id: 'cuesheet-notion',
+        tag: 'Broadcast',
+        title: 'Notion 큐시트 ↔ 언리얼 양방향 — 기획 문서가 곧 방송 씬 세팅',
+        problem: '방송 큐시트(씬 순서·캐릭터·소품·타이밍)를 기획자는 Notion에서 관리하지만, 엔진에서는 매번 수작업으로 씬을 다시 세팅한다. 큐가 바뀌면 동기화 누락이 잦다.',
+        solution: 'Notion 큐시트/런다운 테이블을 파싱(씬명·배경·캐릭터·소품·큐 순서·타이밍)해 대시보드→엔진 페이로드로 전달. 씬·카메라 바인딩이 자동 적용되고 대시보드에 라이브 큐 상태가 표시된다.',
+        insight: '기획 도구를 SSOT(단일 진실 원천)로 삼으면 "문서와 실제 세팅의 불일치"가 구조적으로 사라진다. 사람이 두 번 입력하지 않는 파이프라인이 현장 사고를 가장 많이 줄인다.',
+        arch: null
+    },
+    // ── DCC ──
+    {
+        id: 'dcc-retarget-sop',
+        tag: 'MoCap',
+        title: '모캡 리타겟 세션 자동화 + 소품 타입 분리 — DCC와 엔진 사이의 규율',
+        problem: 'VICON/iPhone 모캡을 MotionBuilder에서 UE 스켈레톤으로 리타겟하는 작업이 매번 수작업이었다. 소품 리깅·머티리얼 규칙도 아티스트마다 제각각.',
+        solution: 'MotionBuilder 세션 자동화(fbx_import → characterize → retarget → session 영속화)로 리타겟 파이프라인을 정형화. 소품은 RTG(리그드·모캡 구동)/CTR(정적 지오메트리) 타입으로 분리해 리깅·머티리얼 LOD 규칙을 차등 적용. Substance Painter 텍스처는 엔진 톤매퍼와 매칭되는 리니어로 익스포트.',
+        insight: 'DCC 자동화의 핵심은 "아티스트가 엔진 규칙을 몰라도 되게" 만드는 것이다. 리타겟 세션을 영속화하면 5명분 모캡 셋업이 클릭 한 번으로 끝난다.',
+        arch: null
+    },
+    // ── Tool ──
+    {
+        id: 'asset-validation',
+        tag: 'Pipeline',
+        title: '에셋 검증 시스템 — 3소스 자동 감사와 리더보드 거버넌스',
+        problem: '30인 팀의 에셋 규칙 위반(네이밍·경로·포맷)을 사람이 리뷰하면 놓치고, 지적하면 감정 소모가 생긴다. 위반이 방치되면 빌드가 깨진다.',
+        solution: 'SVN 커밋 훅 + NAS 30분 스캔 + 엔진 에셋 감사 3개 소스가 위반을 탐지. 카테고리별(캐릭터·소품·배경·시네마틱) Google Chat 방으로 라우팅. 즉시/일일/주간 알림 + 7일 경고·14일 위험 에스컬레이션. 주간 해결 리더보드로 수정을 독려하고 위반 0 도달 시 축하. Google Sheets 백엔드 + Apps Script 웹앱을 clasp로 자동 배포.',
+        insight: '팀 거버넌스에서 "지적"은 감정을 만들지만 "리더보드"는 동기를 만든다. 자동 탐지가 사람을 대신하고 게임화가 규칙 준수를 자발적으로 만든다.',
+        arch: `3 Validation Sources
+├── SVN post-commit hook → 경로/네이밍 규칙 검사
+├── NAS 스캔 (30분, 평일 09-18) → 신규/해결 비교
+└── 엔진 에셋 감사 → 리더보드
+        │
+Category Routing → Google Chat 방
+├── 캐릭터 / 소품·배경 / 개발 / 시네마틱
+        │
+Escalation: 🆕 즉시 · 09시 일일 · 금 17시 주간
+            ⚠️ 7일 · 🚨 14일 · 🎉 위반 0`
+    },
+    {
+        id: 'streamdeck-plugin',
+        tag: 'Broadcast',
+        title: 'Stream Deck 커스텀 플러그인 — 물리 버튼으로 4채널 방송 지휘',
+        problem: '라이브 방송 디렉터가 카메라 전환·캐릭터별 팔로우캠·가시성 토글을 키보드로 조작하면 느리고 실수한다. 어떤 버튼이 어떤 채널인지 시각 피드백이 없다.',
+        solution: 'TypeScript/Node 기반 Stream Deck 커스텀 플러그인 제작. FreeCam 채널 라우팅 + Property Inspector로 버튼별 파라미터 설정. 팔로우캠은 타겟 캐릭터별 색상으로 구분해 시인성 확보. 명시적 ON/OFF 가시성 토글 + 초기 상태 설정. OSC로 UE 엔진에 직접 전송.',
+        insight: '방송 현장 UI의 핵심은 "버튼을 보면 무슨 일이 일어날지 안다"이다. 캐릭터별 색상과 명시적 상태 표시가 생방송 중 오조작을 막는다.',
+        arch: null
     }
 ];
