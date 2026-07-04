@@ -1009,5 +1009,33 @@ _ORM 의 G채널          → Roughness 아님, Rim 데이터
 
 <span class="code-comment"># 결과: DCC 파이프라인은 표준 PBR 접미사 그대로,</span>
 <span class="code-comment">#       NPR 룩은 셰이더가 채널 의미만 바꿔 구현</span>`
+    },
+    dccplugin: {
+        label: 'DNABLE — MotionBuilder Retarget Plugin',
+        lang: 'Python',
+        desc: 'MotionBuilder Python 플러그인 — 리타겟 세션 자동화. FBX 임포트부터 Control Rig plot·익스포트까지 원클릭',
+        code: `<span class="code-key">from</span> pyfbsdk <span class="code-key">import</span> *
+
+<span class="code-key">def</span> <span class="code-fn">auto_retarget</span>(source_fbx, target_char):
+    <span class="code-comment"># 1) 모캡 FBX 임포트</span>
+    <span class="code-fn">FBApplication</span>().<span class="code-fn">FileImport</span>(source_fbx, <span class="code-key">True</span>)
+
+    <span class="code-comment"># 2) Characterize — 본 매핑 표준화</span>
+    actor = <span class="code-fn">characterize_source</span>()      <span class="code-comment"># VICON/ARKit 스켈레톤</span>
+    target = <span class="code-fn">get_character</span>(target_char)  <span class="code-comment"># VRM 캐릭터</span>
+
+    <span class="code-comment"># 3) 리타겟 바인딩 + IK 블렌드</span>
+    target.InputCharacter = actor
+    target.InputActive = <span class="code-key">True</span>
+    <span class="code-fn">apply_retarget_settings</span>(target,
+        reach=<span class="code-num">1.0</span>, stiffness=<span class="code-num">0.3</span>, ik_blend=<span class="code-num">0.8</span>)
+
+    <span class="code-comment"># 4) Control Rig 로 plot → FBX 익스포트</span>
+    <span class="code-fn">plot_to_control_rig</span>(target)
+    <span class="code-fn">export_fbx</span>(target, <span class="code-str">"UE_LiveLink"</span>)
+
+<span class="code-comment"># SOP 강제: 네이밍/유닛/축 검증 후에만 익스포트</span>
+<span class="code-key">if</span> <span class="code-fn">validate_sop</span>(target):
+    <span class="code-fn">auto_retarget</span>(src, char)`
     }
 };

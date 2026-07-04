@@ -1326,5 +1326,25 @@ Living Docs
         solution: 'Apps Script 멀티파일 웹앱(코어 웹훅·카탈로그·태스크·공통 헬퍼)을 clasp로 GitHub Actions 자동 배포. 검증 소스가 현재 위반 목록을 POST하면 방(카테고리)별 스프레드시트를 자동 생성/갱신하고, 해결된 항목은 다음 동기화 때 행에서 자동 소멸(액션 리스트 패러다임). 헤더 고정·방별 라우팅·익명 POST 지원.',
         insight: '현황판은 "쌓이는 로그"가 아니라 "지금 할 일 목록"이어야 한다. 해결된 항목이 스스로 사라지게 만들면, 시트를 여는 순간 남은 위반만 보인다 — 관리 비용이 0으로 수렴한다.',
         arch: null
+    },
+    // ── DCC 플러그인 개발 (Pipeline TD) ──
+    {
+        id: 'dcc-plugins',
+        tag: 'Tool',
+        title: 'DCC 전 툴을 잇는 커스텀 플러그인 — MotionBuilder·Substance·Maya·Unreal',
+        problem: '모캡·서페이싱·모델링·엔진이 각각 다른 DCC 툴을 쓰는데, 툴 사이 데이터가 수작업으로 오가면 실수와 병목이 생긴다. 상용 플러그인은 스튜디오 고유 SOP에 맞지 않는다.',
+        solution: '각 DCC 툴에 맞는 커스텀 플러그인을 직접 제작해 파이프라인을 관통시켰다 — MotionBuilder Python 플러그인(리타겟 세션 자동화: fbx import → characterize → retarget → plot → export), Substance Painter 플러그인(엔진 톤매퍼와 매칭되는 리니어 뷰포트 프리뷰 + 채널 자동 익스포트), Maya 툴(네이밍·유닛·피벗 SOP 검증 + 배치 익스포트), Unreal Python(캐릭터 배치 리임포트 + LiveLink 본 트랜스폼 진단 리스너). 각 플러그인이 스튜디오 SOP를 코드로 강제한다.',
+        insight: '파이프라인 TD의 핵심은 "아티스트가 규칙을 외우지 않아도 되게" 만드는 것이다. 각 DCC 툴 안에 플러그인을 심어 SOP를 자동 검증·자동 변환하면, 툴 경계를 넘는 데이터가 사람 손을 거치지 않는다 — 그게 플러그인을 사서 쓰지 않고 직접 만드는 이유다.',
+        arch: `Cross-Tool Plugin Layer (직접 제작)
+├── MotionBuilder (Python)
+│     리타겟 세션: import → characterize → retarget → plot
+├── Substance Painter (Plugin)
+│     엔진 톤매퍼 매칭 리니어 프리뷰 + 채널 자동 익스포트
+├── Maya (Tool)
+│     네이밍·유닛·피벗 SOP 검증 + 배치 익스포트
+└── Unreal (Python)
+      캐릭터 배치 리임포트 + LiveLink 본 진단 리스너
+            │
+      모든 플러그인이 SOP를 코드로 강제 → 툴 경계 무손실`
     }
 ];
