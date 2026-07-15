@@ -29,3 +29,6 @@ dist/
 .claude/sync/anonymize-map.tsv
 .claude/sync/source.txt
 __tmp_*
+
+# 이미지 교체 백업 (replace-image.mjs)
+.image-backup/
