@@ -253,16 +253,27 @@ function initCodePopup(observer, codeData) {
     });
 }
 
-// --- Blog Cards ---
+// --- Blog Cards (role-lens aware) ---
 function initBlogCards(observer, blogData) {
     const blogGrid = document.getElementById('blog-grid');
     if (!blogGrid || !blogData) return;
 
     const FEATURED_COUNT = 3;
-    const featured = blogData.slice(0, FEATURED_COUNT);
-    const rest = blogData.slice(FEATURED_COUNT);
+    const parent = blogGrid.parentElement;
+    const lensFilter = document.getElementById('blog-lens-filter');
 
-    blogGrid.innerHTML = featured.map(card => `
+    const cardsForLens = (lens) => {
+        if (lens === 'all') return blogData;
+        const match = blogData.filter(c => Array.isArray(c.domains) && c.domains.includes(lens));
+        // Cards whose PRIMARY domain is the lens lead (stable), so each lens
+        // surfaces its most representative work before secondary-tagged cards.
+        return [
+            ...match.filter(c => c.domains[0] === lens),
+            ...match.filter(c => c.domains[0] !== lens),
+        ];
+    };
+
+    const featuredHTML = (card) => `
         <div class="blog-card reveal" data-tag="${card.tag}" data-id="${card.id}">
             <div class="blog-card-header">
                 <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
@@ -281,45 +292,79 @@ function initBlogCards(observer, blogData) {
                 ${card.arch ? `<div class="blog-detail-label">Architecture</div>${renderArch(card.arch)}` : ''}
             </div>
         </div>
-    `).join('');
+    `;
 
-    blogGrid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    // reveal: on initial load animate via observer; on lens switch show immediately (already in view)
+    function reveal(el, immediate) {
+        if (immediate) el.classList.add('visible');
+        else observer.observe(el);
+    }
 
-    if (rest.length > 0) {
-        const listEl = document.createElement('div');
-        listEl.className = 'blog-preview-list reveal';
-        listEl.innerHTML = `
-            <div class="blog-preview-header">
-                <span class="blog-preview-plus">+${rest.length}</span>
-                <span>more Problem Solving cards</span>
-            </div>
-            <div class="blog-preview-grid">
-                ${rest.map(card => `
-                    <div class="blog-preview-item">
-                        <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
-                        <span class="blog-preview-title">${card.title}</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-        blogGrid.parentElement.appendChild(listEl);
-        observer.observe(listEl);
+    function render(lens, immediate) {
+        // clear previously appended siblings from an earlier render
+        parent.querySelectorAll('.blog-preview-list, .blog-cta-overlay').forEach(el => el.remove());
 
+        const pool = cardsForLens(lens);
+        const featured = pool.slice(0, FEATURED_COUNT);
+        const rest = pool.slice(FEATURED_COUNT);
+
+        blogGrid.innerHTML = featured.map(featuredHTML).join('');
+        blogGrid.querySelectorAll('.reveal').forEach(el => reveal(el, immediate));
+
+        if (rest.length > 0) {
+            const listEl = document.createElement('div');
+            listEl.className = 'blog-preview-list reveal';
+            listEl.innerHTML = `
+                <div class="blog-preview-header">
+                    <span class="blog-preview-plus">+${rest.length}</span>
+                    <span>more Problem Solving cards</span>
+                </div>
+                <div class="blog-preview-grid">
+                    ${rest.map(card => `
+                        <div class="blog-preview-item">
+                            <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
+                            <span class="blog-preview-title">${card.title}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            parent.appendChild(listEl);
+            reveal(listEl, immediate);
+        }
+
+        const total = pool.length;
+        const countText = (lens === 'all')
+            ? `총 ${total}개의 Problem Solving 카드`
+            : `이 렌즈에 해당하는 ${total}개 카드`;
         const cta = document.createElement('div');
         cta.className = 'blog-cta-overlay reveal';
         cta.innerHTML = `
             <div class="blog-cta-content">
-                <p class="blog-cta-count">총 ${blogData.length}개의 Problem Solving 카드</p>
+                <p class="blog-cta-count">${countText}</p>
                 <p class="blog-cta-text">상세 내용이 궁금하시면 연락해주세요</p>
                 <a href="#contact" class="btn btn-primary blog-cta-btn">Contact Me</a>
             </div>
         `;
-        blogGrid.parentElement.appendChild(cta);
-        observer.observe(cta);
+        parent.appendChild(cta);
+        reveal(cta, immediate);
     }
 
+    if (lensFilter) {
+        const buttons = lensFilter.querySelectorAll('.domain-filter-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                render(btn.dataset.lens, true);
+            });
+        });
+    }
+
+    // delegated expand toggle (attached once — blogGrid persists across re-renders)
     blogGrid.addEventListener('click', (e) => {
         const card = e.target.closest('.blog-card');
         if (card) card.classList.toggle('expanded');
     });
+
+    render('all', false);
 }

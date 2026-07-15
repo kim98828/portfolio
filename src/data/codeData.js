@@ -325,30 +325,47 @@ Web Frontend/Backend 풀스택`
   UE5 Material Import`
     },
     n8n: {
-        label: 'DNABLE — Automation Pipeline',
+        label: 'DNABLE — n8n Pipeline Orchestration',
         lang: 'Workflow',
-        desc: 'n8n 기반 자동화 워크플로우. 빌드 알림, 에셋 동기화, 슬랙 연동',
-        code: `<span class="code-comment">// n8n Automation Workflows</span>
+        desc: 'n8n 웹훅 기반 에셋 생산 자동화 — 요청 폼 접수, 폴더 생성, 컨펌 제출, 검증 게이트, 위반 알림',
+        code: `<span class="code-comment">// n8n Asset Pipeline Workflows</span>
 
-<span class="code-comment">[1] Build Notification</span>
-UE5 Build Complete
-  → Webhook Trigger
-  → Parse Build Log
-  → Telegram/Slack Alert
-  → Google Sheets Log
+<span class="code-comment">[1] 에셋 요청 폼</span>
+Custom HTML Form → Webhook 접수
+  → 유형 분기 (신규 / 의상 / 배경 / 소품)
+  → Notion 인벤토리 DB upsert
 
-<span class="code-comment">[2] Asset Sync</span>
-Google Drive Watch
-  → New Asset Detected
-  → Download + Convert
-  → Git Commit + Push
-  → Team Notification
+<span class="code-comment">[2] 작업 시작 → 폴더 생성</span>
+Start 버튼 → teamserver API
+  → NAS SOP 폴더 트리 생성 (category/variation)
+  → 자가복구 배포 (수동 chmod 불요)
 
-<span class="code-comment">[3] Daily Report</span>
-Cron (09:00 KST)
-  → GitHub API (commits)
-  → Jira API (tickets)
-  → Summary → Slack Channel`
+<span class="code-comment">[3] 컨펌 제출 + 검증 게이트</span>
+Confirm Form (이미지 업로드)
+  → 검증: 누락 · SOP 위반 검사
+  → 위반 시 제출 차단 / 통과 시 관리자 알림
+
+<span class="code-comment">[4] 위반 알림</span>
+SVN post-commit → 경로 룰 검사
+  → 파트별 구글챗 방 라우팅
+  → 신규 / 재발 / 해결 · 방치 에스컬레이션`
+    },
+    reconcile: {
+        label: 'DNABLE — Engine Reconcile (svnlook)',
+        lang: 'Python / PHP',
+        desc: 'svnlook으로 워킹카피 없이 저장소 트리를 읽어 카탈로그의 엔진 반영 상태를 자동 대조',
+        code: `<span class="code-comment"># teamserver (PHP) — svn_content 액션</span>
+<span class="code-key">svnlook</span> tree &lt;repo&gt;/Content/&lt;Category&gt;
+  → { category: { asset: [variations] } }   <span class="code-comment"># 인증·WC 불요</span>
+
+<span class="code-comment"># notion_catalog.run_reconcile (Python)</span>
+<span class="code-key">for</span> asset <span class="code-key">in</span> catalog:
+    reflected = asset.code <span class="code-key">in</span> svn_tree
+    <span class="code-fn">set_column</span>(asset, <span class="code-str">"엔진 반영"</span>, reflected)
+
+<span class="code-comment"># 안전장치: 조회 실패 시 컬럼 미변경 (전량 미반영 오탐 방지)</span>
+<span class="code-key">if</span> svn_tree <span class="code-key">is</span> <span class="code-key">None</span>:
+    <span class="code-fn">skip</span>()   <span class="code-comment"># 판별 보류</span>`
     },
     react: {
         label: 'SoulxHomePage — Company Website',
@@ -870,7 +887,7 @@ app = FastAPI(title=<span class="code-str">"Studio Dashboard"</span>)
     port57: {
         label: 'DNABLE — UE 5.7 Engine Port Automation',
         lang: 'Bash / Python',
-        desc: '762개 엔진 수정 마커를 459개 패치로 추출 후 클린 5.7 베이스라인에 3-way 머지로 자동 재적용',
+        desc: '762개 엔진 수정 마커를 459개 패치로 추출 후 클린 5.7 베이스라인에 3-way 머지로 자동 재적용. 직접 구축한 Claude Code 하네스 + AI로 포팅+디버깅 약 1주 완료',
         code: `<span class="code-comment"># extract_patches.sh — 마커 블록 → 패치 추출</span>
 <span class="code-key">while</span> IFS= read -r file; do
   <span class="code-comment"># // Custom Engine Start YYYY-MM-DD ~ End 블록 파싱</span>
@@ -887,7 +904,8 @@ app = FastAPI(title=<span class="code-str">"Studio Dashboard"</span>)
         conflict_queue.<span class="code-fn">append</span>(patch)   <span class="code-comment"># 50 파일 수작업</span>
 
 <span class="code-comment"># 결과: 762 마커 → 459 패치 → 98.5% 자동 재적용</span>
-<span class="code-comment">#       3 파일만 재구현 (IR 시스템 마이그레이션 등)</span>`
+<span class="code-comment">#       3 파일만 재구현 (IR 시스템 마이그레이션 등)</span>
+<span class="code-comment"># AI 시스템 + 자체 하네스 합작 — 포팅+디버깅+빌드 안정화 약 1주</span>`
     },
     harness: {
         label: 'StudioSetup — Claude Code Production Harness',

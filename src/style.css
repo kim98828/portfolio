@@ -2365,6 +2365,20 @@ img {
 .domain-filter-btn[data-filter="pipeline"].active { background: rgba(6,182,212,0.12); border-color: #06b6d4; color: #06b6d4; }
 .domain-filter-btn[data-filter="ai"].active { background: rgba(236,72,153,0.12); border-color: #ec4899; color: #ec4899; }
 
+/* Blog role-lens selector */
+.blog-lens-label {
+    color: var(--text-tertiary, var(--text-secondary));
+    font-size: 0.85rem;
+    margin: 0 0 0.75rem;
+}
+.blog-lens { margin-bottom: 1.5rem; }
+.domain-filter-btn[data-lens="engine"].active { background: rgba(245,158,11,0.12); border-color: #f59e0b; color: #f59e0b; }
+.domain-filter-btn[data-lens="ta"].active { background: rgba(139,92,246,0.12); border-color: #8b5cf6; color: #8b5cf6; }
+.domain-filter-btn[data-lens="pipeline"].active { background: rgba(6,182,212,0.12); border-color: #06b6d4; color: #06b6d4; }
+.domain-filter-btn[data-lens="ai"].active { background: rgba(236,72,153,0.12); border-color: #ec4899; color: #ec4899; }
+.domain-filter-btn[data-lens="backend"].active { background: rgba(16,185,129,0.12); border-color: #10b981; color: #10b981; }
+.domain-filter-btn[data-lens="frontend"].active { background: rgba(99,102,241,0.12); border-color: #6366f1; color: #6366f1; }
+
 /* Filtered card hide/show */
 .insight-card.domain-hidden,
 .qna-card.domain-hidden {

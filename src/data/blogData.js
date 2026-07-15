@@ -5,6 +5,7 @@ export const blogData = [
     // ── Featured 3 ──
     {
         id: 'featured-toon-buffer',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: 'DNABLE — 섀도우 채널 분리와 커스텀 Toon 버퍼 설계',
         problem: 'UE5 기본 GBuffer로는 Toon 렌더링에 필요한 그림자 제어가 불가능했다. 머리카락 그림자가 얼굴에 지거나, 반음영 구간을 아티스트가 독립적으로 조절할 수 없는 문제가 반복되었다.',
@@ -27,6 +28,7 @@ export const blogData = [
     },
     {
         id: 'featured-viewport-compositing',
+        domains: ['engine', 'ta'],
         tag: 'Compositing',
         title: 'XROOM — 3D→2D 좌표 변환으로 화질 저하 없는 실시간 컴포지팅',
         problem: 'Viewport에서 전경·XR·후경을 레이어별로 분리 렌더링해야 했다. 3D Plane에 미디어 텍스처를 매핑하면 리샘플링으로 인해 화질이 저하되는 문제가 있었다.',
@@ -48,6 +50,7 @@ export const blogData = [
     },
     {
         id: 'featured-hardware-integration',
+        domains: ['engine', 'backend'],
         tag: 'Broadcast',
         title: '공통 — SDI·NDI·SRT·OSC·WebRTC·BCI 하드웨어 통합 아키텍처',
         problem: '프로젝트마다 요구되는 입출력 장비가 달랐다. Blackmagic DeckLink SDI, NDI, SRT, OSC, WebRTC, Emotiv EEG, Azure Kinect, LiDAR, Arduino 등 — 매번 새로운 하드웨어와 프로토콜을 연동해야 했다.',
@@ -74,6 +77,7 @@ export const blogData = [
     // ── Rendering ──
     {
         id: 'toon-shading',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: '40단계에 걸쳐 구축한 네이티브 톤 셰이딩 모델',
         problem: 'UE5의 Deferred Shading은 PBR 전용. Post-Process로는 GBuffer에 커스텀 데이터를 기록할 수 없어 조명 모델 자체를 NPR로 전환하는 것이 불가능했다.',
@@ -88,6 +92,7 @@ export const blogData = [
     },
     {
         id: 'custom-gbuffer',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: 'GBufferT — 9번째 MRT로 톤 전용 채널 완전 분리',
         problem: 'PBR 채널의 시멘틱으로는 톤 아트디렉션에 필요한 파라미터를 전달할 수 없었다. 초기에는 Clear Coat 채널 하이재킹으로 우회했으나, 그림자 분리·하이라이트 제어 등 요구가 늘며 채널이 부족해졌다.',
@@ -101,6 +106,7 @@ export const blogData = [
     },
     {
         id: 'fov-outline',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: 'FOV 24°~120° 어디서든 동일한 아웃라인 두께',
         problem: 'Inverted Hull 아웃라인이 카메라 FOV 변경 시 두께가 급격히 변하여, 클로즈업과 와이드 샷에서 일관된 아트 퀄리티를 유지할 수 없었다.',
@@ -113,6 +119,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     },
     {
         id: 'face-sdf',
+        domains: ['ta', 'engine'],
         tag: 'Rendering',
         title: 'SDF 기반 얼굴 그림자 — 아티스트가 그린 라이팅 응답',
         problem: '표준 NdotL 라이팅이 애니메 스타일 얼굴에 코, 광대뼈의 추한 그림자를 만들어 손그림 미학을 파괴. 조명 방향 변경 시 그림자가 급변하는 문제.',
@@ -125,6 +132,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     },
     {
         id: 'smooth-normal',
+        domains: ['ta', 'engine'],
         tag: 'Rendering',
         title: '아웃라인이 찢어지지 않는 Smooth Normal UV 베이킹',
         problem: 'UV 분할, 스무딩 그룹 경계에서 버텍스 노멀이 갈라지며 Inverted Hull 아웃라인 셸이 틈이 벌어지는 현상.',
@@ -134,6 +142,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     },
     {
         id: 'engine-outline',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: '엔진 20개 파일 수정 — 모든 메시에 네이티브 아웃라인',
         problem: '플러그인 레벨 아웃라인은 SkeletalMesh에만 작동하고 StaticMesh, InstancedMesh, HISM을 지원하지 않으며, LOD 거리 컬링과 Sequencer 연동도 불가능했다.',
@@ -143,6 +152,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     },
     {
         id: 'phantom-gi',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: '보이지 않는 메시로 Lumen GI를 제어하는 팬텀 라이트',
         problem: '무대 특정 영역에 간접광을 추가해야 하지만, 가시적 광원을 배치하면 아트 디렉션을 파괴. Lumen Emissive GI는 Lighting Channel을 무시하여 캐릭터 격리 불가.',
@@ -152,6 +162,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     },
     {
         id: 'character-exposure',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: 'Custom Stencil로 캐릭터만 노출 보정',
         problem: '밝은 무대 조명에서 캐릭터가 상대적으로 어둡게 보이지만, 글로벌 노출 조정은 배경까지 영향. 캐릭터와 배경을 분리하여 노출 보정할 네이티브 메커니즘이 없었다.',
@@ -161,6 +172,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     },
     {
         id: 'optimization',
+        domains: ['engine', 'ta'],
         tag: 'Optimization',
         title: '5명의 톤 캐릭터를 60fps로 — 전체 예산 플레이북',
         problem: '톤 셰이딩 + Inverted Hull 아웃라인 + Lumen GI + VSM + 멀티 채널 SDI 캡처까지 적용한 5캐릭터를 60fps로 렌더링하려면 GPU/CPU 예산 관리가 필수적.',
@@ -171,6 +183,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     // ── Broadcast ──
     {
         id: 'broadcast-4ch',
+        domains: ['engine', 'backend'],
         tag: 'Broadcast',
         title: '언리얼 에디터 안에서 4채널 SDI 라이브 방송',
         problem: '버추얼 아이돌 라이브에서 FreeCam/AngleCam/CharacterCam/Wide 4개 독립 피드를 60fps로 외부 스위처(ATEM)에 동시 출력해야 하나, UE 표준 SceneCapture에는 멀티 채널 SDI 코디네이터가 없다.',
@@ -186,6 +199,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     },
     {
         id: 'osc-control',
+        domains: ['engine', 'ta'],
         tag: 'Broadcast',
         title: 'Stream Deck → 언리얼: OSC 카메라 전환 & 실시간 의상 교체',
         problem: '라이브 방송 중 디렉터가 4채널 SDI 카메라 소스를 물리 컨트롤러로 전환하고, 캐릭터 의상도 실시간으로 교체해야 했다.',
@@ -196,6 +210,7 @@ FOV 120° → tan=1.73 → compensation=0.58×`
     // ── Camera ──
     {
         id: 'camera-system',
+        domains: ['engine', 'ta'],
         tag: 'Camera',
         title: '설정 파일 없는 카메라 아키텍처 — 레벨에 놓으면 끝',
         problem: '라이브 공연에서 자유 카메라와 최대 9개 고정 앵글 + 캐릭터 추적 카메라를 빠르게 전환해야 하지만, 설정 파일 기반 프리셋 관리가 복잡했다.',
@@ -211,6 +226,7 @@ Arrow Keys ──→ 카메라 순환
     // ── MoCap ──
     {
         id: 'multi-livelink',
+        domains: ['engine', 'ta'],
         tag: 'MoCap',
         title: '10개 LiveLink 동시 운용 — 5인 모캡 라이브 아키텍처',
         problem: '5명의 버추얼 아이돌을 바디(MotionBuilder) + 페이셜(iPhone ARKit) 모캡으로 동시 구동하면 10개 LiveLink 서브젝트의 네이밍, 네트워크, Timecode 동기화가 필요.',
@@ -225,6 +241,7 @@ Arrow Keys ──→ 카메라 순환
     },
     {
         id: 'arkit-remap',
+        domains: ['ta', 'engine'],
         tag: 'MoCap',
         title: 'LiveLink 단계에서 캐릭터별 ARKit 리매핑',
         problem: '5명의 캐릭터가 서로 다른 얼굴 비율을 가지므로 동일한 ARKit 블렌드셰이프 값이 캐릭터마다 다르게 보임. AnimBP에서 리매핑하면 캐릭터별 로직이 중복.',
@@ -234,6 +251,7 @@ Arrow Keys ──→ 카메라 순환
     },
     {
         id: 'tiptoe-fix',
+        domains: ['ta', 'engine'],
         tag: 'MoCap',
         title: '모캡 까치발 수정 — 왜 펠비스가 아닌 메시를 움직였는가',
         problem: 'Vicon→MotionBuilder→LiveLink 파이프라인에서 퍼포머와 캐릭터의 체형 차이로 리타겟 후 까치발(발목 회전) 현상 발생.',
@@ -243,6 +261,7 @@ Arrow Keys ──→ 카메라 순환
     },
     {
         id: 'axis-remap',
+        domains: ['ta', 'engine'],
         tag: 'MoCap',
         title: 'Y-Up 소품을 원컴포넌트로 수정하는 LiveLink 축 리매핑',
         problem: 'MotionBuilder/Maya의 Y-Up 좌표계에서 트래킹된 소품/카메라 리그가 UE5의 Z-Up에서 회전/미러 상태로 나타남.',
@@ -253,6 +272,7 @@ Arrow Keys ──→ 카메라 순환
     // ── Animation ──
     {
         id: 'arm-collision',
+        domains: ['engine', 'ta'],
         tag: 'Animation',
         title: 'Physics Asset으로 팔 관통 방지 — 래그돌 볼륨 재활용',
         problem: '마른 모캡 퍼포머의 "팔 내린 자세"가 리타겟 후 캐릭터 몸통을 관통. 물리 시뮬레이션은 비용이 너무 높음.',
@@ -262,6 +282,7 @@ Arrow Keys ──→ 카메라 순환
     },
     {
         id: 'buoyancy',
+        domains: ['ta', 'engine'],
         tag: 'Animation',
         title: '순수 수학으로 만드는 유기적 플로팅 모션',
         problem: '소품/장식에 유기적 부유 모션이 필요하지만, 리지드 바디 물리는 비용이 높고 기계적인 움직임을 만든다.',
@@ -272,6 +293,7 @@ Arrow Keys ──→ 카메라 순환
     // ── Character ──
     {
         id: 'character-parts',
+        domains: ['engine', 'ta'],
         tag: 'Character',
         title: '자동 아웃라인과 캐스케이딩 오버라이드를 가진 모듈러 캐릭터 파츠',
         problem: '런타임 파츠 교체 시 아웃라인 자동 생성, 물리 애니메이션 동기화, 교차 파츠 머티리얼 오버라이드(짧은 소매가 Body 메시의 팔을 가림)가 수동 설정 없이 필요했다.',
@@ -282,6 +304,7 @@ Arrow Keys ──→ 카메라 순환
     // ── Tool ──
     {
         id: 'lookdev',
+        domains: ['ta', 'engine'],
         tag: 'Tool',
         title: 'LookDev 액터 — 모든 라이팅 변수를 하나의 제어판에서',
         problem: '톤 라이팅, 컬러 그레이딩, 블룸, GI 파라미터를 실시간으로 조정해야 하지만, 여러 PostProcess 컴포넌트가 동일 필드에 겹쳐 써서 "마지막에 쓴 놈이 이김" 버그 발생.',
@@ -299,6 +322,7 @@ Arrow Keys ──→ 카메라 순환
     // ── Pipeline / DevOps ──
     {
         id: 'engine-fork',
+        domains: ['engine', 'pipeline'],
         tag: 'DevOps',
         title: 'UE5 엔진 포크 유지보수 — 마커 + 레지스트리 시스템',
         problem: '100+ C++ 파일, 50+ 셰이더 파일을 수정한 엔진 포크에서 Epic 업스트림 병합 시 어떤 파일이 변경되었는지 추적할 방법이 없으면 고고학적 작업이 된다.',
@@ -308,6 +332,7 @@ Arrow Keys ──→ 카메라 순환
     },
     {
         id: 'role-pipeline',
+        domains: ['pipeline', 'backend'],
         tag: 'DevOps',
         title: '아티스트는 빌드 시스템을 절대 만지지 않는 역할별 파이프라인',
         problem: '엔진 개발자는 Git+소스 빌드, 아티스트는 SVN+프리빌드 엔진. 역할별 도구가 달라 환경 구축에 1~2일 소요되고, 아티스트가 실수로 빌드를 깨뜨리는 사고 빈발.',
@@ -320,6 +345,7 @@ Viewer     : 00A→10→05→06s (read-only)`
     },
     {
         id: 'svn-git-overlay',
+        domains: ['pipeline'],
         tag: 'DevOps',
         title: 'SVN 콘텐츠 + Git 코드를 하나의 디렉토리에서',
         problem: '대용량 바이너리(텍스처, 메시)는 Git에 부적합하고, 코드는 SVN의 히스토리/디프가 약함. 두 도구를 별도로 운영하면 작업 디렉토리가 분리되어 빌드가 깨진다.',
@@ -330,6 +356,7 @@ Viewer     : 00A→10→05→06s (read-only)`
     // ── Pipeline ──
     {
         id: 'bp-architecture',
+        domains: ['engine', 'ta'],
         tag: 'Pipeline',
         title: 'Blueprint는 프로덕션 로직 레이어 — 75개 C++ 클래스의 깔끔한 유지',
         problem: '75개 C++ 클래스가 카메라, 캐릭터, 방송, LookDev 시스템에 걸쳐있을 때, 성능 크리티컬 C++ 로직과 에셋 참조 Blueprint 로직의 경계가 모호해지면 유지보수 비용이 폭증.',
@@ -339,6 +366,7 @@ Viewer     : 00A→10→05→06s (read-only)`
     },
     {
         id: 'gamemode',
+        domains: ['engine'],
         tag: 'Pipeline',
         title: 'GameMode 자동 캐릭터 디스커버리와 공연 오케스트레이션',
         problem: '5명의 버추얼 아이돌 캐릭터, 카메라 시스템, 공연 상태(Active/Paused/Stopped)를 하나의 GameMode에서 조율해야 하지만, 기본 UE GameMode는 이 워크플로우를 지원하지 않음.',
@@ -346,12 +374,67 @@ Viewer     : 00A→10→05→06s (read-only)`
         insight: 'BeginPlay에서 GetAllActorsOfClass로 자동 탐색하면, 새 캐릭터를 레벨에 놓기만 해도 시스템이 자동으로 인식한다 — 설정 제로.',
         arch: null
     },
+    // ── Pipeline Automation (에셋 검증 시스템 / 카탈로그 / 생산 라이프사이클) ──
+    {
+        id: 'asset-validation-gate',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '커밋·NAS·엔진 3소스 SOP 위반 자동 검출 — 방치 추적까지',
+        problem: '캐릭터·배경·소품 에셋이 수백 개로 늘면서 네이밍 규칙과 폴더 구조 SOP 위반을 사람이 일일이 잡는 것이 불가능해졌다. 위반이 엔진까지 흘러 들어간 뒤 발견되면 되돌리는 비용이 몇 배로 커진다.',
+        solution: '세 개의 독립 소스에서 위반을 검출한다 — ① SVN 커밋 훅이 경로·파일명 룰을 즉시 검사(post-commit → 웹훅), ② NAS 폴더를 평일 주기로 스캔, ③ 엔진 콘텐츠를 CLI/대시보드에서 감사. 룰 정본은 한 곳(감사 모듈)에 두고 커밋 검사 노드와 동기화한다. 위반은 파트별 채팅방으로 라우팅하고, 신규·재발·해결을 키로 추적하며 방치 7일/14일에 에스컬레이션, 담당자별 리더보드로 귀속한다.',
+        insight: '위반 검증은 "한 번 훑기"가 아니라 "상태 기계"다. 신규/재발/해결/방치를 키 기반으로 추적해야 알림 피로 없이 실제 개선을 유도할 수 있고, 검출 소스를 커밋·파일시스템·엔진 세 층으로 나누면 어느 단계에서 새는지가 드러난다.',
+        arch: `SOP Violation Detection (3 sources)
+├── SVN Commit Hook ──► 경로·파일명 룰 (즉시)
+├── NAS Scan (평일 주기) ──► 카테고리별 폴더 검사
+└── Engine Audit (CLI/대시보드) ──► 콘텐츠 감사
+         │  Rule Source of Truth (감사 모듈 정본)
+    ┌────┴───────────────┐
+파트별 채팅방 라우팅   담당자 리더보드
+├── 신규/재발/해결 추적 (키 기반)
+├── 방치 에스컬레이션 (7일 / 14일)
+└── 위반 제로 축하`
+    },
+    {
+        id: 'engine-reconcile',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '저장소를 인증 없이 읽어 카탈로그와 대조하는 리컨사일 루프',
+        problem: '에셋이 DCC 툴에서 완성돼도 실제 엔진(저장소 Content)에 임포트됐는지는 별개 문제다. 추적 DB(카탈로그)와 실제 저장소 상태가 어긋나면 "완료 처리됐는데 화면엔 없음"이 반복된다.',
+        solution: 'svnlook으로 워킹카피 체크아웃이나 네트워크 인증 없이 서버에서 저장소 트리를 직접 읽어 {카테고리:{에셋:[변형]}} 구조를 추출하고, 카탈로그의 "엔진 반영" 컬럼을 자동으로 채운다. DCC 퍼블리시(NAS 스캔)와는 독립된 축으로 관리 — "NAS엔 있으나 엔진 미반영" = 임포트 대기 신호다. 조회 실패 시엔 전량 미반영으로 덮어쓰지 않고 판별을 보류한다. 누락 공정도 코드 기준으로 자동 비교(폴더명 수동 입력 불요).',
+        insight: 'svnlook으로 서버에서 트리만 읽으면 수십 GB 워킹카피를 받지 않고도 "실제 반영 상태"를 알 수 있다. 조회가 실패했을 때 "미반영"으로 단정하지 않고 "판별 보류"로 처리하는 것이 전량 오탐 사고를 막는 핵심이다.',
+        arch: `Reconcile Loop
+저장소 Content (SVN)
+   │  svnlook tree (인증·WC 불요)
+   ▼  {category:{asset:[variations]}}
+Catalog "엔진 반영" 컬럼 자동 채움
+   ├── NAS 있음 + 엔진 미반영 → 임포트 대기
+   ├── 조회 실패 → 판별 보류 (오탐 방지)
+   └── 누락 공정 = 코드 기준 자동 비교`
+    },
+    {
+        id: 'asset-lifecycle',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '요청·시작·컨펌·리테이크를 폼과 게이트로 묶은 무인 생산 라이프사이클',
+        problem: '에셋 하나가 요청 → 작업 → 검수 → 컨펌까지 여러 손을 거치는데 상태가 채팅과 구두로만 흘러, 요청 누락·중복 작업·미검수 통과가 잦았다.',
+        solution: '커스텀 HTML 폼(웹훅 접수)으로 요청을 받고, "작업 시작" 시 NAS 폴더 SOP 트리를 자동 생성한다. 컨펌 제출 폼(이미지 업로드)으로 결과를 올리면 관리자가 컨펌/리테이크 버튼으로 판정하고, 제출 시점에 검증 게이트가 누락·SOP 위반을 잡으면 아예 차단한다. 순수 에셋 리스트와 작업목록·위반목록을 분리한 정규화 모델 위에서, 전 과정을 무인 스케줄러(cron)가 주기적으로 돌린다.',
+        insight: '파이프라인의 각 전이(요청/시작/제출/컨펌)에 게이트를 걸면, 검수 통과가 담당자의 성실함이 아니라 시스템의 불변조건이 된다 — 사람이 잊어도 파이프라인이 잊지 않는다.',
+        arch: `Asset Production Lifecycle
+[요청] HTML 폼 → 웹훅 접수
+[작업 시작] → NAS 폴더 SOP 트리 자동 생성
+[컨펌 제출] 이미지 업로드 폼
+   └─ 검증 게이트: 누락·SOP 위반 시 제출 차단
+[관리자 판정] 컨펌 / 리테이크
+정규화 모델: 순수 에셋 리스트 ↔ 작업목록 / 위반목록
+전 과정 무인 스케줄러(cron) 주기 실행`
+    },
     // ══════════════════════════════════════
     // XROOM (SoulXProject) — 960+ commits
     // ══════════════════════════════════════
     // ── SaveLoad ──
     {
         id: 'xroom-saveload',
+        domains: ['engine'],
         tag: 'SaveLoad',
         title: '3D 씬 전체를 직렬화하는 Save/Load 시스템 — 수십 번의 아키텍처 전환',
         problem: 'XROOM의 3D 씬에는 액터, 컴포넌트, MediaPlane 텍스처, Composure 설정, PPT 슬롯, 카메라 트랜스폼이 혼재. 단순 문자열 직렬화로는 오브젝트 간 참조와 고유 ID 충돌을 해결할 수 없었다.',
@@ -367,6 +450,7 @@ Viewer     : 00A→10→05→06s (read-only)`
     // ── Compositing ──
     {
         id: 'xroom-composure',
+        domains: ['engine', 'ta'],
         tag: 'Compositing',
         title: 'Composure 크로마키 + Save/Load = 크래시 — 실시간 합성의 상태 관리',
         problem: 'UE5 Composure 플러그인으로 실시간 크로마키 합성을 구현했으나, Save/Load 시 Composure 상태 복원에서 크래시 발생. ColorResistance 토글 후 뷰포트에 잔상 아티팩트도 남았다.',
@@ -381,6 +465,7 @@ Viewer     : 00A→10→05→06s (read-only)`
     // ── Streaming ──
     {
         id: 'xroom-ndi',
+        domains: ['engine', 'backend'],
         tag: 'Streaming',
         title: 'NDI 비동기 이중 버퍼 — GPU→CPU 스톨 없는 1080p60 송출',
         problem: 'NDI 프레임 송출 시 GPU→CPU 텍스처 리드백에서 동기 대기가 발생하여 프레임 드롭. 실시간 방송에서 매 프레임 16.6ms 예산을 초과하면 시청자에게 끊김이 보인다.',
@@ -393,6 +478,7 @@ Frame N+2: GPU Render → Buffer[0] → NDI Send (Buffer[1])
     },
     {
         id: 'xroom-ndi-audio',
+        domains: ['engine', 'backend'],
         tag: 'Streaming',
         title: 'NDI 오디오 채널 자동 다운믹스/업믹스',
         problem: 'NDI 소스마다 오디오 채널 수가 다름(예: 8ch 수신 → 2ch 출력). 채널 미스매치 시 무음 또는 왜곡 발생. 사용자가 매번 오디오 설정을 수동으로 맞추는 것은 비현실적.',
@@ -402,6 +488,7 @@ Frame N+2: GPU Render → Buffer[0] → NDI Send (Buffer[1])
     },
     {
         id: 'xroom-ffmpeg',
+        domains: ['engine', 'backend'],
         tag: 'Streaming',
         title: 'FFmpeg를 UE5 안에서 — 인프로세스에서 프로세스 분리로',
         problem: 'UE5 내부에서 FFmpeg 라이브러리를 직접 링크하면 인코딩 크래시가 에디터 전체를 죽인다. 연속 녹화 시 메모리 누수도 발생.',
@@ -416,6 +503,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     // ── PPT ──
     {
         id: 'xroom-ppt',
+        domains: ['ta', 'engine'],
         tag: 'Tool',
         title: '3D 엔진 안의 PPT — 79커밋으로 만든 프레젠테이션 시퀀서',
         problem: '3D 가상 공간에서 프레젠테이션을 하려면 카메라 이동, 오브젝트 표시/숨김, 미디어 전환, 이펙트를 시간 기반으로 제어해야 한다. PowerPoint와 같은 UX를 3D 엔진에서 구현해야 했다.',
@@ -430,6 +518,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     // ── MediaPlane ──
     {
         id: 'xroom-mediaplane',
+        domains: ['engine'],
         tag: 'Tool',
         title: 'GC가 라이브 미디어를 죽인다 — MediaPlane과 가비지 컬렉션 전쟁',
         problem: 'UE5의 가비지 컬렉션이 라이브 비디오/웹캠 텍스처를 사용 중인데도 회수. MediaPlane에서 라이브 피드가 갑자기 검은 화면으로 바뀌는 현상이 간헐적으로 발생.',
@@ -440,6 +529,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     // ── Networking ──
     {
         id: 'xroom-multiplayer',
+        domains: ['engine', 'backend'],
         tag: 'Networking',
         title: 'Command 패턴으로 멀티플레이어 상태 동기화',
         problem: 'XROOM의 멀티플레이어에서 오브젝트 선택, 이동, 삭제를 서버 권위(Server-Authoritative)로 처리해야 했다. 직접 RPC 호출 방식은 명령어 종류가 늘어날수록 스파게티 코드화.',
@@ -454,6 +544,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     // ── Auth ──
     {
         id: 'xroom-jwt',
+        domains: ['engine', 'backend'],
         tag: 'Networking',
         title: 'C++에서 JWT 검증 — 크로스 플랫폼 타입 호환성 문제',
         problem: 'UE5의 C++ 환경에서 JWT 토큰을 검증할 때 inttypes.h 호환성 문제 발생. 검증 실패 시 재시도 로직이 없어 일시적 네트워크 오류에도 로그인 실패.',
@@ -464,6 +555,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     // ── Delivery ──
     {
         id: 'xroom-launcher',
+        domains: ['frontend', 'pipeline'],
         tag: 'Delivery',
         title: 'Electron 런처 CI/CD — 멀티 아키텍처 빌드와 코드사인 벽',
         problem: 'XROOM의 Electron 런처를 x86/x64/ARM에서 빌드하고 자동 업데이트를 지원해야 했다. Windows 코드사인이 없으면 자동 업데이트가 차단되는 문제 발견.',
@@ -477,6 +569,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     },
     {
         id: 'xroom-patch',
+        domains: ['engine', 'backend'],
         tag: 'Delivery',
         title: 'SharedPointer 충돌 — 비동기 청크 다운로드 후 메모리 크래시',
         problem: 'XROOM의 CDN 기반 청크 패치 시스템에서 비동기 다운로드 완료 후 SharedPointer 충돌로 크래시 발생. 데이터테이블 청크 분리 후 더 빈번해짐.',
@@ -486,6 +579,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     },
     {
         id: 'xroom-3ch-deploy',
+        domains: ['backend', 'pipeline'],
         tag: 'Delivery',
         title: '3채널 동시 배포 — Steam + Electron + AWS 버전 동기화',
         problem: 'Steam, Electron 런처, AWS 서버 3개 배포 채널의 버전이 각각 관리되어 업데이트 시 동기화 실패 빈번. 사용자마다 다른 버전을 사용하는 파편화 발생.',
@@ -499,6 +593,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     // ── Event ──
     {
         id: 'xroom-event-branch',
+        domains: ['pipeline'],
         tag: 'DevOps',
         title: 'CES부터 두바이까지 — 이벤트 드리븐 브랜치 아키텍처',
         problem: 'XROOM은 CES, 두바이, WIS, NextRise, 대구 등 10개 이상의 글로벌 이벤트에 커스텀 빌드를 납품. 각 이벤트마다 다른 기능 조합이 필요하지만 메인라인 제품과 동기화도 유지해야 했다.',
@@ -515,6 +610,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     // ── Broadcast ──
     {
         id: 'notion-timecode',
+        domains: ['engine', 'backend'],
         tag: 'Broadcast',
         title: '5대 장비의 타임코드를 1ms 이내로 맞추는 동기화 아키텍처',
         problem: 'Vicon 모캡 PC, MotionBuilder PC, UE5 PC, iPhone(ARKit), ATEM 스위처 — 5종 장비가 각자의 시계를 사용. 방송 중 립싱크가 3~4프레임(~130ms) 어긋나고, 모캡-영상 간 동기화도 불안정.',
@@ -532,6 +628,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     },
     {
         id: 'notion-osc',
+        domains: ['engine', 'backend'],
         tag: 'Broadcast',
         title: 'Stream Deck 하나로 멀티 PC 동시 제어 — OSC 원격 방송 시스템',
         problem: '라이브 방송 중 카메라 전환과 캐릭터 의상 변경을 여러 대의 PC(메인/백업)에서 동시에 실행해야 한다. 각 PC에 직접 접근하면 지연이 발생하고, 한 대만 명령이 빠지면 화면이 불일치.',
@@ -547,6 +644,7 @@ v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
     // ── Rendering ──
     {
         id: 'notion-cvm',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: 'GT7 CVM 톤매퍼 — 밝은 빨강이 노란색으로 변하는 문제 해결',
         problem: 'UE5 기본 Film 톤매퍼는 밝은 빨강 하이라이트에서 Hue Shift가 발생하여 노란색으로 변한다. 버추얼 아이돌의 빨간 의상이나 조명에서 의도하지 않은 색상 변화가 나타남.',
@@ -562,6 +660,7 @@ GT7 CVM Tonemapper (구현)
     },
     {
         id: 'notion-rt-shadow',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: 'RT Shadow 채널 분리 — 얼굴에 머리카락 그림자가 지지 않게',
         problem: '캐릭터 얼굴에 머리카락 그림자가 레이트레이싱으로 드리워지면 셀 셰이딩 미감이 깨진다. Raster Shadow뿐 아니라 RT Shadow 경로에서도 선택적으로 그림자를 필터링해야 했다.',
@@ -577,6 +676,7 @@ Raster:  DeferredLight → SurfaceShadow/TransmissionShadow = 1.0`
     },
     {
         id: 'notion-mrt-limit',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: 'D3D12 MRT 8장 제한 vs Toon 전용 버퍼 3개 — 아키텍처 선택',
         problem: 'D3D12에서 MRT(Multiple Render Targets)는 최대 8개. Toon 전용 데이터를 위해 MRT8(ToonDataA) + MRT9(ToonDataC)를 추가하면 UE5의 Substrate 머티리얼 시스템과 렌더타겟이 충돌.',
@@ -594,6 +694,7 @@ Raster:  DeferredLight → SurfaceShadow/TransmissionShadow = 1.0`
     // ── Pipeline ──
     {
         id: 'notion-dashboard',
+        domains: ['frontend', 'pipeline'],
         tag: 'Pipeline',
         title: 'WPF 런처의 한계를 넘어 — 웹 기반 파이프라인 대시보드',
         problem: 'PowerShell WPF 런처의 비동기 처리가 불안정하고, 한글 인코딩 충돌(CP949 vs UTF-8), 실시간 상태 확인이 불가능. 30인 조직에 배포하기엔 안정성이 부족.',
@@ -608,6 +709,7 @@ Raster:  DeferredLight → SurfaceShadow/TransmissionShadow = 1.0`
     },
     {
         id: 'notion-python-pipeline',
+        domains: ['pipeline', 'backend'],
         tag: 'Pipeline',
         title: 'bat/ps1 스크립트 전량 삭제 — Python 패키지로 파이프라인 일원화',
         problem: 'bat와 PowerShell 스크립트가 혼재하면서 인코딩 충돌(LF/CRLF, UTF-8/CP949), 환경변수 미전파, em-dash 파싱 에러 등 셸 간 호환성 문제가 반복 발생.',
@@ -617,6 +719,7 @@ Raster:  DeferredLight → SurfaceShadow/TransmissionShadow = 1.0`
     },
     {
         id: 'notion-prebuilt-100gb',
+        domains: ['pipeline', 'backend'],
         tag: 'Pipeline',
         title: '프리컴파일 엔진 50GB → 100GB — 누락된 것들의 발견',
         problem: '프리컴파일 엔진을 5개 핵심 폴더만 패키징(~50GB)해서 아티스트에게 보냈더니, Generated 파일(자동생성 헤더), 서드파티 라이브러리(.lib/.dll), 플러그인 헤더(.hpp/.h) 누락으로 빌드/실행 실패.',
@@ -639,6 +742,7 @@ v2 패키징 (~100GB) — 성공
     // ── DevOps ──
     {
         id: 'notion-docker-nas',
+        domains: ['backend', 'pipeline'],
         tag: 'DevOps',
         title: 'NAS에 Docker로 팀 서버 배포 — 중앙 인증과 배포 관리',
         problem: '15인 이상의 아티스트에게 SVN 계정 관리, 파이프라인 업데이트 알림, 접속 현황 모니터링을 수동으로 처리. 개발자가 빠지면 관리가 중단되는 SPOF 구조.',
@@ -657,6 +761,7 @@ v2 패키징 (~100GB) — 성공
     // ── Animation ──
     {
         id: 'notion-foot-fix',
+        domains: ['ta', 'engine'],
         tag: 'MoCap',
         title: '모캡 까치발 보정 — Pelvis 이동에서 Mesh 위치로 전환한 이유',
         problem: 'Vicon 모캡 데이터에서 퍼포머와 캐릭터 간 체형 차이로 까치발(Tiptoe) 문제 발생. 초기에 Pelvis 본을 이동하여 높이를 보정했으나 다리가 늘어나는 부작용 발생.',
@@ -675,6 +780,7 @@ FootTiptoeFixComponent
     // ── D:\SoulX Documents ──
     {
         id: 'xroomlite-iteration',
+        domains: ['engine', 'frontend'],
         tag: 'Tool',
         title: 'XROOMLite 22버전 반복 — v1.0에서 v2.0까지의 진화',
         problem: 'XROOM 풀 빌드는 100GB+ 용량에 초기 셋업 시간이 길어 신규 인원 온보딩과 빠른 프로토타이핑이 불가능했다.',
@@ -688,6 +794,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'bci-unreal',
+        domains: ['engine', 'ai'],
         tag: 'Networking',
         title: 'Brain-Wave × Unreal — EEG 신호를 실시간 UE5 인터랙션으로',
         problem: 'Emotiv EEG 헤드셋의 뇌파 데이터를 Unreal Engine에서 실시간으로 수신하여 인터랙션에 활용해야 했으나, EEG SDK와 UE5 사이에 직접 통신 경로가 없었다.',
@@ -705,6 +812,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'paraguay-delivery',
+        domains: ['backend', 'pipeline'],
         tag: 'Delivery',
         title: '파라과이 방송 시스템 납품 — 현지 교육까지 포함한 글로벌 딜리버리',
         problem: '한국에서 개발한 실시간 방송 시스템을 파라과이 현지에 납품해야 했다. 네트워크 환경, 하드웨어 세팅, 운영 인력의 기술 수준이 모두 한국과 달랐다.',
@@ -726,6 +834,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'ai-workflow',
+        domains: ['ai', 'pipeline'],
         tag: 'Pipeline',
         title: 'AI 워크플로우 R&D — ComfyUI + n8n + NAS 자동화 파이프라인',
         problem: 'AI 이미지 생성(StableDiffusion)을 프로덕션 워크플로우에 통합하려면 수동 프롬프트 입력 → 결과 확인 → 후처리의 반복이 병목이었다.',
@@ -747,6 +856,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'webgl-photobooth',
+        domains: ['frontend'],
         tag: 'Tool',
         title: 'WebGL Photo Booth — React + WebGL 실시간 카메라 필터',
         problem: '이벤트 현장에서 참가자 사진을 실시간으로 촬영하고 커스텀 필터를 적용하여 즉석 출력해야 했다. 네이티브 앱 설치 없이 브라우저만으로 동작해야 했다.',
@@ -770,6 +880,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'xroom-design-system',
+        domains: ['frontend'],
         tag: 'Tool',
         title: 'XROOM Design System — 커스텀 컬러 시스템부터 컴포넌트 라이브러리까지',
         problem: 'XROOM UI가 기획·개발·디자인 간 일관성 없이 파편화되어 있었다. 같은 버튼이 화면마다 다른 색상·크기·간격으로 구현되어 유지보수와 신규 화면 제작 속도가 저하.',
@@ -793,6 +904,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'unity-porting-lessons',
+        domains: ['engine', 'pipeline'],
         tag: 'Pipeline',
         title: 'Unity 포팅 프로젝트 — 중단에서 얻은 교훈',
         problem: 'XROOM의 일부 기능을 Unity로 포팅하여 크로스 플랫폼 지원을 검토했다. UE5 고유 기능(Nanite, Lumen, GBuffer 커스텀)에 대한 의존도가 예상보다 높았다.',
@@ -813,6 +925,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'xroom-architecture',
+        domains: ['engine', 'pipeline'],
         tag: 'Pipeline',
         title: 'XROOM 아키텍처 — 모듈 분리와 확장 방향 설계',
         problem: 'XROOM이 커지면서 기능 간 결합도가 높아져 하나의 모듈 수정이 다른 모듈에 영향을 주는 문제가 빈번해졌다. 신규 기능 추가 시 사이드 이펙트 파악에 시간이 과도하게 소요.',
@@ -843,6 +956,7 @@ FootTiptoeFixComponent
     // ── Cross-Domain Versatility ──
     {
         id: 'azure-kinect-lidar',
+        domains: ['engine', 'ai'],
         tag: 'Tool',
         title: 'Azure Kinect + LiDAR — 깊이 센서 기반 인터랙티브 설치',
         problem: '전시 공간에서 관객의 위치와 동작을 실시간으로 인식하여 인터랙티브 콘텐츠를 구동해야 했다. 일반 카메라로는 깊이 정보가 없어 정확한 공간 추적이 불가능.',
@@ -863,6 +977,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'electron-launcher',
+        domains: ['frontend', 'pipeline'],
         tag: 'Pipeline',
         title: 'Electron 런처 — React + CI/CD 자동 업데이트 시스템',
         problem: 'XROOM 사용자들이 매번 수동으로 버전을 확인하고 다운로드해야 했다. Steam 외 배포 채널(직접 설치)에서 버전 파편화가 심각.',
@@ -885,6 +1000,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'smart-factory',
+        domains: ['engine', 'frontend'],
         tag: 'Delivery',
         title: '스마트 팩토리 — Unreal Engine 기반 제조업 시각화',
         problem: '제조업 현장의 생산 라인 데이터를 실시간으로 시각화해야 했다. 기존 SCADA 시스템은 2D 대시보드에 한정되어 공간적 맥락(어떤 라인의 어떤 장비인지)을 직관적으로 파악하기 어려웠다.',
@@ -905,6 +1021,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'xr-education',
+        domains: ['engine'],
         tag: 'Delivery',
         title: '제주·대구 XR교육 — 메인 강사로 커리큘럼 기획부터 실습까지',
         problem: 'XR(VR/AR) 기술을 비개발자 교육생에게 전달해야 했다. Unreal Engine의 학습 곡선이 높아 단기 과정에서 실질적 결과물을 만들어내기 어려웠다.',
@@ -922,6 +1039,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'steam-gs-launch',
+        domains: ['backend', 'pipeline'],
         tag: 'Delivery',
         title: 'Steam 런칭 + GS인증 — 프로덕트 배포의 전 과정',
         problem: 'XROOM을 상용 제품으로 출시하려면 Steam 스토어 등록, Steamworks SDK 통합, GS(Good Software) 인증까지 동시에 진행해야 했다. 개발팀 규모가 작아 모든 과정을 소수가 직접 수행.',
@@ -944,6 +1062,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'opencv-photobooth',
+        domains: ['engine', 'ai'],
         tag: 'Tool',
         title: 'C++ OpenCV 키오스크 포토부스 — 하드웨어 직접 제어',
         problem: '이벤트 현장용 포토부스를 제작해야 했다. 상용 솔루션은 커스터마이징이 제한적이고, 카메라·프린터·결제 단말기를 하나의 시스템으로 통합해야 했다.',
@@ -967,6 +1086,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'threejs-homepage',
+        domains: ['frontend'],
         tag: 'Tool',
         title: 'Three.js + React — 회사 홈페이지 3D 인터랙티브',
         problem: '회사 홈페이지에 XROOM의 3D 기술력을 보여줄 인터랙티브 요소가 필요했다. 일반적인 정적 페이지로는 "실시간 3D 플랫폼 회사"라는 아이덴티티를 전달하기 어려웠다.',
@@ -987,6 +1107,7 @@ FootTiptoeFixComponent
     },
     {
         id: 'studio-xam-webrtc',
+        domains: ['frontend', 'backend'],
         tag: 'Streaming',
         title: 'studio-xam — Next.js + WebRTC 3D 웨비나 플랫폼',
         problem: '3D 가상 공간에서 실시간 화상 회의를 진행하는 웨비나 플랫폼이 필요했다. 기존 화상 솔루션(Zoom 등)은 3D 환경과 통합이 불가능.',
@@ -1012,6 +1133,7 @@ FootTiptoeFixComponent
     // ── Setup ──
     {
         id: 'delta-prebuilt',
+        domains: ['backend', 'pipeline'],
         tag: 'DevOps',
         title: '델타 인코딩 프리빌트 배포 — 100GB 엔진을 변경분만 전송',
         problem: '100GB 프리컴파일 엔진을 매 업데이트마다 통째로 SVN에 올리면 대역폭·디스크·시간이 폭발한다. 아티스트 30명이 매번 전체를 다시 받아야 하는 구조.',
@@ -1022,6 +1144,7 @@ FootTiptoeFixComponent
     // ── AI ──
     {
         id: 'claude-harness',
+        domains: ['pipeline', 'ai'],
         tag: 'Pipeline',
         title: '3개 레포를 지휘하는 Claude Code 프로덕션 하네스',
         problem: '커스텀 엔진 + 프로젝트 + 셋업 3개 저장소를 AI로 개발하면, 파일마다 규칙(엔진=C++ Epic 표준+수정 마커, 프로젝트=UE 규칙, 파이프라인=Python)이 달라 컨텍스트가 섞이는 순간 잘못된 규칙이 적용된다.',
@@ -1042,11 +1165,12 @@ Feedback Loop → 신뢰도 5/5 → 규칙 자동 승격`
     // ── Engine ──
     {
         id: 'engine-57-port',
+        domains: ['engine', 'pipeline'],
         tag: 'Rendering',
-        title: 'UE 5.7 엔진 포팅 — 762개 수정 마커를 459개 패치로 자동 재적용',
-        problem: '2년간 5.5.4 커스텀 엔진에 누적된 762개의 // Custom Engine 마커(158개 파일). 엔진 메이저 업그레이드 때 이걸 수작업으로 재적용하면 수 주가 걸리고 누락 위험이 크다.',
-        solution: '마커 블록을 파서로 추출해 459개 패치(387 marked block + 72 orphan hunk)로 분해. 클린 5.7 베이스라인에 3-way 머지로 재적용하여 98.5% 자동화. 충돌 50개 파일만 수작업, IR 시스템 마이그레이션 등 3개 파일만 재구현.',
-        insight: '엔진 포크의 진짜 자산은 코드가 아니라 "무엇을 왜 바꿨는지"의 메타데이터다. 마커+레지스트리를 규율로 강제하면 메이저 업그레이드가 고고학이 아니라 패치 재적용 문제로 바뀐다.',
+        title: 'AI로 일주일 만에 끝낸 UE 5.5→5.7 엔진 포팅 — 762개 수정 마커 자동 재적용',
+        problem: '2년간 5.5.4 커스텀 엔진에 누적된 762개의 // Custom Engine 마커(158개 파일). 엔진 메이저 업그레이드 때 이걸 수작업으로 재적용하면 수 주~수개월이 걸리고 누락 위험이 크다.',
+        solution: '직접 구축한 Claude Code 프로덕션 하네스(엔진 마커 검증 훅 + 컨텍스트 라우터 + 3개 레포 지휘)로 마커 추출 파서와 3-way 머지 재적용 파이프라인을 구동 — 762개 마커를 459개 패치(387 marked block + 72 orphan hunk)로 분해해 클린 5.7 베이스라인에 98.5% 자동 재적용. 충돌 50개 파일만 수작업, IR 시스템 마이그레이션 등 3개 파일만 재구현. AI 시스템과 이 하네스의 합작으로 포팅부터 충돌 디버깅·빌드 안정화까지 약 일주일에 마무리했다.',
+        insight: '엔진 포크의 진짜 자산은 코드가 아니라 "무엇을 왜 바꿨는지"의 메타데이터다. 이것을 마커·레지스트리·검증 훅으로 규율화한 하네스가 있었기에 AI가 메이저 업그레이드를 고고학이 아니라 "패치 재적용 + 디버깅" 문제로 압축할 수 있었다 — 일주일이라는 속도는 AI 시스템과 그 위에 내가 설계한 하네스의 합작이다.',
         arch: `762 마커 블록 (158 파일, 5.5.4 base)
     → 파서 추출 → 459 패치
         ├── 387 marked_blocks
@@ -1059,6 +1183,7 @@ Feedback Loop → 신뢰도 5/5 → 규칙 자동 승격`
     // ── Project ──
     {
         id: 'broadcast-ready',
+        domains: ['engine', 'pipeline'],
         tag: 'Broadcast',
         title: '방송 준비 검사 — 생방송 직전 5개 카테고리 프리플라이트 + 원클릭 수정',
         problem: '라이브 방송 직전 카메라 커버리지·조명·캐릭터 상태·오디오 싱크·오버레이 중 하나만 빠져도 사고로 이어진다. 사람이 체크리스트로 확인하면 반드시 놓친다.',
@@ -1068,6 +1193,7 @@ Feedback Loop → 신뢰도 5/5 → 규칙 자동 승격`
     },
     {
         id: 'cuesheet-notion',
+        domains: ['pipeline', 'engine'],
         tag: 'Broadcast',
         title: 'Notion 큐시트 ↔ 언리얼 양방향 — 기획 문서가 곧 방송 씬 세팅',
         problem: '방송 큐시트(씬 순서·캐릭터·소품·타이밍)를 기획자는 Notion에서 관리하지만, 엔진에서는 매번 수작업으로 씬을 다시 세팅한다. 큐가 바뀌면 동기화 누락이 잦다.',
@@ -1078,6 +1204,7 @@ Feedback Loop → 신뢰도 5/5 → 규칙 자동 승격`
     // ── DCC ──
     {
         id: 'dcc-retarget-sop',
+        domains: ['ta', 'pipeline'],
         tag: 'MoCap',
         title: '모캡 리타겟 세션 자동화 + 소품 타입 분리 — DCC와 엔진 사이의 규율',
         problem: 'VICON/iPhone 모캡을 MotionBuilder에서 UE 스켈레톤으로 리타겟하는 작업이 매번 수작업이었다. 소품 리깅·머티리얼 규칙도 아티스트마다 제각각.',
@@ -1088,6 +1215,7 @@ Feedback Loop → 신뢰도 5/5 → 규칙 자동 승격`
     // ── Tool ──
     {
         id: 'asset-validation',
+        domains: ['pipeline', 'backend'],
         tag: 'Pipeline',
         title: '에셋 검증 시스템 — 3소스 자동 감사와 리더보드 거버넌스',
         problem: '30인 팀의 에셋 규칙 위반(네이밍·경로·포맷)을 사람이 리뷰하면 놓치고, 지적하면 감정 소모가 생긴다. 위반이 방치되면 빌드가 깨진다.',
@@ -1106,6 +1234,7 @@ Escalation: 🆕 즉시 · 09시 일일 · 금 17시 주간
     },
     {
         id: 'streamdeck-plugin',
+        domains: ['frontend', 'engine'],
         tag: 'Broadcast',
         title: 'Stream Deck 커스텀 플러그인 — 물리 버튼으로 4채널 방송 지휘',
         problem: '라이브 방송 디렉터가 카메라 전환·캐릭터별 팔로우캠·가시성 토글을 키보드로 조작하면 느리고 실수한다. 어떤 버튼이 어떤 채널인지 시각 피드백이 없다.',
@@ -1118,6 +1247,7 @@ Escalation: 🆕 즉시 · 09시 일일 · 금 17시 주간
     // ══════════════════════════════════════
     {
         id: 'toon-light-params',
+        domains: ['ta', 'engine'],
         tag: 'Rendering',
         title: 'DNABLE — 광원마다 25개 파라미터를 갖는 톤 라이팅',
         problem: 'PBR 광원은 세기·색만 있으면 되지만, 셀 셰이딩은 광원별로 셰이딩 경계의 부드러움·오프셋·림라이트·반음영 색을 아티스트가 개별 제어해야 한다. 엔진 기본 라이트 구조로는 이 데이터를 픽셀까지 전달할 방법이 없었다.',
@@ -1136,6 +1266,7 @@ LightComponent → ShaderParameters → DeferredLightData
     },
     {
         id: 'toon-shadow-blur',
+        domains: ['ta', 'engine'],
         tag: 'Rendering',
         title: 'DNABLE — 셀 경계를 부드럽게, sqrt로 대비를 되살린 섀도우 블러',
         problem: '셀 셰이딩의 딱딱한 그림자 경계(step 함수)를 부드럽게 하려고 가우시안 블러를 걸면, 평균화 때문에 값이 0.5 근처로 뭉쳐 대비가 죽고 흐리멍덩해진다.',
@@ -1151,6 +1282,7 @@ LightComponent → ShaderParameters → DeferredLightData
     },
     {
         id: 'toonactor-pivot',
+        domains: ['engine', 'ta'],
         tag: 'Rendering',
         title: 'DNABLE — 16×16 GPU 텍스처로 광원별 얼굴 평탄화 피벗 전파',
         problem: '캐릭터 얼굴을 평평하게(FlatNormal) 셰이딩하려면 "어느 지점을 기준으로 노멀을 평탄화할지" 피벗이 필요한데, 이 피벗이 캐릭터마다·광원마다 다르다. Directional 광원은 픽셀별 피벗까지 알아야 한다.',
@@ -1163,6 +1295,7 @@ LightComponent → ShaderParameters → DeferredLightData
     // ══════════════════════════════════════
     {
         id: 'vcam-arkit',
+        domains: ['ta', 'engine'],
         tag: 'Camera',
         title: 'DNABLE — 아이폰 6대를 가상 카메라로: LiveLink VCam 리그',
         problem: '버추얼 아이돌 라이브에서 감독이 실제 카메라를 들고 움직이듯 가상 카메라를 손으로 조종하고 싶었다. 그것도 6대를 동시에, 각각 다른 조준 방식으로.',
@@ -1180,6 +1313,7 @@ LightComponent → ShaderParameters → DeferredLightData
     },
     {
         id: 'mosaic-ndi',
+        domains: ['engine', 'backend'],
         tag: 'Broadcast',
         title: 'DNABLE — 카메라 30대를 단일 NDI로: Mosaic 라운드로빈 컴포지터',
         problem: '방송 감독이 30대 카메라를 한 화면으로 모니터링하려면, 30개를 개별 캡처·인코딩하는 순간 GPU와 네트워크가 무너진다.',
@@ -1194,6 +1328,7 @@ LightComponent → ShaderParameters → DeferredLightData
     },
     {
         id: 'prop-variation-csv',
+        domains: ['ta', 'pipeline'],
         tag: 'Tool',
         title: 'DNABLE — CSV로 굴리는 프롭 배리에이션 2계층 DataTable',
         problem: '소품 하나에 색·재질·형태 배리에이션이 수십 개씩 붙는다. 이걸 전부 개별 에셋으로 만들면 관리 불가능하고, 아티스트가 언리얼 에디터에서 매번 손으로 세팅하는 것도 비현실적.',
@@ -1213,6 +1348,7 @@ BeginPlay 가중치 랜덤 · PCG 스캐터 · OSC 실시간 교체`
     },
     {
         id: 'output-profile',
+        domains: ['engine', 'backend'],
         tag: 'Broadcast',
         title: 'DNABLE — 채널마다 해상도·포맷·감마가 다른 Output Profile',
         problem: 'SDI는 Rec.709 YUV, 디스플레이는 RGB 패스스루, 유튜브 쇼츠는 9:16 세로 — 방송 출력 채널마다 요구 해상도·픽셀 포맷·감마가 전부 다른데, 하나의 렌더 설정으로는 대응할 수 없다.',
@@ -1225,6 +1361,7 @@ BeginPlay 가중치 랜덤 · PCG 스캐터 · OSC 실시간 교체`
     // ══════════════════════════════════════
     {
         id: 'material-chain',
+        domains: ['ta', 'pipeline'],
         tag: 'Pipeline',
         title: '3-체인 에셋 아키텍처 — 재사용은 최대로, 얽힘은 제로로',
         problem: '텍스처→머티리얼→메시로 이어지는 에셋 체인을 자유롭게 공유하게 두면, 배경 에셋이 캐릭터 텍스처를 참조하는 식의 순환·교차 참조가 생겨 유지보수가 지옥이 된다.',
@@ -1241,6 +1378,7 @@ Share## = 에셋 타입별 네임스페이스 (경계 밖 참조 금지)`
     },
     {
         id: 'filesystem-db',
+        domains: ['backend', 'pipeline'],
         tag: 'DevOps',
         title: '파일시스템이 곧 데이터베이스 — DB가 죽어도 이력은 산다',
         problem: '에셋 버전·리테이크 이력을 메타데이터 DB에 의존하면, DB가 손상되거나 마이그레이션 실패 시 프로젝트 전체의 작업 이력이 날아간다.',
@@ -1258,6 +1396,7 @@ DCC 파일명: 버전 토큰 없음 (디렉토리가 계보 관리)
     },
     {
         id: 'task-state-machine',
+        domains: ['pipeline', 'backend'],
         tag: 'Pipeline',
         title: '9-state 태스크 머신 — 퀄리티와 일정의 결재권을 분리하다',
         problem: '작업 승인 워크플로우에서 일정 압박이 퀄리티 게이팅을 무너뜨리는 일이 반복됐다. PM이 "일단 통과"를 강제하면 검수가 형식화된다.',
@@ -1277,6 +1416,7 @@ Lock/Unlock: 상류가 하류를 열어줌 (재작업 폭포 차단)`
     // ══════════════════════════════════════
     {
         id: 'pipeline-orchestration',
+        domains: ['pipeline', 'backend'],
         tag: 'DevOps',
         title: 'StudioSetup — 10단계 역할 라우팅 + 재개형 빌드 오케스트레이션',
         problem: '엔진 개발자·캐릭터·레벨·뷰어 4개 역할이 각자 다른 도구·저장소·빌드 절차를 필요로 하는데, 신규 인원이 환경을 세팅하다 중간에 실패하면 처음부터 다시 해야 했다.',
@@ -1292,6 +1432,7 @@ Fail  : <FAILED step=… idx=…> 파싱 → 다음행동 주입`
     },
     {
         id: 'rbac-dashboard',
+        domains: ['backend', 'frontend'],
         tag: 'Tool',
         title: 'StudioSetup — 역할 기반 접근제어 파이프라인 대시보드 API',
         problem: '30인 팀에 파이프라인 실행 권한을 열어주면, 아티스트가 실수로 개발자 전용 빌드 스텝을 돌리거나 같은 작업을 중복 실행해 상태가 꼬인다.',
@@ -1304,6 +1445,7 @@ Fail  : <FAILED step=… idx=…> 파싱 → 다음행동 주입`
     // ══════════════════════════════════════
     {
         id: 'knowledge-harness',
+        domains: ['pipeline', 'ai'],
         tag: 'Pipeline',
         title: '자가 유지되는 지식 하네스 — 피드백이 규칙이 되고 문서가 스스로 갱신되는',
         problem: 'AI로 대규모 코드베이스를 개발하면, 같은 교정을 반복해서 알려줘야 하고 185개 문서·수백 개 클래스의 인덱스는 금세 낡는다. 지식이 사람 머릿속에만 있으면 확장되지 않는다.',
@@ -1320,6 +1462,7 @@ Living Docs
     },
     {
         id: 'appsscript-actionlist',
+        domains: ['backend', 'pipeline'],
         tag: 'Tool',
         title: '"액션 리스트" 시트 엔진 — 해결되면 스스로 사라지는 검증 현황',
         problem: '팀 에셋 검증 위반을 스프레드시트로 관리하면, 해결된 항목이 계속 쌓여 "지금 봐야 할 게 뭔지"가 묻힌다. 사람이 수동으로 지우면 또 실수한다.',
@@ -1330,6 +1473,7 @@ Living Docs
     // ── DCC 플러그인 개발 (Pipeline TD) ──
     {
         id: 'dcc-plugins',
+        domains: ['ta', 'pipeline'],
         tag: 'Tool',
         title: 'DCC 전 툴을 잇는 커스텀 플러그인 — MotionBuilder·Substance·Maya·Unreal',
         problem: '모캡·서페이싱·모델링·엔진이 각각 다른 DCC 툴을 쓰는데, 툴 사이 데이터가 수작업으로 오가면 실수와 병목이 생긴다. 상용 플러그인은 스튜디오 고유 SOP에 맞지 않는다.',
