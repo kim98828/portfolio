@@ -788,7 +788,7 @@ v2 패키징 (~100GB) — 성공
 │     ├── /approve     — 관리자 승인
 │     ├── /online      — 접속 현황
 │     └── /release_*   — 업데이트 관리
-├── Reverse Proxy: api.dnable.synology.me
+├── Reverse Proxy: api.team.internal
 └── SVN Server: 프로젝트 + 엔진 빌드`
     },
     // ── Animation ──
