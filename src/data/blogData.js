@@ -1,0 +1,1527 @@
+// ============================================
+// Blog Card Data — Problem-Solving Cards
+// ============================================
+export const blogData = [
+    // ── Featured 3 ──
+    {
+        id: 'featured-toon-buffer',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: 'DNABLE — 섀도우 채널 분리와 커스텀 Toon 버퍼 설계',
+        problem: 'UE5 기본 GBuffer로는 Toon 렌더링에 필요한 그림자 제어가 불가능했다. 머리카락 그림자가 얼굴에 지거나, 반음영 구간을 아티스트가 독립적으로 조절할 수 없는 문제가 반복되었다.',
+        solution: '커스텀 Toon Buffer A·B·C를 설계하여 섀도우 채널을 완전히 분리했다. 얼굴·몸체·헤어 각각의 그림자를 독립 채널로 렌더링하여, 아티스트가 채널별로 그림자를 그릴지 말지를 개별 제어할 수 있도록 구현. 반음영, 섀도우 블러, 다중 광원, GI, Fake GI, 아웃라인, 림라이트, 반투명까지 성능 저하 없이 송출 검증 완료.',
+        insight: '렌더링 문제를 "셰이더 코드"가 아니라 "버퍼 아키텍처"에서 해결하면, 아티스트에게 프로그래머 없이도 라이팅을 제어할 수 있는 권한을 넘겨줄 수 있다.',
+        arch: `Custom Toon Buffer Architecture
+├── Toon Buffer A — Shadow Control
+│   ├── Face Shadow Channel (독립 on/off)
+│   ├── Hair Shadow Channel (독립 on/off)
+│   └── Body Shadow Channel (독립 on/off)
+├── Toon Buffer B — Shading Parameters
+│   ├── Half-Shadow Range (반음영 구간)
+│   ├── Shadow Blur Intensity
+│   └── Rim Light Mask
+├── Toon Buffer C — Extended
+│   ├── Outline Thickness
+│   ├── Translucency Mask (반투명)
+│   └── Fake GI Intensity
+└── Result → 성능 저하 없이 실시간 송출 검증`
+    },
+    {
+        id: 'featured-viewport-compositing',
+        domains: ['engine', 'ta'],
+        tag: 'Compositing',
+        title: 'XROOM — 3D→2D 좌표 변환으로 화질 저하 없는 실시간 컴포지팅',
+        problem: 'Viewport에서 전경·XR·후경을 레이어별로 분리 렌더링해야 했다. 3D Plane에 미디어 텍스처를 매핑하면 리샘플링으로 인해 화질이 저하되는 문제가 있었다.',
+        solution: 'Viewport 렌더링을 오버로드하여 전경·XR·후경 3개 레이어로 분리. 3D 공간의 Plane 위치를 2D 스크린 좌표로 변환(WorldToScreen)하여, 3D를 경유하지 않고 해당 위치에 직접 2D로 드로잉. 원본 해상도 그대로 출력되어 화질 저하가 완전히 사라졌고, 이 방식을 DNABLE 후경 렌더링에도 그대로 적용.',
+        insight: '3D 엔진 안에서 "굳이 3D로 그릴 필요 없는 것"을 판별하는 눈이 중요하다. 좌표 변환 한 번으로 3D Plane의 GPU 비용과 화질 저하를 동시에 제거할 수 있다.',
+        arch: `Viewport Compositing Pipeline
+├── Layer Separation (Viewport Overload)
+│   ├── Background Layer (후경 — 미디어/2D)
+│   ├── XR Layer (가상 3D 씬)
+│   └── Foreground Layer (전경 — 오버레이)
+├── 3D → 2D Coordinate Transform
+│   ├── Plane WorldPosition
+│   ├── → ProjectWorldToScreen()
+│   └── → DrawTexture at ScreenPos (원본 해상도)
+├── Result
+│   ├── XROOM: 전경/XR/후경 합성
+│   └── DNABLE: 후경 연기·움직이는 배경 (동일 방식)
+└── vs 3D Plane: 리샘플링 없음 → 화질 100% 보존`
+    },
+    {
+        id: 'featured-hardware-integration',
+        domains: ['engine', 'backend'],
+        tag: 'Broadcast',
+        title: '공통 — SDI·NDI·SRT·OSC·WebRTC·BCI 하드웨어 통합 아키텍처',
+        problem: '프로젝트마다 요구되는 입출력 장비가 달랐다. Blackmagic DeckLink SDI, NDI, SRT, OSC, WebRTC, Emotiv EEG, Azure Kinect, LiDAR, Arduino 등 — 매번 새로운 하드웨어와 프로토콜을 연동해야 했다.',
+        solution: '장비별 통신 프로토콜(SDI/NDI/SRT/OSC/WebRTC/시리얼)을 하나의 통합 I/O 레이어로 추상화. 각 장비는 플러그인으로 독립 연결되고, 라우팅 테이블로 입출력 경로를 런타임에 변경 가능. XROOM에서는 방송 송출, DNABLE에서는 모캡+방송, 별도 프로젝트에서는 뇌파(BCI)·깊이 센서까지 동일 구조로 연동.',
+        insight: '하드웨어를 "직접 만져본 경험"은 스펙 시트로 대체할 수 없다. SDI의 Genlock, NDI의 디스커버리, OSC의 번들 타이밍, EEG의 노이즈 특성 — 각 프로토콜의 실전 특성을 체감해야 안정적인 통합 아키텍처가 나온다.',
+        arch: `Unified Hardware I/O Architecture
+├── Video I/O
+│   ├── Blackmagic DeckLink (4ch SDI, Genlock)
+│   ├── AJA (SDI alternative)
+│   ├── NDI (LAN 프리뷰, 디스커버리)
+│   ├── SRT (인터넷 스트리밍)
+│   └── WebRTC (브라우저 실시간)
+├── Control
+│   ├── OSC (Stream Deck, 조명, 카메라)
+│   ├── Arduino (물리 센서, 액추에이터)
+│   └── Serial (결제 단말, 프린터)
+├── Sensing
+│   ├── Emotiv EEG → OpenViBE → OSC → UE5
+│   ├── Azure Kinect (Body Tracking)
+│   └── LiDAR (공간 감지)
+└── Routing Table
+    └── 런타임 입출력 경로 변경 가능`
+    },
+    // ── Rendering ──
+    {
+        id: 'toon-shading',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: '40단계에 걸쳐 구축한 네이티브 톤 셰이딩 모델',
+        problem: 'UE5의 Deferred Shading은 PBR 전용. Post-Process로는 GBuffer에 커스텀 데이터를 기록할 수 없어 조명 모델 자체를 NPR로 전환하는 것이 불가능했다.',
+        solution: '엔진 소스에 MSM_Toon(ID 13) 등록, 9번째 MRT인 GBufferT(SV_Target8)를 할당하여 Toon 전용 파라미터를 독립 저장. PBR 라이트 누적을 완전히 제거하고 커스텀 ToonLightPass로 대체.',
+        insight: 'GBufferT를 CustomData와 완전 분리함으로써 Toon 픽셀과 PBR 픽셀이 인접해도 서로의 라이팅 데이터를 오염시키지 않는다.',
+        arch: `MSM_Toon (ID 13) Registration
+├── GBufferT (SV_Target8) — 9th MRT, Toon-only parameters
+├── ToonBxDF — 3-Band Cel Shading (Dark/Mid/Highlight)
+├── ToonLightPass — Replaces PBR light accumulation
+├── Anisotropy Blend — NPR(-1) ↔ PBR(+1) on same material
+└── GT7 CVM Tonemapper — ICtCp chroma-preserving`
+    },
+    {
+        id: 'custom-gbuffer',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: 'GBufferT — 9번째 MRT로 톤 전용 채널 완전 분리',
+        problem: 'PBR 채널의 시멘틱으로는 톤 아트디렉션에 필요한 파라미터를 전달할 수 없었다. 초기에는 Clear Coat 채널 하이재킹으로 우회했으나, 그림자 분리·하이라이트 제어 등 요구가 늘며 채널이 부족해졌다.',
+        solution: '엔진 소스에 9번째 MRT인 GBufferT(SV_Target8)를 할당하여 Toon 전용 파라미터를 독립 저장. CustomData와 완전 분리하여 NPR/PBR 픽셀 간 데이터 오염 방지. 그림자 채널을 개별 분리하여 아티스트가 각각 독립 제어 가능.',
+        insight: 'Clear Coat 하이재킹은 빠른 프로토타이핑에 유효하지만, 프로덕션에서는 전용 버퍼를 할당하는 편이 채널 충돌 없이 확장 가능하다 — MRT 1개 추가의 GPU 비용은 미미하지만 설계 자유도는 비약적으로 늘어난다.',
+        arch: `GBufferT (SV_Target8) — 9th MRT
+├── Shadow Tint (R)     — 그림자 색상
+├── Cel Range (G)       — 셀 셰이딩 범위
+├── Highlight Mask (B)  — 하이라이트 영역
+└── NPR/PBR Blend (A)  — Anisotropy(-1~+1)`
+    },
+    {
+        id: 'fov-outline',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: 'FOV 24°~120° 어디서든 동일한 아웃라인 두께',
+        problem: 'Inverted Hull 아웃라인이 카메라 FOV 변경 시 두께가 급격히 변하여, 클로즈업과 와이드 샷에서 일관된 아트 퀄리티를 유지할 수 없었다.',
+        solution: 'HLSL에서 FOV 보정 계수 fovCompensation = 1.0 / tanHalfFOV 를 적용. UE5.5 내장 View.TanAndInvTanHalfFOV.x 사용으로 MPC 의존 완전 제거.',
+        insight: 'FOV 24°(tan≈0.21)에서 같은 메시가 ~4.7배 적은 픽셀을 차지하므로, 보정 계수가 아웃라인을 비례 확대하여 어떤 줌에서든 동일한 픽셀 두께를 보장한다.',
+        arch: `FOV 24°  → tan=0.21 → compensation=4.7× → same pixel width
+FOV 45°  → tan=0.41 → compensation=2.4×
+FOV 90°  → tan=1.00 → compensation=1.0× (reference)
+FOV 120° → tan=1.73 → compensation=0.58×`
+    },
+    {
+        id: 'face-sdf',
+        domains: ['ta', 'engine'],
+        tag: 'Rendering',
+        title: 'SDF 기반 얼굴 그림자 — 아티스트가 그린 라이팅 응답',
+        problem: '표준 NdotL 라이팅이 애니메 스타일 얼굴에 코, 광대뼈의 추한 그림자를 만들어 손그림 미학을 파괴. 조명 방향 변경 시 그림자가 급변하는 문제.',
+        solution: 'Substance Painter에서 8~12 각도의 그림자 마스크 추출 → 커스텀 Python 도구로 SDF 텍스처 생성. 각 픽셀이 "이 각도에서 그림자 시작"을 인코딩하여, 런타임에 단일 텍스처 샘플로 부드러운 페이스 셰도우 구현.',
+        insight: '기존 렌더링의 "이 픽셀이 그림자인가?"를 뒤집어, "어떤 각도에서 이 픽셀에 그림자가 도달하는가?"로 질문을 바꾸면 단일 룩업으로 프레임당 지오메트리 계산을 대체할 수 있다.',
+        arch: `SP 마스크 추출 (8~12 angles)
+    → 아티스트 보정 (Photoshop)
+    → SDF 생성 (Python FaceShadowSDFGenerator)
+    → 셰이더 적용 (Anisotropy=-1 → SDF mode)`
+    },
+    {
+        id: 'smooth-normal',
+        domains: ['ta', 'engine'],
+        tag: 'Rendering',
+        title: '아웃라인이 찢어지지 않는 Smooth Normal UV 베이킹',
+        problem: 'UV 분할, 스무딩 그룹 경계에서 버텍스 노멀이 갈라지며 Inverted Hull 아웃라인 셸이 틈이 벌어지는 현상.',
+        solution: '에디터 도구가 동일 위치의 모든 버텍스 노멀을 평균하여 UV2/UV3 채널에 탄젠트 공간 스무스 노멀 저장. 아웃라인 머티리얼이 기하학적 노멀 대신 이 UV를 읽어 WPO 방향 결정.',
+        insight: '아웃라인에 필요한 노멀은 라이팅용 노멀과 다르다 — UV 분할과 무관하게 기하학적으로 일치하는 모든 노멀의 평균이 필요하며, UV 채널 저장으로 런타임 비용 제로.',
+        arch: null
+    },
+    {
+        id: 'engine-outline',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: '엔진 20개 파일 수정 — 모든 메시에 네이티브 아웃라인',
+        problem: '플러그인 레벨 아웃라인은 SkeletalMesh에만 작동하고 StaticMesh, InstancedMesh, HISM을 지원하지 않으며, LOD 거리 컬링과 Sequencer 연동도 불가능했다.',
+        solution: 'UMeshComponent에 CustomOutlineMaterial을 1급 UPROPERTY로 추가. OverlayMaterial 인프라를 미러링하되 ReverseCulling만 반전하여, 모든 메시 타입이 아웃라인을 자동으로 얻도록 엔진 소스 20개 파일 수정.',
+        insight: 'OverlayMaterial 인프라를 정확히 복제하면 오클루전 컬링, LOD, 거리 스케일 등 기존 최적화를 공짜로 상속받는다 — 변경점은 컬링 방향 하나뿐.',
+        arch: null
+    },
+    {
+        id: 'phantom-gi',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: '보이지 않는 메시로 Lumen GI를 제어하는 팬텀 라이트',
+        problem: '무대 특정 영역에 간접광을 추가해야 하지만, 가시적 광원을 배치하면 아트 디렉션을 파괴. Lumen Emissive GI는 Lighting Channel을 무시하여 캐릭터 격리 불가.',
+        solution: 'AFakeGIEmissiveLight — HiddenInGame + SetAffectIndirectLightingWhileHidden(true) 조합으로 보이지 않는 이미시브 메시가 Lumen GI에 기여. Kelvin→RGB 변환, 그라데이션 램프 지원.',
+        insight: 'SetAffectIndirectLightingWhileHidden은 Lumen 전용 플래그로, 보이지 않는 메시가 간접 조명에만 기여하는 "팬텀 광원"을 만든다.',
+        arch: null
+    },
+    {
+        id: 'character-exposure',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: 'Custom Stencil로 캐릭터만 노출 보정',
+        problem: '밝은 무대 조명에서 캐릭터가 상대적으로 어둡게 보이지만, 글로벌 노출 조정은 배경까지 영향. 캐릭터와 배경을 분리하여 노출 보정할 네이티브 메커니즘이 없었다.',
+        solution: 'CharacterPartManagerComponent가 이미 기록하는 Custom Stencil(1~7: Body/Face/Hair/Top/Pants/Shoes/Accessory) 값을 Post Process Material에서 읽어 SceneColor에 ExposureScale 선택 적용.',
+        insight: '파트 식별용으로 이미 존재하는 Custom Stencil을 노출 마스크로 재활용하면 추가 렌더 패스 없이 캐릭터별 노출 보정이 가능하다.',
+        arch: null
+    },
+    {
+        id: 'optimization',
+        domains: ['engine', 'ta'],
+        tag: 'Optimization',
+        title: '5명의 톤 캐릭터를 60fps로 — 전체 예산 플레이북',
+        problem: '톤 셰이딩 + Inverted Hull 아웃라인 + Lumen GI + VSM + 멀티 채널 SDI 캡처까지 적용한 5캐릭터를 60fps로 렌더링하려면 GPU/CPU 예산 관리가 필수적.',
+        solution: 'BC7+BC5 텍스처 압축, ORM 패킹으로 샘플 수 감소. LOD 타겟 50K/25K/12K/5K. LOD1+에서 아웃라인/하이라이트 머티리얼 제거. Static Switch로 컴파일 타임 분기. Animation Budget 4ms.',
+        insight: 'Static Switch Parameter는 쿡 타임에 분기를 완전히 제거하므로, 노멀맵 없는 머티리얼은 노멀맵 코드 경로의 GPU 비용이 말 그대로 제로다.',
+        arch: null
+    },
+    // ── Broadcast ──
+    {
+        id: 'broadcast-4ch',
+        domains: ['engine', 'backend'],
+        tag: 'Broadcast',
+        title: '언리얼 에디터 안에서 4채널 SDI 라이브 방송',
+        problem: '버추얼 아이돌 라이브에서 FreeCam/AngleCam/CharacterCam/Wide 4개 독립 피드를 60fps로 외부 스위처(ATEM)에 동시 출력해야 하나, UE 표준 SceneCapture에는 멀티 채널 SDI 코디네이터가 없다.',
+        solution: 'ABroadcastOutputActor 코디네이터 — OutputChannelManager(4× SceneCapture 1080p), DeckLinkOutputManager(Blackmagic 4ch SDI), MultiViewPreviewManager(라운드로빈 저해상도 프리뷰), NDIOutputManager(네트워크 프리뷰).',
+        insight: '에디터 멀티뷰 프리뷰가 4개 별도 캡처 대신 단일 SceneCapture를 라운드로빈(프레임당 2소스)으로 재사용하여 에디터 오버헤드 75% 절감.',
+        arch: `ABroadcastOutputActor (Coordinator)
+├── UOutputChannelManager      # 4ch SceneCapture 1080p
+├── UCameraSourceRegistry      # Free/Angle/Follow/Character auto-discover
+├── UDeckLinkOutputManager     # Blackmagic 4ch SDI
+├── UMultiViewPreviewManager   # Round-robin low-res editor preview
+├── UPIPOverlayManager         # PIP widget overlay
+└── UNDIOutputManager          # Network preview output`
+    },
+    {
+        id: 'osc-control',
+        domains: ['engine', 'ta'],
+        tag: 'Broadcast',
+        title: 'Stream Deck → 언리얼: OSC 카메라 전환 & 실시간 의상 교체',
+        problem: '라이브 방송 중 디렉터가 4채널 SDI 카메라 소스를 물리 컨트롤러로 전환하고, 캐릭터 의상도 실시간으로 교체해야 했다.',
+        solution: 'UOSCControlManager가 UDP 8000에서 OSC 수신. 프리뷰 패널의 표시 순서가 곧 OSC 인덱스. 의상 변경은 /studio/costume/[Code]/set으로 동적 에셋 탐색(DA_[Code]_Set_[Number]_*) 수행.',
+        insight: '프리뷰 패널의 표시 순서를 OSC API의 인덱스로 그대로 사용하면 설정 파일이 필요 없다 — 디렉터가 화면에서 3번을 보고 OSC 3을 보내면 그냥 동작한다.',
+        arch: null
+    },
+    // ── Camera ──
+    {
+        id: 'camera-system',
+        domains: ['engine', 'ta'],
+        tag: 'Camera',
+        title: '설정 파일 없는 카메라 아키텍처 — 레벨에 놓으면 끝',
+        problem: '라이브 공연에서 자유 카메라와 최대 9개 고정 앵글 + 캐릭터 추적 카메라를 빠르게 전환해야 하지만, 설정 파일 기반 프리셋 관리가 복잡했다.',
+        solution: 'CameraActorManager가 FreeCameraPawn(NumPad 0)과 레벨 배치 CameraActorBase(NumPad 1-9)를 통합 관리. CameraID 문자열 정렬로 NumPad 자동 매핑. ShotType 프리셋으로 원클릭 배치.',
+        insight: '레벨에 배치된 카메라 액터의 위치가 곧 설정이므로, 앵글 변경 시 설정 파일이 아닌 액터를 움직이면 된다.',
+        arch: `NumPad 0 ──→ FreeCameraPawn (자유 카메라)
+NumPad 1-9 ─→ CameraActorBase (레벨 배치)
+                ├─ AngleCameraActor (고정 앵글)
+                └─ FollowCameraActor (캐릭터 추적)
+Arrow Keys ──→ 카메라 순환
+1-5 키 ──────→ 타겟 캐릭터 설정`
+    },
+    // ── MoCap ──
+    {
+        id: 'multi-livelink',
+        domains: ['engine', 'ta'],
+        tag: 'MoCap',
+        title: '10개 LiveLink 동시 운용 — 5인 모캡 라이브 아키텍처',
+        problem: '5명의 버추얼 아이돌을 바디(MotionBuilder) + 페이셜(iPhone ARKit) 모캡으로 동시 구동하면 10개 LiveLink 서브젝트의 네이밍, 네트워크, Timecode 동기화가 필요.',
+        solution: '바디 5명은 단일 Message Bus(UDP 6666)로 통합 전송, 페이셜 5명은 고정 IP별 ARKit(포트 11111). UTimecodeSynchronizer 3프레임 버퍼로 유선(~10ms) vs WiFi(~30-50ms) 레이턴시 정렬.',
+        insight: 'MotionBuilder가 5명의 바디 서브젝트를 하나의 Message Bus 연결로 스트리밍하면 네트워크 핸드셰이크와 방화벽 룰이 단일 포트로 단순화된다.',
+        arch: `[MotionBuilder] ──Message Bus UDP 6666──→ 5× Body Subjects
+[iPhone ×5] ──ARKit UDP 11111──→ 5× Facial Subjects
+                                    ↓
+                    UTimecodeSynchronizer (3-frame buffer)
+                                    ↓
+                    Per-Character Child AnimBP binding`
+    },
+    {
+        id: 'arkit-remap',
+        domains: ['ta', 'engine'],
+        tag: 'MoCap',
+        title: 'LiveLink 단계에서 캐릭터별 ARKit 리매핑',
+        problem: '5명의 캐릭터가 서로 다른 얼굴 비율을 가지므로 동일한 ARKit 블렌드셰이프 값이 캐릭터마다 다르게 보임. AnimBP에서 리매핑하면 캐릭터별 로직이 중복.',
+        solution: 'UARKitFacialPreProcessor(ULiveLinkFramePreProcessor 상속)를 각 캐릭터의 LiveLink Subject에 추가. FacialRemapDataAsset에 52개 블렌드셰이프별 Multiplier/Offset/Min/Max/Curve 정의.',
+        insight: 'AnimBP가 아닌 LiveLink PreProcessor에서 리매핑하면 5개 캐릭터 AnimBP가 동일한 베이스 클래스를 공유하고, 캐릭터 개성은 Data Asset에만 존재한다.',
+        arch: null
+    },
+    {
+        id: 'tiptoe-fix',
+        domains: ['ta', 'engine'],
+        tag: 'MoCap',
+        title: '모캡 까치발 수정 — 왜 펠비스가 아닌 메시를 움직였는가',
+        problem: 'Vicon→MotionBuilder→LiveLink 파이프라인에서 퍼포머와 캐릭터의 체형 차이로 리타겟 후 까치발(발목 회전) 현상 발생.',
+        solution: 'FootTiptoeFixComponent + AnimNode_FootTiptoeFix가 캐릭터별 높이 오프셋과 발/발가락 회전 보정값을 프레임마다 적용. DeadZone으로 모캡 노이즈 억제.',
+        insight: '높이 보정을 Pelvis 본이 아닌 SkeletalMesh 컴포넌트 위치로 적용하면 "고무 다리" 아티팩트를 방지한다 — Pelvis 오프셋은 IK 캘리브레이션을 파괴하기 때문.',
+        arch: null
+    },
+    {
+        id: 'axis-remap',
+        domains: ['ta', 'engine'],
+        tag: 'MoCap',
+        title: 'Y-Up 소품을 원컴포넌트로 수정하는 LiveLink 축 리매핑',
+        problem: 'MotionBuilder/Maya의 Y-Up 좌표계에서 트래킹된 소품/카메라 리그가 UE5의 Z-Up에서 회전/미러 상태로 나타남.',
+        solution: 'LiveLinkAxisRemapComponent(ActorComponent)가 DCC→UE 축 변환 프리셋을 제공. LiveLink Source 설정을 건드리지 않고 어떤 Prop Actor에든 추가 가능.',
+        insight: '축 리매핑을 LiveLink Source나 PreProcessor가 아닌 ActorComponent로 만들면, 새 소품이 무대에 합류할 때 기존 설정을 건드리지 않고 빠르게 적용할 수 있다.',
+        arch: null
+    },
+    // ── Animation ──
+    {
+        id: 'arm-collision',
+        domains: ['engine', 'ta'],
+        tag: 'Animation',
+        title: 'Physics Asset으로 팔 관통 방지 — 래그돌 볼륨 재활용',
+        problem: '마른 모캡 퍼포머의 "팔 내린 자세"가 리타겟 후 캐릭터 몸통을 관통. 물리 시뮬레이션은 비용이 너무 높음.',
+        solution: 'AnimNode_ArmCollisionLimit가 Physics Asset의 Capsule/Sphere 볼륨을 읽어 6개 팔 본(양쪽 upperarm/lowerarm/hand)이 3개 몸통 볼륨 안에 진입하면 밀어냄. 프레임당 18회 거리 계산.',
+        insight: '래그돌/물리용으로 이미 제작된 Physics Asset의 충돌 볼륨을 팔 관통 경계로 재활용하면 리거의 추가 작업 없이 다른 목적에 활용 가능하다.',
+        arch: null
+    },
+    {
+        id: 'buoyancy',
+        domains: ['ta', 'engine'],
+        tag: 'Animation',
+        title: '순수 수학으로 만드는 유기적 플로팅 모션',
+        problem: '소품/장식에 유기적 부유 모션이 필요하지만, 리지드 바디 물리는 비용이 높고 기계적인 움직임을 만든다.',
+        solution: 'Sin+Cos 파형을 축별 주파수 비율로 조합(X: sin+cos@0.7, Z: sin+cos@1.3)하여 비주기적 패턴 생성. Warp 변조 + 4고조파 Perlin 노이즈. 월드 좌표가 랜덤 시드.',
+        insight: '액터의 월드 좌표를 결정론적 노이즈 시드로 사용하면, 50개 동일 코인을 레벨에 배치해도 인스턴스별 설정 없이 50가지 고유 모션이 자동 생성된다.',
+        arch: null
+    },
+    // ── Character ──
+    {
+        id: 'character-parts',
+        domains: ['engine', 'ta'],
+        tag: 'Character',
+        title: '자동 아웃라인과 캐스케이딩 오버라이드를 가진 모듈러 캐릭터 파츠',
+        problem: '런타임 파츠 교체 시 아웃라인 자동 생성, 물리 애니메이션 동기화, 교차 파츠 머티리얼 오버라이드(짧은 소매가 Body 메시의 팔을 가림)가 수동 설정 없이 필요했다.',
+        solution: 'CharacterPartManagerComponent가 FName 키 슬롯(무제한) 관리. OutlineMaterial 지정 시 Outline_[SlotName] 자동 생성. FPartMaterialOverride로 파츠 장착 시 다른 슬롯의 머티리얼 선언적 교체.',
+        insight: '짧은 소매 파츠가 "장착 시 Body.Material[0]을 MI_Body_ArmHidden으로 교체하라"고 선언하면 매니저가 저장/복원을 자동 처리 — 모프 타겟이나 숨겨진 지오메트리 없이 팔 클리핑 해결.',
+        arch: null
+    },
+    // ── Tool ──
+    {
+        id: 'lookdev',
+        domains: ['ta', 'engine'],
+        tag: 'Tool',
+        title: 'LookDev 액터 — 모든 라이팅 변수를 하나의 제어판에서',
+        problem: '톤 라이팅, 컬러 그레이딩, 블룸, GI 파라미터를 실시간으로 조정해야 하지만, 여러 PostProcess 컴포넌트가 동일 필드에 겹쳐 써서 "마지막에 쓴 놈이 이김" 버그 발생.',
+        solution: 'Coordinator 패턴의 LookDevActor — 6개 독립 컴포넌트(Lighting/PP/Tonemapper/SplitCG/Character/GI)가 각각 소유한 PP 필드만 조작. DataAsset 프리셋으로 세이브/로드, 언두/리두 지원.',
+        insight: '소유권을 감사하여 각 PP 필드를 정확히 하나의 컴포넌트에 할당하니, 15개의 죽은 CVar과 6개의 죽은 struct 필드가 발견되었다 — 이들은 한 번도 적용된 적이 없었다.',
+        arch: `ALookDevActor (Coordinator)
+├── LightingComp    → DirectionalLight, SkyLight
+├── PPComp          → Exposure, Bloom, Vignette, Split Bloom
+├── TonemapperComp  → GT7 CVar control
+├── SplitCGComp     → 8-Part Split Color Grading (MID)
+├── CharacterComp   → Lighting Channel, Base/Shadow Tint
+├── GIComp          → Lumen, AO, GI Directionality
+└── HistoryManager  → Undo/Redo`
+    },
+    // ── Pipeline / DevOps ──
+    {
+        id: 'engine-fork',
+        domains: ['engine', 'pipeline'],
+        tag: 'DevOps',
+        title: 'UE5 엔진 포크 유지보수 — 마커 + 레지스트리 시스템',
+        problem: '100+ C++ 파일, 50+ 셰이더 파일을 수정한 엔진 포크에서 Epic 업스트림 병합 시 어떤 파일이 변경되었는지 추적할 방법이 없으면 고고학적 작업이 된다.',
+        solution: '모든 엔진 수정부에 // Custom Engine Start YYYY-MM-DD 마커 의무화 + ModifiedEngineFiles.md 레지스트리에 파일 경로/설명/날짜 기록. grep "Custom Engine Start"로 전체 변경 목록 즉시 확인.',
+        insight: '날짜 스탬프 마커 시스템이 블랙박스 엔진 포크를 자기 문서화 감사 추적으로 변환한다 — grep 한 줄이면 업스트림 대비 전체 변경 표면이 드러난다.',
+        arch: null
+    },
+    {
+        id: 'role-pipeline',
+        domains: ['pipeline', 'backend'],
+        tag: 'DevOps',
+        title: '아티스트는 빌드 시스템을 절대 만지지 않는 역할별 파이프라인',
+        problem: '엔진 개발자는 Git+소스 빌드, 아티스트는 SVN+프리빌드 엔진. 역할별 도구가 달라 환경 구축에 1~2일 소요되고, 아티스트가 실수로 빌드를 깨뜨리는 사고 빈발.',
+        solution: 'Python StudioSetup — config.toml 통합 설정, 역할별 자동 셋업(Developer: Git+Build, Character/Level: SVN+Prebuilt). FastAPI 대시보드로 팀 상태 관리. 프리컴파일 엔진 SVN NAS 배포.',
+        insight: '아티스트에게 빌드 툴체인을 노출하지 않는 SVN 전용 경로를 만들면 "아티스트가 엔진 빌드를 깨뜨리는" 고전적 문제가 구조적으로 불가능해진다.',
+        arch: `Developer  : 00→01→02→03→04→05→06→09 (Git+Build)
+Character  : 00A→10→05→06s (SVN+Prebuilt, no maps)
+Level      : 00A→10→05→06s→08 (SVN+Prebuilt+Maps)
+Viewer     : 00A→10→05→06s (read-only)`
+    },
+    {
+        id: 'svn-git-overlay',
+        domains: ['pipeline'],
+        tag: 'DevOps',
+        title: 'SVN 콘텐츠 + Git 코드를 하나의 디렉토리에서',
+        problem: '대용량 바이너리(텍스처, 메시)는 Git에 부적합하고, 코드는 SVN의 히스토리/디프가 약함. 두 도구를 별도로 운영하면 작업 디렉토리가 분리되어 빌드가 깨진다.',
+        solution: 'Step 06이 SVN 바이너리 콘텐츠를 기본으로 체크아웃하고, 그 위에 Git 코드를 오버레이하여 단일 작업 디렉토리로 병합. 각 도구가 자신의 장점을 살리는 영역만 관리.',
+        insight: 'SVN이 바이너리를, Git이 텍스트를 각각의 강점으로 관리하되 하나의 작업 디렉토리에서 합치면, 개발자는 Git의 히스토리/디프를 누리고 아티스트는 SVN만으로 충분하다.',
+        arch: null
+    },
+    // ── Pipeline ──
+    {
+        id: 'bp-architecture',
+        domains: ['engine', 'ta'],
+        tag: 'Pipeline',
+        title: 'Blueprint는 프로덕션 로직 레이어 — 75개 C++ 클래스의 깔끔한 유지',
+        problem: '75개 C++ 클래스가 카메라, 캐릭터, 방송, LookDev 시스템에 걸쳐있을 때, 성능 크리티컬 C++ 로직과 에셋 참조 Blueprint 로직의 경계가 모호해지면 유지보수 비용이 폭증.',
+        solution: 'C++는 "언제/어떻게"(카메라 수학, 입력, MPC 업데이트)를, Blueprint는 "무엇을"(어떤 에셋, 어떤 사운드, 어떤 조명) 소유. BlueprintImplementableEvent로 C++ 이벤트를 Blueprint가 구현.',
+        insight: 'C++가 시스템의 타이밍과 메커니즘을 소유하고 Blueprint가 콘텐츠 참조를 소유하면, 엔지니어와 아티스트가 서로의 영역을 건드리지 않고 독립 작업 가능.',
+        arch: null
+    },
+    {
+        id: 'gamemode',
+        domains: ['engine'],
+        tag: 'Pipeline',
+        title: 'GameMode 자동 캐릭터 디스커버리와 공연 오케스트레이션',
+        problem: '5명의 버추얼 아이돌 캐릭터, 카메라 시스템, 공연 상태(Active/Paused/Stopped)를 하나의 GameMode에서 조율해야 하지만, 기본 UE GameMode는 이 워크플로우를 지원하지 않음.',
+        solution: 'AStudioGameModeBase가 BeginPlay에서 GetAllActorsOfClass로 모든 VirtualIdolCharacter를 자동 등록. 첫 번째가 Primary Idol. BlueprintImplementableEvent로 공연 시작/종료 시 음악/조명/UI 반응.',
+        insight: 'BeginPlay에서 GetAllActorsOfClass로 자동 탐색하면, 새 캐릭터를 레벨에 놓기만 해도 시스템이 자동으로 인식한다 — 설정 제로.',
+        arch: null
+    },
+    // ── Pipeline Automation (에셋 검증 시스템 / 카탈로그 / 생산 라이프사이클) ──
+    {
+        id: 'asset-validation-gate',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '커밋·NAS·엔진 3소스 SOP 위반 자동 검출 — 방치 추적까지',
+        problem: '캐릭터·배경·소품 에셋이 수백 개로 늘면서 네이밍 규칙과 폴더 구조 SOP 위반을 사람이 일일이 잡는 것이 불가능해졌다. 위반이 엔진까지 흘러 들어간 뒤 발견되면 되돌리는 비용이 몇 배로 커진다.',
+        solution: '세 개의 독립 소스에서 위반을 검출한다 — ① SVN 커밋 훅이 경로·파일명 룰을 즉시 검사(post-commit → 웹훅), ② NAS 폴더를 평일 주기로 스캔, ③ 엔진 콘텐츠를 CLI/대시보드에서 감사. 룰 정본은 한 곳(감사 모듈)에 두고 커밋 검사 노드와 동기화한다. 위반은 파트별 채팅방으로 라우팅하고, 신규·재발·해결을 키로 추적하며 방치 7일/14일에 에스컬레이션, 담당자별 리더보드로 귀속한다.',
+        insight: '위반 검증은 "한 번 훑기"가 아니라 "상태 기계"다. 신규/재발/해결/방치를 키 기반으로 추적해야 알림 피로 없이 실제 개선을 유도할 수 있고, 검출 소스를 커밋·파일시스템·엔진 세 층으로 나누면 어느 단계에서 새는지가 드러난다.',
+        arch: `SOP Violation Detection (3 sources)
+├── SVN Commit Hook ──► 경로·파일명 룰 (즉시)
+├── NAS Scan (평일 주기) ──► 카테고리별 폴더 검사
+└── Engine Audit (CLI/대시보드) ──► 콘텐츠 감사
+         │  Rule Source of Truth (감사 모듈 정본)
+    ┌────┴───────────────┐
+파트별 채팅방 라우팅   담당자 리더보드
+├── 신규/재발/해결 추적 (키 기반)
+├── 방치 에스컬레이션 (7일 / 14일)
+└── 위반 제로 축하`
+    },
+    {
+        id: 'engine-reconcile',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '저장소를 인증 없이 읽어 카탈로그와 대조하는 리컨사일 루프',
+        problem: '에셋이 DCC 툴에서 완성돼도 실제 엔진(저장소 Content)에 임포트됐는지는 별개 문제다. 추적 DB(카탈로그)와 실제 저장소 상태가 어긋나면 "완료 처리됐는데 화면엔 없음"이 반복된다.',
+        solution: 'svnlook으로 워킹카피 체크아웃이나 네트워크 인증 없이 서버에서 저장소 트리를 직접 읽어 {카테고리:{에셋:[변형]}} 구조를 추출하고, 카탈로그의 "엔진 반영" 컬럼을 자동으로 채운다. DCC 퍼블리시(NAS 스캔)와는 독립된 축으로 관리 — "NAS엔 있으나 엔진 미반영" = 임포트 대기 신호다. 조회 실패 시엔 전량 미반영으로 덮어쓰지 않고 판별을 보류한다. 누락 공정도 코드 기준으로 자동 비교(폴더명 수동 입력 불요).',
+        insight: 'svnlook으로 서버에서 트리만 읽으면 수십 GB 워킹카피를 받지 않고도 "실제 반영 상태"를 알 수 있다. 조회가 실패했을 때 "미반영"으로 단정하지 않고 "판별 보류"로 처리하는 것이 전량 오탐 사고를 막는 핵심이다.',
+        arch: `Reconcile Loop
+저장소 Content (SVN)
+   │  svnlook tree (인증·WC 불요)
+   ▼  {category:{asset:[variations]}}
+Catalog "엔진 반영" 컬럼 자동 채움
+   ├── NAS 있음 + 엔진 미반영 → 임포트 대기
+   ├── 조회 실패 → 판별 보류 (오탐 방지)
+   └── 누락 공정 = 코드 기준 자동 비교`
+    },
+    {
+        id: 'asset-lifecycle',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '요청·시작·컨펌·리테이크를 폼과 게이트로 묶은 무인 생산 라이프사이클',
+        problem: '에셋 하나가 요청 → 작업 → 검수 → 컨펌까지 여러 손을 거치는데 상태가 채팅과 구두로만 흘러, 요청 누락·중복 작업·미검수 통과가 잦았다.',
+        solution: '커스텀 HTML 폼(웹훅 접수)으로 요청을 받고, "작업 시작" 시 NAS 폴더 SOP 트리를 자동 생성한다. 컨펌 제출 폼(이미지 업로드)으로 결과를 올리면 관리자가 컨펌/리테이크 버튼으로 판정하고, 제출 시점에 검증 게이트가 누락·SOP 위반을 잡으면 아예 차단한다. 순수 에셋 리스트와 작업목록·위반목록을 분리한 정규화 모델 위에서, 전 과정을 무인 스케줄러(cron)가 주기적으로 돌린다.',
+        insight: '파이프라인의 각 전이(요청/시작/제출/컨펌)에 게이트를 걸면, 검수 통과가 담당자의 성실함이 아니라 시스템의 불변조건이 된다 — 사람이 잊어도 파이프라인이 잊지 않는다.',
+        arch: `Asset Production Lifecycle
+[요청] HTML 폼 → 웹훅 접수
+[작업 시작] → NAS 폴더 SOP 트리 자동 생성
+[컨펌 제출] 이미지 업로드 폼
+   └─ 검증 게이트: 누락·SOP 위반 시 제출 차단
+[관리자 판정] 컨펌 / 리테이크
+정규화 모델: 순수 에셋 리스트 ↔ 작업목록 / 위반목록
+전 과정 무인 스케줄러(cron) 주기 실행`
+    },
+    {
+        id: 'automation-notify-ops',
+        domains: ['pipeline', 'backend'],
+        tag: 'DevOps',
+        title: '위반·마감·리포트를 파트별 채팅방으로 자동 배포하는 무인 운영 레이어',
+        problem: '검출 로직이 있어도 "누가 언제 무엇을 봐야 하는가"가 사람 손에 남으면 결국 방치된다. 위반 알림·마감 임박·주간 결산이 채팅과 구두로만 흘러 담당자마다 놓치는 것이 달랐고, 알림이 한꺼번에 쏟아지면 피로해져 아무도 안 보게 된다.',
+        solution: '알림 대상을 파트(캐릭터/배경·소품/개발/시네마틱/관리자) 단위로 라우팅하고, 위반은 발생 즉시·정기 리포트·주간 결산으로 층을 나눠 보낸다. 마감 요청일 기준 D-3 임박/초과 에셋을 매일 아침 카테고리별 방으로 자동 발송하고, 주간 회의용 개발 리포트를 담당자·상태·기간 필터로 생성해 추적 DB에 자동 업로드한다. 방 라우팅 정본은 설정 파일 한 곳에 두고, 웹훅 같은 시크릿은 코드가 아닌 각 런타임 시크릿 스토어에서만 로드한다 — 시크릿 미설정 시 조회는 되고 발송만 조용히 skip(무해).',
+        insight: '자동화의 마지막 1미터는 "검출"이 아니라 "적시에 올바른 사람 앞에 놓는 것"이다. 라우팅 정본을 코드에서 분리해 설정 한 곳에 두면 조직 개편이 있어도 코드를 안 건드리고, 시크릿 부재를 에러가 아닌 무해한 skip으로 설계하면 부분 배포 환경에서도 파이프라인이 멈추지 않는다.',
+        arch: `무인 알림/리포트 운영 레이어
+├── 위반 → 파트별 방 (즉시 / 정기 리포트 / 주간 결산)
+├── 방치 에스컬레이션 (7일 ⚠️ / 14일 🚨) + 위반 제로 축하 🎉
+├── 마감 D-3·초과 → 카테고리별 방 (매일 아침 cron)
+├── 주간 개발 리포트 → 담당자·상태·기간 필터 → 추적 DB 업로드
+├── 라우팅 정본 = 설정 파일 1곳 (조직 변경 = 코드 무변경)
+└── 시크릿 = 런타임 스토어 로드, 미설정 시 무해 skip`
+    },
+    {
+        id: 'automation-dry-deploy',
+        domains: ['backend', 'pipeline'],
+        tag: 'DevOps',
+        title: '로직은 한 곳, 실행은 여러 런타임 — 룰이 갈라지지 않는 자동화 배포',
+        problem: '같은 업무 규칙(위반 판정·리컨사일·리마인더)이 워크플로우 엔진·스크립트·스케줄러 여러 런타임에서 돌아야 했다. 각 런타임에 로직을 복붙하면 룰이 갈라져 한쪽만 고쳐지는 사고가 반복되고, 어느 게 진짜인지 아무도 모르게 된다.',
+        solution: '업무 로직을 단일 소스(정본)에 두고, 워크플로우 엔진 노드는 트리거·전달만 담당해 로직 중복을 제거(DRY)했다. 워크플로우 정의는 파일로 버전관리해 푸시 시 CI가 자동 배포하고, 서버 직접 배포가 필요한 구성요소만 별도 수동 절차로 분리했다. 스케줄은 평일 업무시간 정각 주기로 무인 실행하되, 외부 저장소·NAS 미도달 시 빈 결과로 degrade해 파이프라인이 멈추지 않게 했다. 시간 판정은 런타임이 UTC라도 항상 KST 보정을 강제.',
+        insight: '멀티 런타임 자동화의 핵심은 "어디서 실행되든 진실은 한 곳"이다. 로직을 정본 한 곳에 몰고 각 런타임은 얇은 어댑터로 두면, 룰이 갈라지지 않고 배포도 파일 푸시 한 번으로 수렴한다. degrade 설계가 없으면 외부 의존 하나가 죽을 때 자동화 전체가 멈춘다.',
+        arch: `DRY 자동화 배포
+로직 정본 (단일 소스)
+   ├── 워크플로우 엔진 = 트리거/전달만 (로직 0)
+   ├── 스케줄러(cron) = 평일 정각 무인 실행
+   ├── 외부(저장소·NAS) 미도달 → 빈 결과 degrade (무중단)
+   └── 시간 판정 = UTC→KST 보정 강제
+배포: 워크플로우 정의 push → CI 자동 배포
+      서버 구성요소만 수동 분리 배포`
+    },
+    // ══════════════════════════════════════
+    // XROOM — 960+ commits
+    // ══════════════════════════════════════
+    // ── SaveLoad ──
+    {
+        id: 'xroom-saveload',
+        domains: ['engine'],
+        tag: 'SaveLoad',
+        title: '3D 씬 전체를 직렬화하는 Save/Load 시스템 — 수십 번의 아키텍처 전환',
+        problem: 'XROOM의 3D 씬에는 액터, 컴포넌트, MediaPlane 텍스처, Composure 설정, PPT 슬롯, 카메라 트랜스폼이 혼재. 단순 문자열 직렬화로는 오브젝트 간 참조와 고유 ID 충돌을 해결할 수 없었다.',
+        solution: '문자열 → 오브젝트 기반 → 오브젝트 그래프 전체 영속화로 아키텍처를 수차례 전환. DragDrop 오브젝트의 UniqueID 중복 문제를 해결하고, Undo/Redo 시스템까지 Save/Load 위에 재구축.',
+        insight: 'Save 시스템이 충분히 완전하면 Undo/Redo를 별도로 구현할 필요가 없다 — 스냅샷 저장/복원이 곧 Undo/Redo다. 이 발견으로 코드를 절반으로 줄였다.',
+        arch: `Save/Load Architecture
+├── Actor Serializer   — Transform, Properties, UniqueID
+├── Component State    — Media, Composure, PPT, Camera
+├── Object Graph       — Reference tracking, ID dedup
+├── Undo/Redo          — Built on Save/Load snapshots
+└── File I/O           — Async write, versioned format`
+    },
+    // ── Compositing ──
+    {
+        id: 'xroom-composure',
+        domains: ['engine', 'ta'],
+        tag: 'Compositing',
+        title: 'Composure 크로마키 + Save/Load = 크래시 — 실시간 합성의 상태 관리',
+        problem: 'UE5 Composure 플러그인으로 실시간 크로마키 합성을 구현했으나, Save/Load 시 Composure 상태 복원에서 크래시 발생. ColorResistance 토글 후 뷰포트에 잔상 아티팩트도 남았다.',
+        solution: 'Composure 컴포넌트의 초기화 순서를 제어하는 예외 처리 레이어 추가. 복원 시 Composure를 먼저 해제 → 씬 로드 → 재초기화하는 3단계 프로세스. 잔상 문제는 렌더 타겟 강제 클리어로 해결.',
+        insight: '실시간 합성 시스템은 "현재 프레임"에 최적화되어 있어 상태 저장/복원을 고려하지 않는다. Save/Load와 결합하려면 초기화 순서를 명시적으로 제어하는 중간 레이어가 필수다.',
+        arch: `Load Sequence
+1. Composure Release  — 기존 합성 파이프라인 해제
+2. Scene Restore      — 액터, 미디어, 카메라 복원
+3. Composure Reinit   — 크로마키 설정 재적용
+4. RenderTarget Clear — 잔상 방지 강제 클리어`
+    },
+    // ── Streaming ──
+    {
+        id: 'xroom-ndi',
+        domains: ['engine', 'backend'],
+        tag: 'Streaming',
+        title: 'NDI 비동기 이중 버퍼 — GPU→CPU 스톨 없는 1080p60 송출',
+        problem: 'NDI 프레임 송출 시 GPU→CPU 텍스처 리드백에서 동기 대기가 발생하여 프레임 드롭. 실시간 방송에서 매 프레임 16.6ms 예산을 초과하면 시청자에게 끊김이 보인다.',
+        solution: 'MappedTexture[2] 핑퐁 구조의 비동기 이중 버퍼 설계. 한 프레임을 NDI로 전송하는 동안 다음 프레임의 GPU 리드백을 동시 진행. 파이프라인 지연을 1프레임 이내로 억제.',
+        insight: 'GPU→CPU 리드백은 본질적으로 느리다. 동기 방식으로는 해결 불가능하며, 1프레임 지연을 수용하는 비동기 핑퐁이 실시간 방송에서 유일한 실용적 해법이다.',
+        arch: `Frame N:   GPU Render → Buffer[0] → NDI Send
+Frame N+1: GPU Render → Buffer[1] → (waiting)
+Frame N+2: GPU Render → Buffer[0] → NDI Send (Buffer[1])
+                         ↑ ping-pong ↑`
+    },
+    {
+        id: 'xroom-ndi-audio',
+        domains: ['engine', 'backend'],
+        tag: 'Streaming',
+        title: 'NDI 오디오 채널 자동 다운믹스/업믹스',
+        problem: 'NDI 소스마다 오디오 채널 수가 다름(예: 8ch 수신 → 2ch 출력). 채널 미스매치 시 무음 또는 왜곡 발생. 사용자가 매번 오디오 설정을 수동으로 맞추는 것은 비현실적.',
+        solution: '자동 다운믹스/업믹스 알고리즘 구현. 초과 채널은 합산 후 정규화, 부족 채널은 평균으로 생성. Float32→Int16 변환 포함. 어떤 NDI 소스든 자동으로 출력 포맷에 맞춰 재생.',
+        insight: '오디오 채널 불일치는 방송 현장에서 가장 흔한 문제다. "항상 자동으로 맞추기"가 "옵션으로 선택하기"보다 현장 안정성이 높다 — 방송 중에는 설정을 건드릴 시간이 없다.',
+        arch: null
+    },
+    {
+        id: 'xroom-ffmpeg',
+        domains: ['engine', 'backend'],
+        tag: 'Streaming',
+        title: 'FFmpeg를 UE5 안에서 — 인프로세스에서 프로세스 분리로',
+        problem: 'UE5 내부에서 FFmpeg 라이브러리를 직접 링크하면 인코딩 크래시가 에디터 전체를 죽인다. 연속 녹화 시 메모리 누수도 발생.',
+        solution: '초기 인프로세스 방식에서 별도 프로세스 스폰 방식으로 전환. UE5는 파이프로 프레임을 전달하고 FFmpeg 프로세스가 독립적으로 인코딩. 오디오 녹음, 타임코드 표시, 파일 관리까지 모듈 분리.',
+        insight: '서드파티 네이티브 라이브러리가 호스트 앱을 크래시시킬 수 있다면 프로세스를 분리하라. 파이프 통신의 오버헤드는 크래시 복구 비용보다 항상 저렴하다.',
+        arch: `v1: UE5 ←link→ FFmpeg.dll  (crash = editor dead)
+v2: UE5 ←pipe→ FFmpeg.exe  (crash = respawn)
+         ├── Video pipe (raw frames)
+         ├── Audio pipe (PCM)
+         └── Control pipe (start/stop/config)`
+    },
+    // ── PPT ──
+    {
+        id: 'xroom-ppt',
+        domains: ['ta', 'engine'],
+        tag: 'Tool',
+        title: '3D 엔진 안의 PPT — 79커밋으로 만든 프레젠테이션 시퀀서',
+        problem: '3D 가상 공간에서 프레젠테이션을 하려면 카메라 이동, 오브젝트 표시/숨김, 미디어 전환, 이펙트를 시간 기반으로 제어해야 한다. PowerPoint와 같은 UX를 3D 엔진에서 구현해야 했다.',
+        solution: '슬롯 기반 시퀀서 설계 — 각 슬롯이 카메라 트랜스폼, 오브젝트 가시성, 미디어 상태, 전환 효과(Fade/Dissolve/Shake)를 소유. 자동 재생, 루프, 페이지 업/다운, 멀티카메라를 지원.',
+        insight: '시퀀서의 각 슬롯이 "상태 스냅샷"이라고 정의하면, 전환은 두 스냅샷 간 보간이 된다. 이 추상화가 카메라, 오브젝트, 미디어를 단일 인터페이스로 통합한다.',
+        arch: `PPT Sequencer
+├── Slot[N]  — Camera, Visibility, Media, Effects
+├── Transition — Fade, Dissolve, Camera Shake
+├── Playback  — Auto/수동, Loop, Duration
+└── Integration — Save/Load, Multi-Camera, MediaPlane`
+    },
+    // ── MediaPlane ──
+    {
+        id: 'xroom-mediaplane',
+        domains: ['engine'],
+        tag: 'Tool',
+        title: 'GC가 라이브 미디어를 죽인다 — MediaPlane과 가비지 컬렉션 전쟁',
+        problem: 'UE5의 가비지 컬렉션이 라이브 비디오/웹캠 텍스처를 사용 중인데도 회수. MediaPlane에서 라이브 피드가 갑자기 검은 화면으로 바뀌는 현상이 간헐적으로 발생.',
+        solution: '미디어 리소스의 소유권을 MediaPlane 컴포넌트가 명시적으로 AddToRoot 또는 강한 참조로 보유하도록 재설계. JPG 임포트 에러, 잔상 제거, 멀티 임포트 등 미디어 생명주기 전반을 재구축.',
+        insight: 'UE5 GC는 "현재 사용 중"인지가 아니라 "참조 체인이 있는지"를 본다. 동적으로 생성된 미디어 리소스는 반드시 명시적 소유권을 설정해야 GC에서 보호된다.',
+        arch: null
+    },
+    // ── Networking ──
+    {
+        id: 'xroom-multiplayer',
+        domains: ['engine', 'backend'],
+        tag: 'Networking',
+        title: 'Command 패턴으로 멀티플레이어 상태 동기화',
+        problem: 'XROOM의 멀티플레이어에서 오브젝트 선택, 이동, 삭제를 서버 권위(Server-Authoritative)로 처리해야 했다. 직접 RPC 호출 방식은 명령어 종류가 늘어날수록 스파게티 코드화.',
+        solution: 'Command 패턴을 도입하여 모든 사용자 액션을 직렬화 가능한 Command 객체로 캡슐화. 서버에서 실행 후 결과를 클라이언트에 리플리케이트. DOREPLIFETIME으로 PlayerController 상태 동기화.',
+        insight: 'Command 패턴은 네트워크 동기화와 Undo/Redo를 동시에 해결한다 — Command를 서버에 보내면 동기화, 스택에 쌓으면 Undo다.',
+        arch: `Client → Command Object → Server Execute → Replicate
+         ├── SelectCmd   — Object selection sync
+         ├── MoveCmd     — Transform replication
+         ├── DeleteCmd   — Server-authoritative removal
+         └── UndoStack   — Command history for Undo/Redo`
+    },
+    // ── Auth ──
+    {
+        id: 'xroom-jwt',
+        domains: ['engine', 'backend'],
+        tag: 'Networking',
+        title: 'C++에서 JWT 검증 — 크로스 플랫폼 타입 호환성 문제',
+        problem: 'UE5의 C++ 환경에서 JWT 토큰을 검증할 때 inttypes.h 호환성 문제 발생. 검증 실패 시 재시도 로직이 없어 일시적 네트워크 오류에도 로그인 실패.',
+        solution: 'inttypes 전용 빌드로 크로스 플랫폼 호환성 확보. HTTPManager를 GameInstance로 이동하여 인증 상태를 앱 생명주기와 동기화. JWT 디코더를 패치 브랜칭에 통합하여 인증된 업데이트만 허용.',
+        insight: 'C++ 게임 엔진에서 웹 표준(JWT)을 사용할 때는 타입 시스템의 차이가 가장 큰 장벽이다. 라이브러리를 "있는 그대로" 링크하지 말고 엔진의 타입 체계에 맞게 래핑해야 한다.',
+        arch: null
+    },
+    // ── Delivery ──
+    {
+        id: 'xroom-launcher',
+        domains: ['frontend', 'pipeline'],
+        tag: 'Delivery',
+        title: 'Electron 런처 CI/CD — 멀티 아키텍처 빌드와 코드사인 벽',
+        problem: 'XROOM의 Electron 런처를 x86/x64/ARM에서 빌드하고 자동 업데이트를 지원해야 했다. Windows 코드사인이 없으면 자동 업데이트가 차단되는 문제 발견.',
+        solution: 'GitHub Actions로 멀티 아키텍처 CI/CD 구축(183커밋). 코드사인 미적용 환경에서는 홈페이지 리다이렉트로 우회. Firebase 연동, API 엔드포인트 관리, 토큰 환경변수를 자동화.',
+        insight: 'Electron 자동 업데이트는 코드사인을 사실상 필수로 요구한다. 코드사인 인프라가 없다면 웹 기반 업데이트 안내가 현실적인 대안이다.',
+        arch: `GitHub Actions CI/CD
+├── Build    — x86 / x64 / ARM
+├── Sign     — (skipped → web redirect fallback)
+├── Release  — GitHub Releases auto-publish
+└── Update   — Electron autoUpdater → Homepage redirect`
+    },
+    {
+        id: 'xroom-patch',
+        domains: ['engine', 'backend'],
+        tag: 'Delivery',
+        title: 'SharedPointer 충돌 — 비동기 청크 다운로드 후 메모리 크래시',
+        problem: 'XROOM의 CDN 기반 청크 패치 시스템에서 비동기 다운로드 완료 후 SharedPointer 충돌로 크래시 발생. 데이터테이블 청크 분리 후 더 빈번해짐.',
+        solution: '비동기 다운로드 콜백에서 SharedPointer 소유권이 불명확했던 문제 발견. 다운로드 완료 시점에 원본 포인터가 이미 해제된 경우가 원인. Weak → Shared 승격 패턴으로 콜백 안전성 확보. 재연결 시도 로직 추가.',
+        insight: '비동기 콜백에서 SharedPointer를 직접 캡처하면 수명이 예측 불가능해진다. WeakPtr로 캡처 후 콜백 진입 시 Shared로 승격하는 패턴이 비동기 C++ 코드의 정석이다.',
+        arch: null
+    },
+    {
+        id: 'xroom-3ch-deploy',
+        domains: ['backend', 'pipeline'],
+        tag: 'Delivery',
+        title: '3채널 동시 배포 — Steam + Electron + AWS 버전 동기화',
+        problem: 'Steam, Electron 런처, AWS 서버 3개 배포 채널의 버전이 각각 관리되어 업데이트 시 동기화 실패 빈번. 사용자마다 다른 버전을 사용하는 파편화 발생.',
+        solution: '중앙 Version API 서버 구축. Electron 런처 자동 업데이트 + SteamPipe 브랜치 관리 + AWS CDN을 통합. 델타 패칭으로 업데이트 크기 80% 감소.',
+        insight: '멀티채널 배포에서 "각 채널이 독립적으로 버전을 관리"하면 반드시 파편화된다. 단일 Version API가 진실의 원천(Source of Truth)이 되어야 한다.',
+        arch: `Version API (Source of Truth)
+├── Steam      — SteamPipe branch management
+├── Electron   — autoUpdater + GitHub Releases
+└── AWS CDN    — Chunked delta patching (80% smaller)`
+    },
+    // ── Event ──
+    {
+        id: 'xroom-event-branch',
+        domains: ['pipeline'],
+        tag: 'DevOps',
+        title: 'CES부터 두바이까지 — 이벤트 드리븐 브랜치 아키텍처',
+        problem: 'XROOM은 CES, 두바이, WIS, NextRise, 대구 등 10개 이상의 글로벌 이벤트에 커스텀 빌드를 납품. 각 이벤트마다 다른 기능 조합이 필요하지만 메인라인 제품과 동기화도 유지해야 했다.',
+        solution: '이벤트별 브랜치(v2.0.0_CES, v2.5.0_Dubai, v3.0.0_Daegu_Composure 등)를 메인라인에서 분기 → 커스터마이징 → 이벤트 종료 후 유용한 기능만 메인에 체리픽. 27개 버전 릴리스를 2년간 관리.',
+        insight: '이벤트 브랜치는 "쓰고 버리는 것"이 아니라 "실전 테스트 환경"이다. 이벤트에서 검증된 기능만 메인라인에 머지하면 제품 안정성이 자연스럽게 올라간다.',
+        arch: `main ─── v1.0 ─── v2.0 ─── v2.5 ─── v3.0
+              ↓         ↓         ↓         ↓
+            CES    Dubai/WIS  NextRise   Daegu
+              └── cherry-pick useful features back ──→ main`
+    },
+    // ══════════════════════════════════════
+    // Notion 주간보고/기술문서 기반 카드
+    // ══════════════════════════════════════
+    // ── Broadcast ──
+    {
+        id: 'notion-timecode',
+        domains: ['engine', 'backend'],
+        tag: 'Broadcast',
+        title: '5대 장비의 타임코드를 1ms 이내로 맞추는 동기화 아키텍처',
+        problem: 'Vicon 모캡 PC, MotionBuilder PC, UE5 PC, iPhone(ARKit), ATEM 스위처 — 5종 장비가 각자의 시계를 사용. 방송 중 립싱크가 3~4프레임(~130ms) 어긋나고, 모캡-영상 간 동기화도 불안정.',
+        solution: 'NAS를 NTP 서버로 지정하여 전체 장비의 시계를 중앙 동기화. ATEM REF OUT으로 DeckLink/HyperDeck에 Genlock 공급. iPhone은 NTP 수동 설정 + LiveLink Time Offset 보정. ATEM Fairlight Audio Delay ~100ms로 립싱크 보정. 방송 전 박수 테스트로 캘리브레이션.',
+        insight: 'NTP(소프트웨어 동기화)와 Genlock(하드웨어 동기화)은 역할이 다르다. NTP는 ms 단위 시계 통일, Genlock은 프레임 정확(frame-accurate) 동기화. 두 계층을 조합해야 모캡-영상-오디오가 완전히 일치한다.',
+        arch: `NAS (NTP Server) ─── 로컬 네트워크 타임 마스터
+├── NTP → Vicon Tracker PC
+├── NTP → MotionBuilder PC
+├── NTP → UE5 PC (DeckLink)
+├── NTP → iPhone (LiveLink Face)
+└── 수동시계 → ATEM Constellation
+                  ├── REF OUT → DeckLink (Genlock)
+                  ├── REF OUT → HyperDeck (Genlock)
+                  └── Fairlight Delay ~100ms (립싱크)`
+    },
+    {
+        id: 'notion-osc',
+        domains: ['engine', 'backend'],
+        tag: 'Broadcast',
+        title: 'Stream Deck 하나로 멀티 PC 동시 제어 — OSC 원격 방송 시스템',
+        problem: '라이브 방송 중 카메라 전환과 캐릭터 의상 변경을 여러 대의 PC(메인/백업)에서 동시에 실행해야 한다. 각 PC에 직접 접근하면 지연이 발생하고, 한 대만 명령이 빠지면 화면이 불일치.',
+        solution: 'UE5에 OSC 서버(포트 8000)를 구현하고 Stream Deck에서 버튼 하나로 여러 PC에 동시 명령 전송. 채널별 카메라 소스 전환(/studio/channel/{1-4}/source)과 캐릭터별 의상 세트 변경(/studio/costume/{name}/set)을 OSC 경로로 매핑.',
+        insight: '방송 현장에서는 "1개 버튼 = 1개 동작"이 철칙이다. OSC의 멀티캐스트 특성을 이용하면 메인/백업 서버를 동시에 제어할 수 있어 화면 불일치 사고를 원천 차단한다.',
+        arch: `Stream Deck → OSC Multicast
+├── UE5 Main Server (port 8000)
+│     ├── /studio/channel/1/source 2  → Camera Switch
+│     └── /studio/costume/all/set 3   → Costume Change
+└── UE5 Backup Server (port 8000)
+      └── (동일 명령 동시 수신)`
+    },
+    // ── Rendering ──
+    {
+        id: 'notion-cvm',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: 'GT7 CVM 톤매퍼 — 밝은 빨강이 노란색으로 변하는 문제 해결',
+        problem: 'UE5 기본 Film 톤매퍼는 밝은 빨강 하이라이트에서 Hue Shift가 발생하여 노란색으로 변한다. 버추얼 아이돌의 빨간 의상이나 조명에서 의도하지 않은 색상 변화가 나타남.',
+        solution: 'Gran Turismo 7의 Color Volume Mapping(CVM) 톤매퍼를 엔진에 구현. ICtCp 색공간에서 Chroma를 보존하는 톤매핑으로 Hue Shift 방지. LUT 생성 시에만 연산하여 per-pixel 추가 비용 제로. BlendRatio CVar로 Film↔CVM 블렌딩 가능.',
+        insight: 'Film 톤매퍼의 Hue Shift는 RGB 공간에서 채도를 보존하려다 발생한다. 지각적 색공간(ICtCp)에서 처리하면 밝기가 올라가도 색상이 유지된다 — 연산 위치를 LUT로 한정하면 런타임 비용은 0이다.',
+        arch: `Film Tonemapper (기본)
+  RGB → Filmic Curve → Hue Shift 발생
+
+GT7 CVM Tonemapper (구현)
+  RGB → ICtCp 변환 → Chroma 보존 톤매핑
+      → ChromaFade(Start/End) → Hue 안정
+      → LUT 생성 시에만 연산 (per-pixel 비용 0)`
+    },
+    {
+        id: 'notion-rt-shadow',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: 'RT Shadow 채널 분리 — 얼굴에 머리카락 그림자가 지지 않게',
+        problem: '캐릭터 얼굴에 머리카락 그림자가 레이트레이싱으로 드리워지면 셀 셰이딩 미감이 깨진다. Raster Shadow뿐 아니라 RT Shadow 경로에서도 선택적으로 그림자를 필터링해야 했다.',
+        solution: 'ShadowReceiveChannel 기반 채널 필터링을 Raster와 RT Shadow 양쪽에 구현. RT 경로에서는 AnyHitShader에 ShadowCastChannel/ReceiveChannel 비트 AND 비교 로직 추가. 얼굴(Channel=0)은 모든 그림자 무시, 바디(Channel=1)는 머리카락 그림자 정상 수신.',
+        insight: 'NPR에서 그림자는 "물리적 정확성"이 아니라 "미적 제어"가 목적이다. 채널 기반 필터링으로 아티스트가 어떤 오브젝트가 어디에 그림자를 드리울지 완전히 제어할 수 있어야 한다.',
+        arch: `Shadow Channel Filtering
+Face  (Receive=0): Shadow = 1.0 (항상 밝음)
+Body  (Receive=1): Hair Shadow 정상 수신
+Hair  (Cast=1):    Face에는 그림자 안 드리움
+
+RT Path: AnyHitShader → CastChannel & ReceiveChannel 비트 비교
+Raster:  DeferredLight → SurfaceShadow/TransmissionShadow = 1.0`
+    },
+    {
+        id: 'notion-mrt-limit',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: 'D3D12 MRT 8장 제한 vs Toon 전용 버퍼 3개 — 아키텍처 선택',
+        problem: 'D3D12에서 MRT(Multiple Render Targets)는 최대 8개. Toon 전용 데이터를 위해 MRT8(ToonDataA) + MRT9(ToonDataC)를 추가하면 UE5의 Substrate 머티리얼 시스템과 렌더타겟이 충돌.',
+        solution: 'Substrate와 Toon은 동시 사용 불가함을 확인하고, Substrate 미사용 조건에서만 MRT8/9를 활성화하도록 분기. 별도 ToonBufferPass를 시도했으나 풀 머티리얼 재평가 비용이 너무 높아 롤백 → 베이스패스 MRT 출력에 ToonDataA/C를 통합.',
+        insight: 'MRT를 추가하는 것보다 "기존 패스에서 데이터를 함께 출력"하는 것이 거의 항상 효율적이다. 별도 패스 = 머티리얼 재평가 비용. 같은 패스에 MRT 추가 = 대역폭 비용만. 후자가 압도적으로 싸다.',
+        arch: `시도 1: ToonBufferPass (별도 패스)
+  → 머티리얼 전체 재평가 필요 → 비용 과다 → 롤백
+
+시도 2: BasePass MRT 확장 (채택)
+  MRT0-7: 기존 GBuffer (Substrate 미사용 시)
+  MRT8:   ToonDataA (Cast/Receive/ToonModel/SCF/HairOffset)
+  MRT9:   ToonDataC (RGBA 4채널 자유 사용)
+  CustomData: ToonDataB (Specular Smooth/Offset + Outline)`
+    },
+    // ── Pipeline ──
+    {
+        id: 'notion-dashboard',
+        domains: ['frontend', 'pipeline'],
+        tag: 'Pipeline',
+        title: 'WPF 런처의 한계를 넘어 — 웹 기반 파이프라인 대시보드',
+        problem: 'PowerShell WPF 런처의 비동기 처리가 불안정하고, 한글 인코딩 충돌(CP949 vs UTF-8), 실시간 상태 확인이 불가능. 30인 조직에 배포하기엔 안정성이 부족.',
+        solution: 'HTML/JS 웹 대시보드 + PowerShell HttpListener 백엔드로 전면 전환. Git 3개 저장소 + SVN 2개 상태를 실시간 JSON API로 수집. 파이프라인 스크립트 10개를 원클릭 실행 + 500ms 폴링 로그 스트리밍. 역할별(Developer/Character/Level/Viewer) UI 필터링.',
+        insight: 'WPF는 단일 사용자 도구에 적합하지만, 팀 전체에 배포하려면 웹이 유일한 답이다. 브라우저는 인코딩, OS 호환성, 업데이트 문제를 한 번에 해결한다.',
+        arch: `Browser ← HTTP → DashboardServer.ps1
+├── GET /api/status  → Git×3 + SVN×2 상태 JSON
+├── GET /api/scripts → 실행 가능한 파이프라인 목록
+├── POST /api/run/:s → bat 스크립트 비동기 실행
+├── GET /api/log     → 500ms 폴링 실시간 로그
+└── POST /api/stop   → 프로세스 종료`
+    },
+    {
+        id: 'notion-python-pipeline',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: 'bat/ps1 스크립트 전량 삭제 — Python 패키지로 파이프라인 일원화',
+        problem: 'bat와 PowerShell 스크립트가 혼재하면서 인코딩 충돌(LF/CRLF, UTF-8/CP949), 환경변수 미전파, em-dash 파싱 에러 등 셸 간 호환성 문제가 반복 발생.',
+        solution: 'bat/ps1 스크립트를 전량 삭제하고 studio-pipeline Python 패키지로 일원화. setup-developer/character/level/viewer 4개 원클릭 명령으로 역할별 셋업 분리. pip install로 설치, Cross-platform 호환.',
+        insight: '셸 스크립트는 빠르게 만들 수 있지만 조직에 배포하면 OS/인코딩/버전 차이가 모든 장점을 상쇄한다. Python 패키지는 초기 투자가 크지만 "한 번 만들면 어디서나 동일하게 동작"한다.',
+        arch: null
+    },
+    {
+        id: 'notion-prebuilt-100gb',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '프리컴파일 엔진 50GB → 100GB — 누락된 것들의 발견',
+        problem: '프리컴파일 엔진을 5개 핵심 폴더만 패키징(~50GB)해서 아티스트에게 보냈더니, Generated 파일(자동생성 헤더), 서드파티 라이브러리(.lib/.dll), 플러그인 헤더(.hpp/.h) 누락으로 빌드/실행 실패.',
+        solution: 'Generated 폴더, 서드파티 라이브러리, 플러그인 헤더/라이브러리를 모두 포함하도록 패키징 범위 확대. ElectronicNodes 플러그인이 .cpp를 #include하는 비표준 패턴 → 화이트리스트 예외 처리. 최종 ~100GB이지만 아티스트 PC에서 정상 동작.',
+        insight: '프리컴파일 배포에서 "컴파일된 바이너리만 주면 된다"는 착각이 가장 위험하다. Generated 헤더, 서드파티 링크 라이브러리, 플러그인 퍼블릭 헤더까지 포함해야 실제로 동작한다.',
+        arch: `v1 패키징 (~50GB) — 실패
+├── Binaries/   ✓
+├── Content/    ✓
+├── Plugins/    (바이너리만)
+├── Generated/  ✗ ← 자동생성 헤더 누락
+└── ThirdParty/ ✗ ← .lib/.dll 누락
+
+v2 패키징 (~100GB) — 성공
+├── Binaries/   ✓
+├── Content/    ✓
+├── Plugins/    ✓ (헤더 + 라이브러리 + 화이트리스트)
+├── Generated/  ✓
+└── ThirdParty/ ✓`
+    },
+    // ── DevOps ──
+    {
+        id: 'notion-docker-nas',
+        domains: ['backend', 'pipeline'],
+        tag: 'DevOps',
+        title: 'NAS에 Docker로 팀 서버 배포 — 중앙 인증과 배포 관리',
+        problem: '15인 이상의 아티스트에게 SVN 계정 관리, 파이프라인 업데이트 알림, 접속 현황 모니터링을 수동으로 처리. 개발자가 빠지면 관리가 중단되는 SPOF 구조.',
+        solution: 'Synology NAS에 PHP+Apache Docker 컨테이너로 TeamServer API를 배포. 도메인 기반 역방향 프록시 구성. SVN 계정 기반 로그인/회원가입 + 관리자 승인 시스템. 12개 API 엔드포인트(checkin, user_login, approve, online, release_check 등)로 팀 상태 자동 관리.',
+        insight: 'NAS는 단순 파일 서버가 아니라 Docker를 돌릴 수 있는 상시 운영 서버다. 소규모 팀에서 AWS 비용 없이 팀 인프라를 유지하려면 NAS Docker가 최적의 선택지다.',
+        arch: `Synology NAS
+├── Docker: PHP 8.2 + Apache (TeamServer API)
+│     ├── /checkin     — 출근 체크인
+│     ├── /user_login  — SVN 계정 인증
+│     ├── /approve     — 관리자 승인
+│     ├── /online      — 접속 현황
+│     └── /release_*   — 업데이트 관리
+├── Reverse Proxy: api.team.internal
+└── SVN Server: 프로젝트 + 엔진 빌드`
+    },
+    // ── Animation ──
+    {
+        id: 'notion-foot-fix',
+        domains: ['ta', 'engine'],
+        tag: 'MoCap',
+        title: '모캡 까치발 보정 — Pelvis 이동에서 Mesh 위치로 전환한 이유',
+        problem: 'Vicon 모캡 데이터에서 퍼포머와 캐릭터 간 체형 차이로 까치발(Tiptoe) 문제 발생. 초기에 Pelvis 본을 이동하여 높이를 보정했으나 다리가 늘어나는 부작용 발생.',
+        solution: 'Pelvis 본 이동 대신 Mesh 자체의 위치를 조절하여 전체 높이 보정(다리 늘어남 없음). FootTiptoeFixComponent + AnimNode로 발목/발가락 회전 오프셋을 실시간 조절. Link Both Feet 모드로 양발 동시 조절, Blend Weight + Smoothing Factor로 급격한 변화 방지.',
+        insight: '본 이동은 IK 체인에 영향을 미치지만 Mesh 이동은 렌더링 공간에서만 작용한다. 높이 보정은 "본 계층구조 밖에서" 처리해야 다리 길이에 영향을 주지 않는다.',
+        arch: `v1: Pelvis Bone Move → 다리 IK 체인 영향 → 다리 늘어남
+v2: Mesh Position Offset → IK 체인 무관 → 정상 비율 유지
+
+FootTiptoeFixComponent
+├── Height Offset     (-30~+30cm, Mesh 위치)
+├── Foot Rotation     (Pitch/Roll/Yaw ±45°)
+├── Toe Rotation      (Pitch/Roll/Yaw ±45°)
+├── Link Both Feet    (양발 동시 조절)
+└── Blend Weight      (보정 강도 + 스무딩)`
+    },
+    // ── D:\SoulX Documents ──
+    {
+        id: 'xroomlite-iteration',
+        domains: ['engine', 'frontend'],
+        tag: 'Tool',
+        title: 'XROOMLite 22버전 반복 — v1.0에서 v2.0까지의 진화',
+        problem: 'XROOM 풀 빌드는 100GB+ 용량에 초기 셋업 시간이 길어 신규 인원 온보딩과 빠른 프로토타이핑이 불가능했다.',
+        solution: 'XROOMLite를 독립 프로젝트로 분리하여 22개 버전을 반복. v1.0 기본 뷰어 → v1.5 에셋 로딩 최적화 → v1.8 네트워크 동기화 → v2.0 풀 기능 경량 버전까지 점진적으로 발전.',
+        insight: '거대한 프로젝트를 경량 서브셋으로 분리하면 온보딩 시간이 수일에서 수시간으로 단축된다. 22번의 버전 반복은 "한번에 완성"보다 점진적 검증이 더 빠르다는 것을 증명한다.',
+        arch: `XROOMLite Version History
+├── v1.0~v1.4  — Core Viewer (기본 렌더링 + 카메라)
+├── v1.5~v1.7  — Asset Optimization (로딩 속도 개선)
+├── v1.8~v1.9  — Network Sync (멀티유저 테스트)
+└── v2.0       — Full-Feature Lite (프로덕션 경량 빌드)`
+    },
+    {
+        id: 'bci-unreal',
+        domains: ['engine', 'ai'],
+        tag: 'Networking',
+        title: 'Brain-Wave × Unreal — EEG 신호를 실시간 UE5 인터랙션으로',
+        problem: 'Emotiv EEG 헤드셋의 뇌파 데이터를 Unreal Engine에서 실시간으로 수신하여 인터랙션에 활용해야 했으나, EEG SDK와 UE5 사이에 직접 통신 경로가 없었다.',
+        solution: 'OpenViBE로 EEG 신호를 전처리한 후 OSC 프로토콜로 UE5에 전송. UE5 OSC 플러그인으로 수신하여 집중도/이완도를 실시간 변수로 매핑. 뇌파 상태에 따라 환경 변화, 오브젝트 인터랙션 트리거.',
+        insight: 'BCI(Brain-Computer Interface)를 게임 엔진에 연결할 때 OSC는 저지연·범용성에서 최적의 미들웨어다. EEG 원본 데이터보다 OpenViBE에서 전처리된 특징값을 전송하는 것이 안정성과 반응 속도 모두에서 유리하다.',
+        arch: `Emotiv EEG Headset
+├── Raw EEG Signal → OpenViBE
+│   ├── Band-pass Filter (Alpha/Beta/Theta)
+│   ├── Feature Extraction (집중도/이완도)
+│   └── OSC Output (localhost:9000)
+└── UE5 OSC Plugin
+    ├── /brain/focus    → 환경 라이팅 변화
+    ├── /brain/relax    → 파티클 밀도 제어
+    └── /brain/trigger  → 오브젝트 인터랙션`
+    },
+    {
+        id: 'paraguay-delivery',
+        domains: ['backend', 'pipeline'],
+        tag: 'Delivery',
+        title: '파라과이 방송 시스템 납품 — 현지 교육까지 포함한 글로벌 딜리버리',
+        problem: '한국에서 개발한 실시간 방송 시스템을 파라과이 현지에 납품해야 했다. 네트워크 환경, 하드웨어 세팅, 운영 인력의 기술 수준이 모두 한국과 달랐다.',
+        solution: '시스템을 모듈화하여 현지 네트워크에 맞춘 설정 프리셋 제공. DeckLink SDI + NDI 이중화로 안정성 확보. 현지 운영자 대상 교육 매뉴얼 작성 및 직접 트레이닝 수행.',
+        insight: '글로벌 납품에서 기술보다 중요한 것은 "현지 운영자가 독립적으로 운영할 수 있는가"이다. 모듈화된 설정 프리셋과 현지어 매뉴얼이 원격 지원 비용을 90% 줄여준다.',
+        arch: `Global Delivery Pipeline
+├── Pre-Delivery
+│   ├── Network Assessment (현지 대역폭 측정)
+│   ├── Hardware Spec Matching (DeckLink/NDI 호환)
+│   └── Config Preset Generation (현지 최적화)
+├── On-Site Setup
+│   ├── SDI + NDI Dual Path (이중화)
+│   ├── Timecode Sync (LTC/MTC)
+│   └── Failover Testing
+└── Training
+    ├── Operator 매뉴얼 (현지어)
+    ├── Hands-on Workshop (3일)
+    └── Remote Support Channel`
+    },
+    {
+        id: 'ai-workflow',
+        domains: ['ai', 'pipeline'],
+        tag: 'Pipeline',
+        title: 'AI 워크플로우 R&D — ComfyUI + n8n + NAS 자동화 파이프라인',
+        problem: 'AI 이미지 생성(StableDiffusion)을 프로덕션 워크플로우에 통합하려면 수동 프롬프트 입력 → 결과 확인 → 후처리의 반복이 병목이었다.',
+        solution: 'ComfyUI로 노드 기반 생성 파이프라인 구축, n8n으로 트리거·후처리·저장을 자동화. NAS Docker에 ComfyUI 서버를 배포하여 팀 공유. React 프론트엔드로 비개발자도 프롬프트 입력 가능.',
+        insight: 'AI 도구의 프로덕션 도입은 "모델 성능"보다 "워크플로우 자동화"가 핵심이다. n8n 같은 로우코드 오케스트레이터가 개발자와 아티스트 사이의 갭을 메워준다.',
+        arch: `AI Production Pipeline
+├── Frontend (React)
+│   └── Prompt Input UI → n8n Webhook
+├── Orchestration (n8n)
+│   ├── Trigger → ComfyUI API
+│   ├── Result Polling
+│   ├── Post-Processing (upscale, crop)
+│   └── NAS Storage Upload
+├── Generation (ComfyUI on NAS Docker)
+│   ├── StableDiffusion XL
+│   ├── ControlNet (포즈/깊이)
+│   └── Custom LoRA Models
+└── Output → Slack Notification + Gallery`
+    },
+    {
+        id: 'webgl-photobooth',
+        domains: ['frontend'],
+        tag: 'Tool',
+        title: 'WebGL Photo Booth — React + WebGL 실시간 카메라 필터',
+        problem: '이벤트 현장에서 참가자 사진을 실시간으로 촬영하고 커스텀 필터를 적용하여 즉석 출력해야 했다. 네이티브 앱 설치 없이 브라우저만으로 동작해야 했다.',
+        solution: 'React로 UI를 구성하고 WebGL 셰이더로 실시간 카메라 필터 적용. getUserMedia API로 카메라 접근, Canvas → WebGL 파이프라인으로 프레임 단위 처리. 크로마키, 배경 합성, 스티커 오버레이를 실시간 렌더링.',
+        insight: 'WebGL 셰이더는 브라우저에서도 GPU 가속을 활용할 수 있어 네이티브 앱 수준의 실시간 이미지 처리가 가능하다. 설치 없는 즉시 접근성이 이벤트 현장에서는 결정적 장점이다.',
+        arch: `WebGL Photo Booth
+├── Camera Input (getUserMedia)
+│   └── MediaStream → Canvas → WebGL Texture
+├── WebGL Pipeline
+│   ├── Chroma Key Shader (배경 제거)
+│   ├── Color Grading (LUT 필터)
+│   ├── Sticker Overlay (알파 블렌딩)
+│   └── Background Composite
+├── UI (React)
+│   ├── Filter Selector
+│   ├── Countdown Timer
+│   └── Preview + Retake
+└── Output
+    ├── Canvas.toBlob() → Download
+    └── Direct Print (ESC/POS)`
+    },
+    {
+        id: 'xroom-design-system',
+        domains: ['frontend'],
+        tag: 'Tool',
+        title: 'XROOM Design System — 커스텀 컬러 시스템부터 컴포넌트 라이브러리까지',
+        problem: 'XROOM UI가 기획·개발·디자인 간 일관성 없이 파편화되어 있었다. 같은 버튼이 화면마다 다른 색상·크기·간격으로 구현되어 유지보수와 신규 화면 제작 속도가 저하.',
+        solution: '커스텀 컬러 팔레트(Primary/Secondary/Semantic)를 정의하고, Figma 기반 컴포넌트 라이브러리를 4단계로 구축. 토큰 → 원자 → 분자 → 유기체 계층 구조로 UE5 UMG 위젯과 1:1 매핑.',
+        insight: '디자인 시스템은 "예쁜 컴포넌트 모음"이 아니라 "의사결정의 일관성"이다. 컬러 토큰 하나를 변경하면 전체 UI에 자동 반영되는 구조가 팀 규모와 무관하게 품질을 보장한다.',
+        arch: `XROOM Design System (4-Part)
+├── Part 1: Color System
+│   ├── Primary Palette (Brand Colors)
+│   ├── Secondary Palette (UI States)
+│   ├── Semantic Colors (Success/Warning/Error)
+│   └── Dark/Light Theme Tokens
+├── Part 2: Typography + Spacing
+│   ├── Type Scale (12/14/16/20/24/32)
+│   └── Spacing Grid (4px base unit)
+├── Part 3: Component Library
+│   ├── Atoms (Button, Input, Badge, Icon)
+│   ├── Molecules (Card, Form Group, Nav Item)
+│   └── Organisms (Header, Sidebar, Modal)
+└── Part 4: Figma ↔ UMG Mapping
+    └── Token Export → UE5 Widget Blueprint`
+    },
+    {
+        id: 'unity-porting-lessons',
+        domains: ['engine', 'pipeline'],
+        tag: 'Pipeline',
+        title: 'Unity 포팅 프로젝트 — 중단에서 얻은 교훈',
+        problem: 'XROOM의 일부 기능을 Unity로 포팅하여 크로스 플랫폼 지원을 검토했다. UE5 고유 기능(Nanite, Lumen, GBuffer 커스텀)에 대한 의존도가 예상보다 높았다.',
+        solution: '코어 로직(네트워킹, 세션 관리)은 포팅에 성공했으나, 렌더링 파이프라인 차이로 비주얼 패리티 달성이 불가하다고 판단하여 프로젝트를 중단. 크로스 엔진 호환 가능한 모듈과 불가능한 모듈을 명확히 분류하여 문서화.',
+        insight: '"실패한 프로젝트"에서 가장 큰 수확은 엔진 종속성 지도다. 어떤 모듈이 이식 가능하고 어떤 것이 불가능한지를 실증적으로 파악한 경험은, 이후 아키텍처 설계에서 결합도를 의식적으로 낮추게 만들었다.',
+        arch: `Unity Porting Assessment
+├── ✅ Portable (성공)
+│   ├── Session Management (C# 재작성)
+│   ├── Network Protocol (Shared Lib)
+│   └── UI Logic (MVVM 패턴)
+├── ❌ Non-Portable (UE5 종속)
+│   ├── Nanite Mesh → Unity Mesh 호환 X
+│   ├── Lumen GI → Unity Light Probe 대체 불가
+│   ├── GBufferT (커스텀 MRT) → SRP 한계
+│   └── Niagara FX → VFX Graph 재작성 필요
+└── 📋 Lesson: 코어 로직은 엔진 독립적으로,
+    렌더링은 엔진 네이티브로 설계`
+    },
+    {
+        id: 'xroom-architecture',
+        domains: ['engine', 'pipeline'],
+        tag: 'Pipeline',
+        title: 'XROOM 아키텍처 — 모듈 분리와 확장 방향 설계',
+        problem: 'XROOM이 커지면서 기능 간 결합도가 높아져 하나의 모듈 수정이 다른 모듈에 영향을 주는 문제가 빈번해졌다. 신규 기능 추가 시 사이드 이펙트 파악에 시간이 과도하게 소요.',
+        solution: 'XROOM을 Core/Rendering/Network/Content 4개 레이어로 분리. 각 레이어는 인터페이스로만 통신하고, 도식화를 통해 의존성 방향을 단방향으로 강제. AI/WebRTC 등 신규 모듈은 Plugin 형태로 독립 추가.',
+        insight: '아키텍처 도식화는 코드 리뷰보다 먼저 해야 한다. 화살표 방향이 순환하는 순간 기술 부채가 시작된다. 모듈 간 의존성을 시각적으로 관리하면 리팩터링 시점을 사전에 감지할 수 있다.',
+        arch: `XROOM Architecture (4-Layer)
+├── Core Layer
+│   ├── Session Manager
+│   ├── Config System
+│   └── Event Bus (단방향 메시지)
+├── Rendering Layer
+│   ├── ToonPipeline (GBufferT)
+│   ├── Compositing (가상+실사 합성)
+│   └── Post-Processing Chain
+├── Network Layer
+│   ├── Replication (UE5 NetDriver)
+│   ├── NDI/SDI Bridge
+│   └── OSC Controller
+├── Content Layer
+│   ├── Asset Manager
+│   ├── Level Streaming
+│   └── Save/Load System
+└── Plugin Slots
+    ├── AI Module (ComfyUI Bridge)
+    ├── WebRTC (브라우저 스트리밍)
+    └── BCI (뇌파 인터페이스)`
+    },
+    // ── Cross-Domain Versatility ──
+    {
+        id: 'azure-kinect-lidar',
+        domains: ['engine', 'ai'],
+        tag: 'Tool',
+        title: 'Azure Kinect + LiDAR — 깊이 센서 기반 인터랙티브 설치',
+        problem: '전시 공간에서 관객의 위치와 동작을 실시간으로 인식하여 인터랙티브 콘텐츠를 구동해야 했다. 일반 카메라로는 깊이 정보가 없어 정확한 공간 추적이 불가능.',
+        solution: 'Azure Kinect의 ToF 깊이 센서와 LiDAR 포인트 클라우드를 결합하여 3D 공간 맵핑. Body Tracking SDK로 스켈레톤 추출 후 Unreal Engine에 실시간 전달. LiDAR는 넓은 공간 커버리지, Kinect는 정밀 제스처 인식으로 역할 분담.',
+        insight: '깊이 센서마다 최적 거리와 정밀도가 다르다. Azure Kinect(0.5~5m 정밀)와 LiDAR(5~50m 광역)를 조합하면 좁은 무대부터 넓은 전시장까지 하나의 시스템으로 커버할 수 있다.',
+        arch: `Depth Sensor Pipeline
+├── Azure Kinect (정밀 트래킹)
+│   ├── ToF Depth (0.5~5m)
+│   ├── Body Tracking SDK → 32 Joints
+│   └── → UE5 LiveLink
+├── LiDAR (광역 감지)
+│   ├── Point Cloud (5~50m)
+│   ├── Clustering → 관객 위치
+│   └── → Zone Trigger
+└── Fusion
+    ├── 근거리: Kinect 제스처
+    └── 원거리: LiDAR 존 진입`
+    },
+    {
+        id: 'electron-launcher',
+        domains: ['frontend', 'pipeline'],
+        tag: 'Pipeline',
+        title: 'Electron 런처 — React + CI/CD 자동 업데이트 시스템',
+        problem: 'XROOM 사용자들이 매번 수동으로 버전을 확인하고 다운로드해야 했다. Steam 외 배포 채널(직접 설치)에서 버전 파편화가 심각.',
+        solution: 'Electron + React로 데스크톱 런처 제작. electron-updater로 자동 업데이트 파이프라인 구축. AWS S3에 빌드 아티팩트 업로드, 런처가 시작 시 버전 체크 → 델타 다운로드 → 자동 패치. Redux로 다운로드 진행률, 설치 상태 관리.',
+        insight: '자동 업데이트의 핵심은 "사용자가 아무것도 하지 않아도 최신 버전"을 보장하는 것이다. 런처를 자체 제작하면 업데이트 UX뿐 아니라 사용 통계 수집까지 완전히 제어할 수 있다.',
+        arch: `Electron Launcher Pipeline
+├── Build (CI)
+│   ├── UE5 Package → Zip
+│   ├── Version Manifest (JSON)
+│   └── Upload → AWS S3
+├── Launcher (Electron + React)
+│   ├── Version Check → S3 Manifest
+│   ├── Delta Download (changed files only)
+│   ├── Progress UI (Redux state)
+│   └── Auto-Patch → Launch
+└── Channels
+    ├── Stable (production)
+    ├── Beta (QA)
+    └── Dev (internal)`
+    },
+    {
+        id: 'smart-factory',
+        domains: ['engine', 'frontend'],
+        tag: 'Delivery',
+        title: '스마트 팩토리 — Unreal Engine 기반 제조업 시각화',
+        problem: '제조업 현장의 생산 라인 데이터를 실시간으로 시각화해야 했다. 기존 SCADA 시스템은 2D 대시보드에 한정되어 공간적 맥락(어떤 라인의 어떤 장비인지)을 직관적으로 파악하기 어려웠다.',
+        solution: 'Unreal Engine으로 공장 3D 디지털 트윈을 구축. 센서 데이터를 실시간으로 수신하여 장비별 상태(가동/정지/이상)를 3D 모델에 색상으로 매핑. 관리자가 가상 공간을 돌아다니며 현장 파악 가능.',
+        insight: '게임 엔진의 렌더링 능력은 게임 밖에서도 강력하다. 3D 시각화만으로 제조업 관리자의 의사결정 속도가 달라진다 — "어디가 문제인가"를 텍스트 로그 대신 공간으로 보여주는 것.',
+        arch: `Smart Factory Digital Twin
+├── Data Layer
+│   ├── PLC / Sensor → OPC-UA
+│   └── Real-time DB → REST API
+├── UE5 Visualization
+│   ├── Factory 3D Model (1:1 Scale)
+│   ├── Equipment Status (Color Coding)
+│   ├── Production Line Flow Animation
+│   └── Alert Overlay (이상 감지)
+└── Interface
+    ├── Desktop Viewer
+    └── Packaged Build (배포)`
+    },
+    {
+        id: 'xr-education',
+        domains: ['engine'],
+        tag: 'Delivery',
+        title: '제주·대구 XR교육 — 메인 강사로 커리큘럼 기획부터 실습까지',
+        problem: 'XR(VR/AR) 기술을 비개발자 교육생에게 전달해야 했다. Unreal Engine의 학습 곡선이 높아 단기 과정에서 실질적 결과물을 만들어내기 어려웠다.',
+        solution: '커리큘럼을 직접 기획하여 "결과물 우선" 접근법 채택. 첫 날부터 완성된 프로젝트를 배포하고 역순으로 각 기능을 분해·학습. Blueprint 중심으로 진입 장벽을 낮추되, C++ 확장 포인트를 미리 설계하여 심화 교육 연결.',
+        insight: '기술 교육에서 가장 중요한 것은 "첫 성공 경험의 속도"다. 이론→실습이 아니라 실습→이론 순서가 비개발자의 동기를 유지시킨다. 강사 경험은 곧 기술 문서화·온보딩 설계 역량으로 직결된다.',
+        arch: `XR Education Program
+├── Day 1: 완성 프로젝트 배포 + 체험
+├── Day 2~3: 기능 분해 + Blueprint 실습
+│   ├── VR Interaction (Grab, Teleport)
+│   ├── AR Marker Tracking
+│   └── UI + Audio Integration
+├── Day 4: 개인 프로젝트 제작
+└── Day 5: 발표 + 피드백
+    └── 결과물: 개인 VR/AR 체험 앱`
+    },
+    {
+        id: 'steam-gs-launch',
+        domains: ['backend', 'pipeline'],
+        tag: 'Delivery',
+        title: 'Steam 런칭 + GS인증 — 프로덕트 배포의 전 과정',
+        problem: 'XROOM을 상용 제품으로 출시하려면 Steam 스토어 등록, Steamworks SDK 통합, GS(Good Software) 인증까지 동시에 진행해야 했다. 개발팀 규모가 작아 모든 과정을 소수가 직접 수행.',
+        solution: 'Steamworks SDK를 Unreal 프로젝트에 통합하고, SteamPipe로 빌드 자동 업로드 파이프라인 구축. GS인증은 테스트 시나리오 문서화 + 결함 관리 + 성능 기준 충족을 직접 수행. 스토어 페이지 에셋(스크린샷, 영상, 설명)도 직접 제작.',
+        insight: '소규모 팀에서 런칭까지 도달하려면 "개발 외의 모든 것"도 직접 해야 한다. 스토어 등록, 인증, 마케팅 에셋 제작 경험은 프로덕트 감각의 핵심이다. GS인증 과정은 QA 프로세스를 체계화하는 계기가 되었다.',
+        arch: `Product Launch Pipeline
+├── Steam
+│   ├── Steamworks SDK Integration
+│   ├── SteamPipe Auto-Upload (CI)
+│   ├── Store Page (스크린샷, 트레일러)
+│   ├── Achievement / Cloud Save
+│   └── Branch Management (stable/beta)
+├── GS Certification
+│   ├── Test Scenario Documentation
+│   ├── Defect Tracking & Resolution
+│   └── Performance Benchmark Pass
+└── Marketing
+    ├── Trailer Video Production
+    └── Press Kit / Media Assets`
+    },
+    {
+        id: 'opencv-photobooth',
+        domains: ['engine', 'ai'],
+        tag: 'Tool',
+        title: 'C++ OpenCV 키오스크 포토부스 — 하드웨어 직접 제어',
+        problem: '이벤트 현장용 포토부스를 제작해야 했다. 상용 솔루션은 커스터마이징이 제한적이고, 카메라·프린터·결제 단말기를 하나의 시스템으로 통합해야 했다.',
+        solution: 'C++ WinForms 기반 키오스크 앱 제작. OpenCV로 카메라 캡처 + 실시간 필터(크로마키, 보정), ESC/POS 프로토콜로 포토 프린터 직접 제어, 시리얼 통신으로 결제 단말기 연동. 전체를 키오스크 모드로 잠금.',
+        insight: '하드웨어 직접 제어(시리얼, ESC/POS, USB 카메라)를 다뤄본 경험은 소프트웨어만으로 해결할 수 없는 문제를 이해하게 해준다. "연결"의 마지막 1%는 항상 물리적 인터페이스에서 결정된다.',
+        arch: `Kiosk Photo Booth (C++)
+├── Camera (OpenCV)
+│   ├── USB Camera Capture
+│   ├── Chroma Key Filter
+│   ├── Color Correction
+│   └── Background Composite
+├── Payment (Serial)
+│   ├── Card Terminal (COM Port)
+│   └── Cash Acceptor (Serial)
+├── Print (ESC/POS)
+│   ├── Photo Printer Direct Control
+│   └── Layout Template Engine
+└── Kiosk Mode
+    ├── Fullscreen Lock
+    └── Watchdog (Auto-Restart)`
+    },
+    {
+        id: 'threejs-homepage',
+        domains: ['frontend'],
+        tag: 'Tool',
+        title: 'Three.js + React — 회사 홈페이지 3D 인터랙티브',
+        problem: '회사 홈페이지에 XROOM의 3D 기술력을 보여줄 인터랙티브 요소가 필요했다. 일반적인 정적 페이지로는 "실시간 3D 플랫폼 회사"라는 아이덴티티를 전달하기 어려웠다.',
+        solution: 'React + react-three-fiber로 3D 씬을 홈페이지에 직접 임베딩. Three.js 기반 인터랙티브 모델 뷰어, 파티클 이펙트, 스크롤 연동 카메라 애니메이션 구현. Suspense + lazy loading으로 3D 에셋 로딩 최적화.',
+        insight: '웹 3D는 "멋진 데모"가 아니라 "첫 로딩 3초 이내"가 핵심이다. react-three-fiber의 선언적 API는 React 생태계와 자연스럽게 통합되어 3D를 UI 컴포넌트처럼 관리할 수 있게 해준다.',
+        arch: `3D Interactive Homepage
+├── React (SPA)
+│   ├── Page Router
+│   ├── Styled Components
+│   └── i18next (다국어)
+├── react-three-fiber
+│   ├── 3D Model Viewer (GLTF)
+│   ├── Particle Effects
+│   ├── Scroll-linked Camera
+│   └── Suspense + Lazy Loading
+└── Deploy
+    └── Vercel / GitHub Pages`
+    },
+    {
+        id: 'studio-xam-webrtc',
+        domains: ['frontend', 'backend'],
+        tag: 'Streaming',
+        title: 'studio-xam — Next.js + WebRTC 3D 웨비나 플랫폼',
+        problem: '3D 가상 공간에서 실시간 화상 회의를 진행하는 웨비나 플랫폼이 필요했다. 기존 화상 솔루션(Zoom 등)은 3D 환경과 통합이 불가능.',
+        solution: 'Next.js 13 + react-three-fiber로 3D 가상 공간 구현. WebRTC(socket.io-client)로 P2P 영상 통화, 3D 씬 안에 참가자 비디오를 텍스처로 매핑. MUI로 채팅/참가자 목록 UI, ChakraUI로 컨트롤 패널 구성.',
+        insight: 'WebRTC 비디오를 Three.js 텍스처로 바로 매핑하면 "3D 공간 안의 화상 통화"가 자연스럽게 구현된다. 프레임워크 경계를 넘는 데이터 흐름(WebRTC → Canvas → Three.js Texture)을 이해하는 것이 핵심.',
+        arch: `studio-xam Architecture
+├── Frontend (Next.js 13)
+│   ├── react-three-fiber (3D 공간)
+│   ├── WebRTC Video → Three.js Texture
+│   ├── MUI (채팅, 참가자)
+│   └── ChakraUI (컨트롤)
+├── Signaling (socket.io)
+│   ├── Room Management
+│   ├── WebRTC SDP Exchange
+│   └── Chat / Reactions
+└── Media
+    ├── P2P (소규모)
+    └── SFU 옵션 (대규모)`
+    },
+    // ══════════════════════════════════════
+    // StudioSetup v1.16.x — 최신 개발 동기화
+    // ══════════════════════════════════════
+    // ── Setup ──
+    {
+        id: 'delta-prebuilt',
+        domains: ['backend', 'pipeline'],
+        tag: 'DevOps',
+        title: '델타 인코딩 프리빌트 배포 — 100GB 엔진을 변경분만 전송',
+        problem: '100GB 프리컴파일 엔진을 매 업데이트마다 통째로 SVN에 올리면 대역폭·디스크·시간이 폭발한다. 아티스트 30명이 매번 전체를 다시 받아야 하는 구조.',
+        solution: '엔진을 6개 카테고리(Binaries/Plugins/Content/Config/Source/Programs) ZIP으로 나누고, 직전 SVN 스테이징과 SHA-256을 비교해 변경된 파일만 커밋. 업로드 후 스테이징을 자동 정리해 디스크를 회수. 역할 전환 시 .svn↔.git 을 자동 감지·정리하여 혼합 VCS 상태로 빌드가 깨지는 것을 원천 차단.',
+        insight: '대용량 바이너리 배포는 결국 "전체 vs 증분"의 문제다. SHA-256 델타 비교 한 겹이면 100GB 전송이 실제 변경분(대개 수 GB)으로 줄어든다.',
+        arch: null
+    },
+    // ── AI ──
+    {
+        id: 'claude-harness',
+        domains: ['pipeline', 'ai'],
+        tag: 'Pipeline',
+        title: '3개 레포를 지휘하는 Claude Code 프로덕션 하네스',
+        problem: '커스텀 엔진 + 프로젝트 + 셋업 3개 저장소를 AI로 개발하면, 파일마다 규칙(엔진=C++ Epic 표준+수정 마커, 프로젝트=UE 규칙, 파이프라인=Python)이 달라 컨텍스트가 섞이는 순간 잘못된 규칙이 적용된다.',
+        solution: '파일 경로 패턴으로 규칙을 자동 분기하는 Context Router. 엔진 소스 수정 시 날짜 마커가 없으면 저장을 차단하는 훅. 커밋 한국어 태그 강제. 커스텀 서브에이전트 3종(엔진 리뷰어 / 셰이더 디버거 / SVN 충돌 분석). 사용자 교정·확인을 신뢰도로 축적해 5/5 도달 시 규칙으로 자동 승격하는 피드백 루프까지 구축.',
+        insight: 'AI 페어 프로그래밍의 확장성은 "모델 성능"이 아니라 "규칙을 코드로 강제하는 하네스"에서 나온다. 훅이 마커 없는 수정을 물리적으로 막으면, 실수가 리뷰가 아니라 저장 시점에 걸린다.',
+        arch: `Context Router (파일 경로 → 규칙 분기)
+CustomEngine/  → C++ Epic 표준 + 수정 마커 훅
+StudioProject/ → UE5 프로젝트 규칙
+src/pipeline/  → Python 규칙
+       │
+Custom Sub-Agents
+├── Engine Reviewer  — 마커 날짜/표준 감사
+├── Shader Debugger  — 톤 셰이더 채널 격리
+└── SVN Resolver     — Git 오버레이 충돌 진단
+       │
+Feedback Loop → 신뢰도 5/5 → 규칙 자동 승격`
+    },
+    // ── Engine ──
+    {
+        id: 'engine-57-port',
+        domains: ['engine', 'pipeline'],
+        tag: 'Rendering',
+        title: 'AI로 일주일 만에 끝낸 UE 5.5→5.7 엔진 포팅 — 762개 수정 마커 자동 재적용',
+        problem: '2년간 5.5.4 커스텀 엔진에 누적된 762개의 // Custom Engine 마커(158개 파일). 엔진 메이저 업그레이드 때 이걸 수작업으로 재적용하면 수 주~수개월이 걸리고 누락 위험이 크다.',
+        solution: '직접 구축한 Claude Code 프로덕션 하네스(엔진 마커 검증 훅 + 컨텍스트 라우터 + 3개 레포 지휘)로 마커 추출 파서와 3-way 머지 재적용 파이프라인을 구동 — 762개 마커를 459개 패치(387 marked block + 72 orphan hunk)로 분해해 클린 5.7 베이스라인에 98.5% 자동 재적용. 충돌 50개 파일만 수작업, IR 시스템 마이그레이션 등 3개 파일만 재구현. AI 시스템과 이 하네스의 합작으로 포팅부터 충돌 디버깅·빌드 안정화까지 약 일주일에 마무리했다.',
+        insight: '엔진 포크의 진짜 자산은 코드가 아니라 "무엇을 왜 바꿨는지"의 메타데이터다. 이것을 마커·레지스트리·검증 훅으로 규율화한 하네스가 있었기에 AI가 메이저 업그레이드를 고고학이 아니라 "패치 재적용 + 디버깅" 문제로 압축할 수 있었다 — 일주일이라는 속도는 AI 시스템과 그 위에 내가 설계한 하네스의 합작이다.',
+        arch: `762 마커 블록 (158 파일, 5.5.4 base)
+    → 파서 추출 → 459 패치
+        ├── 387 marked_blocks
+        └── 72 orphan_hunks
+    → 클린 5.7 베이스라인 3-way 머지
+        ├── 98.5% 자동 재적용
+        ├── 50 파일 수작업 충돌 해결
+        └── 3 파일 재구현 (IR 마이그레이션 등)`
+    },
+    // ── Project ──
+    {
+        id: 'broadcast-ready',
+        domains: ['engine', 'pipeline'],
+        tag: 'Broadcast',
+        title: '방송 준비 검사 — 생방송 직전 5개 카테고리 프리플라이트 + 원클릭 수정',
+        problem: '라이브 방송 직전 카메라 커버리지·조명·캐릭터 상태·오디오 싱크·오버레이 중 하나만 빠져도 사고로 이어진다. 사람이 체크리스트로 확인하면 반드시 놓친다.',
+        solution: 'BroadcastReadyConfig 구조체 기반 5개 카테고리 자동 프리플라이트. 실패 항목을 원클릭 "Fix All"로 자동 보정. 이전 방송에서 실패했던 항목의 리그레션 감지. 방송용 GameMode Override를 필수 전제로 강제해 잘못된 초기화 자체를 차단.',
+        insight: '생방송은 되돌릴 수 없으므로 "검사"보다 "자동 교정"이 답이다. 체크만 하면 여전히 사람이 고쳐야 하지만, 검사가 곧 수정을 트리거하면 실수 표면이 사라진다.',
+        arch: null
+    },
+    {
+        id: 'cuesheet-notion',
+        domains: ['pipeline', 'engine'],
+        tag: 'Broadcast',
+        title: 'Notion 큐시트 ↔ 언리얼 양방향 — 기획 문서가 곧 방송 씬 세팅',
+        problem: '방송 큐시트(씬 순서·캐릭터·소품·타이밍)를 기획자는 Notion에서 관리하지만, 엔진에서는 매번 수작업으로 씬을 다시 세팅한다. 큐가 바뀌면 동기화 누락이 잦다.',
+        solution: 'Notion 큐시트/런다운 테이블을 파싱(씬명·배경·캐릭터·소품·큐 순서·타이밍)해 대시보드→엔진 페이로드로 전달. 씬·카메라 바인딩이 자동 적용되고 대시보드에 라이브 큐 상태가 표시된다.',
+        insight: '기획 도구를 SSOT(단일 진실 원천)로 삼으면 "문서와 실제 세팅의 불일치"가 구조적으로 사라진다. 사람이 두 번 입력하지 않는 파이프라인이 현장 사고를 가장 많이 줄인다.',
+        arch: null
+    },
+    // ── DCC ──
+    {
+        id: 'dcc-retarget-sop',
+        domains: ['ta', 'pipeline'],
+        tag: 'MoCap',
+        title: '모캡 리타겟 세션 자동화 + 소품 타입 분리 — DCC와 엔진 사이의 규율',
+        problem: 'VICON/iPhone 모캡을 MotionBuilder에서 UE 스켈레톤으로 리타겟하는 작업이 매번 수작업이었다. 소품 리깅·머티리얼 규칙도 아티스트마다 제각각.',
+        solution: 'MotionBuilder 세션 자동화(fbx_import → characterize → retarget → session 영속화)로 리타겟 파이프라인을 정형화. 소품은 RTG(리그드·모캡 구동)/CTR(정적 지오메트리) 타입으로 분리해 리깅·머티리얼 LOD 규칙을 차등 적용. Substance Painter 텍스처는 엔진 톤매퍼와 매칭되는 리니어로 익스포트.',
+        insight: 'DCC 자동화의 핵심은 "아티스트가 엔진 규칙을 몰라도 되게" 만드는 것이다. 리타겟 세션을 영속화하면 5명분 모캡 셋업이 클릭 한 번으로 끝난다.',
+        arch: null
+    },
+    // ── Tool ──
+    {
+        id: 'asset-validation',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '에셋 검증 시스템 — 3소스 자동 감사와 리더보드 거버넌스',
+        problem: '30인 팀의 에셋 규칙 위반(네이밍·경로·포맷)을 사람이 리뷰하면 놓치고, 지적하면 감정 소모가 생긴다. 위반이 방치되면 빌드가 깨진다.',
+        solution: 'SVN 커밋 훅 + NAS 30분 스캔 + 엔진 에셋 감사 3개 소스가 위반을 탐지. 카테고리별(캐릭터·소품·배경·시네마틱) Google Chat 방으로 라우팅. 즉시/일일/주간 알림 + 7일 경고·14일 위험 에스컬레이션. 주간 해결 리더보드로 수정을 독려하고 위반 0 도달 시 축하. Google Sheets 백엔드 + Apps Script 웹앱을 clasp로 자동 배포.',
+        insight: '팀 거버넌스에서 "지적"은 감정을 만들지만 "리더보드"는 동기를 만든다. 자동 탐지가 사람을 대신하고 게임화가 규칙 준수를 자발적으로 만든다.',
+        arch: `3 Validation Sources
+├── SVN post-commit hook → 경로/네이밍 규칙 검사
+├── NAS 스캔 (30분, 평일 09-18) → 신규/해결 비교
+└── 엔진 에셋 감사 → 리더보드
+        │
+Category Routing → Google Chat 방
+├── 캐릭터 / 소품·배경 / 개발 / 시네마틱
+        │
+Escalation: 🆕 즉시 · 09시 일일 · 금 17시 주간
+            ⚠️ 7일 · 🚨 14일 · 🎉 위반 0`
+    },
+    {
+        id: 'streamdeck-plugin',
+        domains: ['frontend', 'engine'],
+        tag: 'Broadcast',
+        title: 'Stream Deck 커스텀 플러그인 — 물리 버튼으로 4채널 방송 지휘',
+        problem: '라이브 방송 디렉터가 카메라 전환·캐릭터별 팔로우캠·가시성 토글을 키보드로 조작하면 느리고 실수한다. 어떤 버튼이 어떤 채널인지 시각 피드백이 없다.',
+        solution: 'TypeScript/Node 기반 Stream Deck 커스텀 플러그인 제작. FreeCam 채널 라우팅 + Property Inspector로 버튼별 파라미터 설정. 팔로우캠은 타겟 캐릭터별 색상으로 구분해 시인성 확보. 명시적 ON/OFF 가시성 토글 + 초기 상태 설정. OSC로 UE 엔진에 직접 전송.',
+        insight: '방송 현장 UI의 핵심은 "버튼을 보면 무슨 일이 일어날지 안다"이다. 캐릭터별 색상과 명시적 상태 표시가 생방송 중 오조작을 막는다.',
+        arch: null
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — Engine
+    // ══════════════════════════════════════
+    {
+        id: 'toon-light-params',
+        domains: ['ta', 'engine'],
+        tag: 'Rendering',
+        title: 'DNABLE — 광원마다 25개 파라미터를 갖는 톤 라이팅',
+        problem: 'PBR 광원은 세기·색만 있으면 되지만, 셀 셰이딩은 광원별로 셰이딩 경계의 부드러움·오프셋·림라이트·반음영 색을 아티스트가 개별 제어해야 한다. 엔진 기본 라이트 구조로는 이 데이터를 픽셀까지 전달할 방법이 없었다.',
+        solution: 'Directional/Point/Spot/Rect 모든 광원에 25개 톤 파라미터(5개 그룹: 기본 라이팅·셰이딩 형태·FlatNormal 거리·림라이트·페넘브라 틴트)를 추가. LightComponent → ShaderParameters → DeferredLightData → BxDF로 전파. smoothstep 기반 셰이딩 경계, 백페이스 반전 방지(NoL<0 클램프), 17개 Blueprint 세터로 시퀀서 키프레임까지 지원.',
+        insight: '조명을 "물리량"이 아니라 "아트 파라미터"로 재정의하면, 라이팅 아티스트가 프로그래머 없이 광원 하나하나의 셀 룩을 조각할 수 있다. 핵심은 그 25개 값을 렌더 스레드 끝(BxDF)까지 손실 없이 흘려보내는 데이터 배관이다.',
+        arch: `Per-Light Toon Parameters (25)
+├── 기본 라이팅 (4)   — Default/Base Lighting on·intensity
+├── 셰이딩 형태 (4)   — Smooth(0~1), Offset(-1~1), FlatNormal
+├── FlatNormal 거리 (3) — Distance, RangeMode, Offset
+├── 림라이트 (9)      — Intensity, Color, Width, Threshold,
+│                       ScreenSpace/Fresnel Contribute, Exponent
+└── 페넘브라 틴트 (5) — Mode(None/Solid/Ramp), Color, Ramp texture
+      │
+LightComponent → ShaderParameters → DeferredLightData
+             → AreaLight.ToonLight → ToonBxDF (픽셀)`
+    },
+    {
+        id: 'toon-shadow-blur',
+        domains: ['ta', 'engine'],
+        tag: 'Rendering',
+        title: 'DNABLE — 셀 경계를 부드럽게, sqrt로 대비를 되살린 섀도우 블러',
+        problem: '셀 셰이딩의 딱딱한 그림자 경계(step 함수)를 부드럽게 하려고 가우시안 블러를 걸면, 평균화 때문에 값이 0.5 근처로 뭉쳐 대비가 죽고 흐리멍덩해진다.',
+        solution: '전용 ToonShadow 타깃(R16F 단일 채널)에 다단계 가우시안 블러(Q1~Q5, 3~6 mip 다운샘플)를 적용한 뒤 sqrt()로 중간값 대비를 복원(sqrt(0.5)≈0.71). BO_Min 블렌드로 합성하고, 하드 마스크(ForceShadow/ForceLit)는 블러 이후에 적용해 우선순위를 보장. PPV 게이팅으로 끄면 GPU 비용 0.',
+        insight: '가우시안은 값을 0.5로 수렴시키므로 그대로 쓰면 대비가 사라진다. sqrt 한 번이 평균화된 분포를 다시 밝은 쪽으로 밀어 셀 셰이딩 특유의 대비를 되살린다 — 1080p Q5에서 0.5~1.5ms로 블룸보다 가볍다.',
+        arch: `ToonShadow (R16F) 파이프라인
+1. Clear → (0,0,0,1)  alpha seed (BO_Min용)
+2. Setup → ToonShadow.r 단일 채널
+3. Multi-Stage Gaussian (Q1=3 … Q5=6 stage)
+4. sqrt(blur) → alpha, BO_Min 합성
+5. ShadowOverride: lerp(cel,0,Force) → lerp(_,1,Lit)
+   (하드 마스크가 소프트 경계보다 우선)`
+    },
+    {
+        id: 'toonactor-pivot',
+        domains: ['engine', 'ta'],
+        tag: 'Rendering',
+        title: 'DNABLE — 16×16 GPU 텍스처로 광원별 얼굴 평탄화 피벗 전파',
+        problem: '캐릭터 얼굴을 평평하게(FlatNormal) 셰이딩하려면 "어느 지점을 기준으로 노멀을 평탄화할지" 피벗이 필요한데, 이 피벗이 캐릭터마다·광원마다 다르다. Directional 광원은 픽셀별 피벗까지 알아야 한다.',
+        solution: 'ToonActorComponent가 씬에 피벗을 등록하면 16×16 RGBA32F 텍스처(픽셀당 피벗 8개)에 컴퓨트 셰이더로 기록. 라이트 패스가 이 텍스처를 샘플해 광원-피벗 거리를 계산하고, RangeMode(Relative/Absolute)로 거리 기반 평탄화 강도를 조절. Directional은 픽셀별 피벗을 RT에 출력해 재사용.',
+        insight: '"어느 캐릭터의 어느 부위를 어느 광원 기준으로 평탄화하나"는 CPU에서 풀면 프레임마다 순회 비용이 든다. 피벗을 GPU 텍스처로 올려 셰이더가 직접 룩업하면, 광원 수·캐릭터 수와 무관하게 상수 비용이 된다.',
+        arch: null
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — Project
+    // ══════════════════════════════════════
+    {
+        id: 'vcam-arkit',
+        domains: ['ta', 'engine'],
+        tag: 'Camera',
+        title: 'DNABLE — 아이폰 6대를 가상 카메라로: LiveLink VCam 리그',
+        problem: '버추얼 아이돌 라이브에서 감독이 실제 카메라를 들고 움직이듯 가상 카메라를 손으로 조종하고 싶었다. 그것도 6대를 동시에, 각각 다른 조준 방식으로.',
+        solution: 'VCam 카메라 액터가 아이폰 ARKit LiveLink로 실시간 구동되며 기존 넘패드/퀵세이브 카메라 시스템에 통합. 3가지 조준 모드(FollowPhone=폰 방향 그대로 / Selfie=롤 +180° / LookAtTarget=캐릭터 소켓 추적). Tick에서 VCamComponent를 직접 업데이트해 에디터 한계를 우회, PixelStreaming으로 폰 입력을 수신. 프리셋으로 6대 일괄 스폰.',
+        insight: '가상 프로덕션의 몰입은 "손맛"에서 온다. 스마트폰의 ARKit 트래킹을 LiveLink 카메라로 바인딩하면, 전용 짐벌 없이도 6대의 핸드헬드 가상 카메라를 라이브로 운용할 수 있다.',
+        arch: `iPhone ×6 ──ARKit LiveLink──→ VCamComponent
+                                    │
+                          VCam Camera Actor
+                          ├── FollowPhone (폰 방향 raw)
+                          ├── Selfie (Roll +180°)
+                          └── LookAtTarget (캐릭터 소켓 추적)
+                                    │
+              기존 카메라 시스템(NumPad/QuickSave) 통합
+              PixelStreaming ← 폰 입력 수신`
+    },
+    {
+        id: 'mosaic-ndi',
+        domains: ['engine', 'backend'],
+        tag: 'Broadcast',
+        title: 'DNABLE — 카메라 30대를 단일 NDI로: Mosaic 라운드로빈 컴포지터',
+        problem: '방송 감독이 30대 카메라를 한 화면으로 모니터링하려면, 30개를 개별 캡처·인코딩하는 순간 GPU와 네트워크가 무너진다.',
+        solution: 'Mosaic 컴포지터가 30대를 6×5 그리드(셀당 320×180 = 1920×1080)로 합성해 단일 NDI 스트림으로 송출. 매 프레임 5개 소스만 라운드로빈 갱신(소스당 6fps)해 캡처 부하를 분산. 채널별 색상 오버레이(CH1~4)로 식별, 30대 초과 시 페이지 네비게이션. 개별 스트림 대비 인코딩 부하 1/30, GPU 약 0.7배.',
+        insight: '모니터링은 매 프레임 모든 소스가 최신일 필요가 없다. 라운드로빈으로 프레임당 일부만 갱신하면, 사람 눈에는 충분히 실시간이면서 인코딩 비용은 소스 수에 비례하지 않게 된다.',
+        arch: `30 Cameras → Mosaic Compositor
+├── 6×5 Grid (320×180 cell = 1920×1080)
+├── Round-Robin: 5 sources/frame (소스당 6fps)
+├── Channel Overlay: CH1~4 색상 식별
+├── Paging: 30대 초과 시 페이지 전환
+└── 단일 NDI 출력 (인코딩 부하 1/30, GPU ~0.7×)`
+    },
+    {
+        id: 'prop-variation-csv',
+        domains: ['ta', 'pipeline'],
+        tag: 'Tool',
+        title: 'DNABLE — CSV로 굴리는 프롭 배리에이션 2계층 DataTable',
+        problem: '소품 하나에 색·재질·형태 배리에이션이 수십 개씩 붙는다. 이걸 전부 개별 에셋으로 만들면 관리 불가능하고, 아티스트가 언리얼 에디터에서 매번 손으로 세팅하는 것도 비현실적.',
+        solution: '2계층 DataTable 설계 — 마스터(프롭 카탈로그: 기본 메시·배리에이션 테이블 참조·PCG 가중치)와 개별(배리에이션별: 메시·머티리얼·아웃라인·스케일·오프셋·가중치). 아티스트는 CSV만 편집하면 임포트 툴이 DataTable을 생성/갱신(경로·중복·누락 검증). BeginPlay 가중치 랜덤 선택, PCG 스캐터 연동, OSC `/studio/prop/{id}/variation`로 실시간 교체.',
+        insight: '아티스트에게 언리얼 에디터를 열게 하지 말고 CSV를 주면, 데이터 입력 속도가 몇 배 빨라진다. 2계층(카탈로그+배리에이션)으로 나누면 프롭 종류와 배리에이션이 독립적으로 늘어난다.',
+        arch: `DT_Prop_Master (카탈로그)
+├── DisplayName, Category, DefaultMesh
+├── VariationTable ref, VariationCount
+└── PCG: Weight, Tags, Min/MaxScale, AttachBone
+        │
+DT_Prop_<Item> (개별 배리에이션)
+├── V00/V01/… : Mesh, Materials[], Outline[]
+├── ScaleOverride, Offset, Weight
+        │
+CSV 편집 → 임포트 툴(검증) → DataTable 생성
+BeginPlay 가중치 랜덤 · PCG 스캐터 · OSC 실시간 교체`
+    },
+    {
+        id: 'output-profile',
+        domains: ['engine', 'backend'],
+        tag: 'Broadcast',
+        title: 'DNABLE — 채널마다 해상도·포맷·감마가 다른 Output Profile',
+        problem: 'SDI는 Rec.709 YUV, 디스플레이는 RGB 패스스루, 유튜브 쇼츠는 9:16 세로 — 방송 출력 채널마다 요구 해상도·픽셀 포맷·감마가 전부 다른데, 하나의 렌더 설정으로는 대응할 수 없다.',
+        solution: '채널별 독립 Output Profile — 해상도(HD/QHD/UHD/DCI4K) × 픽셀포맷(RGBA16f HDR / 10bit / 8bit) × 출력종류(SDI_YUV / Display_RGB / NDI_RGB) × 감마모드. SceneCapture가 카메라의 노출·컬러그레이딩·필름커브·비네트를 미러링하고, 프로파일 변경 시 렌더타깃을 자동 재생성(활성 채널 정지→재생성→재시작). 포탈 모드는 전 카메라 롤 +90°로 세로 쇼츠 출력.',
+        insight: '방송 출력은 "하나 만들어 여러 곳에 보내기"가 아니라 "채널마다 다른 규격으로 인코딩하기"다. 채널을 독립 프로파일로 분리하면 SDI·모니터·쇼츠를 동시에, 각자의 정확한 규격으로 뽑을 수 있다.',
+        arch: null
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — DCC / Pipeline
+    // ══════════════════════════════════════
+    {
+        id: 'material-chain',
+        domains: ['ta', 'pipeline'],
+        tag: 'Pipeline',
+        title: '3-체인 에셋 아키텍처 — 재사용은 최대로, 얽힘은 제로로',
+        problem: '텍스처→머티리얼→메시로 이어지는 에셋 체인을 자유롭게 공유하게 두면, 배경 에셋이 캐릭터 텍스처를 참조하는 식의 순환·교차 참조가 생겨 유지보수가 지옥이 된다.',
+        solution: '3가지 공유 패턴을 명시적으로 설계 — Independent(1:1:1 전용 소유), Share(하나의 MI를 여러 메시가 참조하는 1:N), Mixed(둘의 혼재). `Share##`를 에셋 타입별 네임스페이스로 스코핑(텍스처 Share01 ≠ 머티리얼 Share01)하고, 공유 범위를 에셋 경계(캐릭터/프롭/배경) 안으로 가둬 교차 참조를 원천 차단. drawio 다이어그램으로 각 패턴의 토폴로지를 시각화.',
+        insight: '재사용과 결합도는 상충한다. 공유를 금지하면 중복이, 방치하면 스파게티가 생긴다. 답은 "공유하되 경계를 넘지 않는" 네임스페이스 규칙 — `Share##`가 관계를 선언하되 에셋 경계를 벗어나지 못하게 하는 것이다.',
+        arch: `3-Chain Patterns (BG/CH/Prop)
+├── Independent (1:1:1)
+│     T_..._Lamp_DIF → MI_..._Lamp → SM_..._Lamp
+├── Share (1:N)
+│     MI_..._Share01 ← Chair, Desk 공유
+└── Mixed (혼재, 多대多 허용)
+      T_Share02 ← 공유 MI + 독립 MI 양쪽
+Share## = 에셋 타입별 네임스페이스 (경계 밖 참조 금지)`
+    },
+    {
+        id: 'filesystem-db',
+        domains: ['backend', 'pipeline'],
+        tag: 'DevOps',
+        title: '파일시스템이 곧 데이터베이스 — DB가 죽어도 이력은 산다',
+        problem: '에셋 버전·리테이크 이력을 메타데이터 DB에 의존하면, DB가 손상되거나 마이그레이션 실패 시 프로젝트 전체의 작업 이력이 날아간다.',
+        solution: '디렉토리 구조 자체를 권위 있는 진실로 삼는 설계 — `Revision/vXXX/`에 모든 제출 시도를, `Publish/vXXX/`에 승인 버전만(불변·가산). DCC 파일명에는 버전 토큰을 넣지 않고 디렉토리 카운터가 계보를 관리. 리깅만 예외로 UE `Rig/v00x/`가 퍼블리시 버전을 추종(스켈레탈 에셋은 버전 바인딩이 필요하므로).',
+        insight: '메타데이터는 유실되지만 파일시스템은 남는다. 버전·승인·리테이크를 디렉토리 구조로 인코딩하면, DB 없이도 이력이 복구되고 구조 자체가 "언제 무엇이 승인됐는지"를 스스로 설명한다.',
+        arch: `Asset/Category/Name/Variation/Discipline/
+├── Revision/
+│     ├── v001  (첫 제출)
+│     ├── v002  (리테이크 재제출)
+│     └── v003  … 모든 시도 = KPI 이력
+└── Publish/
+      └── vXXX  (승인본만, 불변·가산)
+DCC 파일명: 버전 토큰 없음 (디렉토리가 계보 관리)
+예외: Rig/v00x/ 만 퍼블리시 버전 추종`
+    },
+    {
+        id: 'task-state-machine',
+        domains: ['pipeline', 'backend'],
+        tag: 'Pipeline',
+        title: '9-state 태스크 머신 — 퀄리티와 일정의 결재권을 분리하다',
+        problem: '작업 승인 워크플로우에서 일정 압박이 퀄리티 게이팅을 무너뜨리는 일이 반복됐다. PM이 "일단 통과"를 강제하면 검수가 형식화된다.',
+        solution: '9개 상태(Assign→WIP→Pending→Confirm→Final, +Retake/OnHold/Postpone/Cancel) 머신을 설계하고, 퀄리티 컨펌(디렉터)과 일정 컨펌(PD)의 결재권을 구조적으로 분리 — PM은 Final을 강제할 수 없고 리뷰어 연결만 한다. 상류→하류 Lock/Unlock 게이팅으로 재작업 폭포를 방지, 리테이크 이력(횟수·주체·사유)을 정량 KPI로 축적. 승인/반려는 태스크별 자동생성 Confirm 공간에서만 유효.',
+        insight: '"공간에 없는 결정은 인정되지 않는다" — 문화가 아니라 시스템으로 권한을 강제해야 일정 압박이 퀄리티를 침범하지 못한다. 상태 머신과 결재권 분리가 그 강제 장치다.',
+        arch: `Assign → WIP → Pending(검증) → Confirm → Final
+                          ↑            │
+                      (재검증)      Retake → WIP
+결재권 분리
+├── 퀄리티 컨펌 → Art Director / Director
+├── 일정 컨펌   → PD (포맷 검증만)
+└── PM: Final 강제 불가 (연결·중재만)
+Lock/Unlock: 상류가 하류를 열어줌 (재작업 폭포 차단)`
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — Setup
+    // ══════════════════════════════════════
+    {
+        id: 'pipeline-orchestration',
+        domains: ['pipeline', 'backend'],
+        tag: 'DevOps',
+        title: 'StudioSetup — 10단계 역할 라우팅 + 재개형 빌드 오케스트레이션',
+        problem: '엔진 개발자·캐릭터·레벨·뷰어 4개 역할이 각자 다른 도구·저장소·빌드 절차를 필요로 하는데, 신규 인원이 환경을 세팅하다 중간에 실패하면 처음부터 다시 해야 했다.',
+        solution: '00~10 단계 파이프라인을 역할별로 라우팅 — winget으로 사전 도구 자동 설치, 레지스트리 엔진 연결, 역할 전환 시 .svn↔.git 자동 정리. 엔진 빌드는 3-phase(Setup→GenerateProjectFiles→Build) 체크포인트로 중단 지점부터 재개(1~3시간 빌드를 처음부터 다시 안 함). 실패 시 `<FAILED step=01 idx=2 total=8>` 마커를 파싱해 "관리자 권한으로 재실행" 같은 다음 행동을 UI에 주입.',
+        insight: '긴 셋업의 스트레스는 "어디서 실패했고 뭘 해야 하는지 모름"에서 온다. 체크포인트로 재개 가능하게 하고, 실패마다 다음 행동을 명시하면, 셋업이 도박이 아니라 절차가 된다.',
+        arch: `Developer : 00→01→02→03→04→05→06→09 (Git+Build)
+Artist    : 00a→10→05→06s (SVN+Prebuilt)
+       │
+Prereq: winget 자동설치 · 레지스트리 엔진연결
+Build : Setup→GenProjectFiles→Build (3-phase 체크포인트)
+        └ 중단 시 checkpoint.json 에서 재개
+Fail  : <FAILED step=… idx=…> 파싱 → 다음행동 주입`
+    },
+    {
+        id: 'rbac-dashboard',
+        domains: ['backend', 'frontend'],
+        tag: 'Tool',
+        title: 'StudioSetup — 역할 기반 접근제어 파이프라인 대시보드 API',
+        problem: '30인 팀에 파이프라인 실행 권한을 열어주면, 아티스트가 실수로 개발자 전용 빌드 스텝을 돌리거나 같은 작업을 중복 실행해 상태가 꼬인다.',
+        solution: 'FastAPI 대시보드에 역할×스텝 접근 매트릭스를 구현 — 개발자는 00·01~06·08·09·업로드, 아티스트는 00a·10·05·06s 서브셋만. `POST /api/run/{script}`가 사용자 역할을 검사하고 거부 시 감사 로그에 기록. 이미 실행 중이면 409 Conflict(더블클릭 가드, `force=true`로만 강제 종료), IP당 10req/60s 레이트리밋.',
+        insight: '팀 도구의 안정성은 "할 수 있는 것"이 아니라 "할 수 없게 막은 것"에서 온다. 역할 매트릭스로 권한을 게이트하고 중복 실행을 구조적으로 막으면, 사람의 실수가 시스템을 깨뜨리지 못한다.',
+        arch: null
+    },
+    // ══════════════════════════════════════
+    // 문서 기반 종합 반영 — AI / Tool
+    // ══════════════════════════════════════
+    {
+        id: 'knowledge-harness',
+        domains: ['pipeline', 'ai'],
+        tag: 'Pipeline',
+        title: '자가 유지되는 지식 하네스 — 피드백이 규칙이 되고 문서가 스스로 갱신되는',
+        problem: 'AI로 대규모 코드베이스를 개발하면, 같은 교정을 반복해서 알려줘야 하고 185개 문서·수백 개 클래스의 인덱스는 금세 낡는다. 지식이 사람 머릿속에만 있으면 확장되지 않는다.',
+        solution: '피드백을 신뢰도로 축적하는 루프 — 사용자 교정/확인을 카테고리별(엔진/렌더링/파이프라인/워크플로) 엔트리로 쌓고, 1/5→5/5로 신뢰도가 오르면 CLAUDE.md 규칙으로 자동 승격. 동시에 185개 문서를 자동 인덱싱하고 소스 스캔으로 클래스 목록 문서를 자동 생성해, 지식 베이스가 코드와 함께 스스로 갱신되게 구성.',
+        insight: 'AI 개발의 진짜 자산은 생성된 코드가 아니라 "축적되는 규칙과 최신 상태의 지식 베이스"다. 피드백이 자동으로 규칙이 되고 문서가 스스로 갱신되면, 하네스가 쓸수록 똑똑해진다.',
+        arch: `Feedback Loop
+사용자 교정/확인 → 카테고리 엔트리(신뢰도 1/5)
+   → 반복 확인 → 3/5 (검증자 명단) → 5/5
+   → CLAUDE.md 규칙 자동 승격
+Living Docs
+├── 185 문서 자동 인덱싱
+└── 소스 스캔 → 클래스 목록 문서 자동 생성
+결과: 코드와 함께 스스로 갱신되는 지식 베이스`
+    },
+    {
+        id: 'appsscript-actionlist',
+        domains: ['backend', 'pipeline'],
+        tag: 'Tool',
+        title: '"액션 리스트" 시트 엔진 — 해결되면 스스로 사라지는 검증 현황',
+        problem: '팀 에셋 검증 위반을 스프레드시트로 관리하면, 해결된 항목이 계속 쌓여 "지금 봐야 할 게 뭔지"가 묻힌다. 사람이 수동으로 지우면 또 실수한다.',
+        solution: 'Apps Script 멀티파일 웹앱(코어 웹훅·카탈로그·태스크·공통 헬퍼)을 clasp로 GitHub Actions 자동 배포. 검증 소스가 현재 위반 목록을 POST하면 방(카테고리)별 스프레드시트를 자동 생성/갱신하고, 해결된 항목은 다음 동기화 때 행에서 자동 소멸(액션 리스트 패러다임). 헤더 고정·방별 라우팅·익명 POST 지원.',
+        insight: '현황판은 "쌓이는 로그"가 아니라 "지금 할 일 목록"이어야 한다. 해결된 항목이 스스로 사라지게 만들면, 시트를 여는 순간 남은 위반만 보인다 — 관리 비용이 0으로 수렴한다.',
+        arch: null
+    },
+    // ── DCC 플러그인 개발 (Pipeline TD) ──
+    {
+        id: 'dcc-plugins',
+        domains: ['ta', 'pipeline'],
+        tag: 'Tool',
+        title: 'DCC 전 툴을 잇는 커스텀 플러그인 — MotionBuilder·Substance·Maya·Unreal',
+        problem: '모캡·서페이싱·모델링·엔진이 각각 다른 DCC 툴을 쓰는데, 툴 사이 데이터가 수작업으로 오가면 실수와 병목이 생긴다. 상용 플러그인은 스튜디오 고유 SOP에 맞지 않는다.',
+        solution: '각 DCC 툴에 맞는 커스텀 플러그인을 직접 제작해 파이프라인을 관통시켰다 — MotionBuilder Python 플러그인(리타겟 세션 자동화: fbx import → characterize → retarget → plot → export), Substance Painter 플러그인(엔진 톤매퍼와 매칭되는 리니어 뷰포트 프리뷰 + 채널 자동 익스포트), Maya 툴(네이밍·유닛·피벗 SOP 검증 + 배치 익스포트), Unreal Python(캐릭터 배치 리임포트 + LiveLink 본 트랜스폼 진단 리스너). 각 플러그인이 스튜디오 SOP를 코드로 강제한다.',
+        insight: '파이프라인 TD의 핵심은 "아티스트가 규칙을 외우지 않아도 되게" 만드는 것이다. 각 DCC 툴 안에 플러그인을 심어 SOP를 자동 검증·자동 변환하면, 툴 경계를 넘는 데이터가 사람 손을 거치지 않는다 — 그게 플러그인을 사서 쓰지 않고 직접 만드는 이유다.',
+        arch: `Cross-Tool Plugin Layer (직접 제작)
+├── MotionBuilder (Python)
+│     리타겟 세션: import → characterize → retarget → plot
+├── Substance Painter (Plugin)
+│     엔진 톤매퍼 매칭 리니어 프리뷰 + 채널 자동 익스포트
+├── Maya (Tool)
+│     네이밍·유닛·피벗 SOP 검증 + 배치 익스포트
+└── Unreal (Python)
+      캐릭터 배치 리임포트 + LiveLink 본 진단 리스너
+            │
+      모든 플러그인이 SOP를 코드로 강제 → 툴 경계 무손실`
+    }
+];

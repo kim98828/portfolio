@@ -1,0 +1,6 @@
+# 소스 저장소(회사 개발 프로젝트)의 로컬 경로. 이 파일을 source.txt 로 복사해 실제 경로를 적으세요.
+#   cp .claude/sync/source.example.txt .claude/sync/source.txt
+#
+# source.txt 는 .gitignore 됩니다 (내부 경로/코드명이 커밋되면 안 되므로).
+# 한 줄, '#' 주석 무시. 예:
+/path/to/your/source-repo

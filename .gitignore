@@ -1,0 +1,40 @@
+tmp_api.json
+tmp_b64.txt
+*.pdf
+!public/*.pdf
+*.b64
+.claude/settings.local.json
+
+# clasp (Apps Script) — .clasp.json 은 CI 워크플로우가 생성, 로컬 인증정보는 커밋 금지
+.clasp.json
+.clasprc.json
+
+# --- Vite / Node build (dev/prod 분리) ---
+node_modules/
+dist/
+.vite/
+# .env.development / .env.production 은 커밋 (비밀값 아님). 개인 오버라이드만 무시:
+.env.local
+.env.*.local
+# CI 가 생성하는 임시 설정 / 리포트
+.stylelintrc.json
+.lighthouserc.json
+.lighthouseci/
+
+# --- 하네스(자동화) 로컬 산출물 ---
+.claude/harness.log
+.claude/harness-unmatched.log
+.claude/secrets-blocklist.txt
+# 익명화 매핑·소스경로(실제 내부 명칭/경로 포함) — example 만 커밋, 실제값은 로컬 전용
+.claude/sync/anonymize-map.tsv
+.claude/sync/source.txt
+__tmp_*
+
+# 이미지 교체 백업 (replace-image.mjs)
+.image-backup/
+
+# 내부 익명화 가이드(실제 명칭 포함) — 로컬 전용, 공개 금지
+.claude/sync/image-regen-guide.md
+
+# 이력서 등 개인 문서(실명·연락처 포함) — 로컬 전용, 공개 금지
+.private/

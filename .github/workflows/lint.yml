@@ -1,0 +1,59 @@
+name: Lint CSS & JS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+
+      - name: Create stylelint config
+        run: |
+          cat > .stylelintrc.json << 'EOF'
+          {
+            "extends": "stylelint-config-standard",
+            "rules": {
+              "no-descending-specificity": null,
+              "selector-class-pattern": null,
+              "custom-property-pattern": null,
+              "alpha-value-notation": null,
+              "color-function-notation": null,
+              "color-function-alias-notation": null,
+              "declaration-block-no-redundant-longhand-properties": null,
+              "declaration-block-no-duplicate-properties": null,
+              "declaration-block-single-line-max-declarations": null,
+              "keyframes-name-pattern": null,
+              "value-keyword-case": null,
+              "property-no-vendor-prefix": null,
+              "property-no-deprecated": null,
+              "media-feature-range-notation": null,
+              "rule-empty-line-before": null,
+              "at-rule-empty-line-before": null,
+              "function-no-unknown": [true, { "ignoreFunctions": ["color-mix", "env"] }],
+              "media-feature-name-no-unknown": [true, { "ignoreMediaFeatureNames": ["prefers-reduced-motion"] }]
+            }
+          }
+          EOF
+
+      - name: Install & Run Stylelint
+        run: |
+          npm install stylelint stylelint-config-standard
+          npx stylelint "src/**/*.css" --formatter compact
+
+      - name: Syntax check JS (ES modules)
+        run: |
+          for f in src/main.js src/modules/*.js src/data/*.js; do
+            node --input-type=module -e "$(cat "$f")" 2>/dev/null && echo "OK: $f" || echo "WARN: $f (import.meta/resolution expected at build)"
+          done

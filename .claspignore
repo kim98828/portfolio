@@ -1,0 +1,8 @@
+# clasp는 rootDir(저장소 루트)의 모든 파일을 푸시하려 한다.
+# 프론트엔드 파일(blogData.js, codeData.js, script.js, modules/** 등)이
+# Apps Script 프로젝트로 올라가면 안 되므로, 전부 무시한 뒤
+# Apps Script 파일 두 개만 다시 포함한다.
+**/**
+
+!appsscript.json
+!backend.gs

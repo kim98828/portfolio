@@ -1,0 +1,38 @@
+name: CI Build
+
+# Cloud build verification (replaces the old GitHub Pages deploy).
+# Production hosting is Cloudflare Pages (connected via dashboard, native Git
+# integration handles deploy + PR previews). This job just proves the Vite
+# build is green on every push/PR.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install
+        run: npm install
+
+      - name: Build (production)
+        run: npm run build
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
