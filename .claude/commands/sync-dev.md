@@ -9,11 +9,13 @@
 ## 1. 수집
 - `bash .claude/sync/collect-source.sh` 실행.
 - 출력에 `CURSOR_UPTODATE` 가 있으면 "이미 최신입니다" 보고 후 종료.
+- `bash .claude/sync/coverage-report.sh` 로 **현재 커버리지**(카테고리별 카드 수 + 지난 backlog 의 미반영 `deferred` 항목)를 먼저 확인한다 — 이번에 새로 카드화할 후보에 지난 deferred 도 포함해 검토한다.
 - 신규 커밋/성과단위/변경영역, 그리고 참고 문서 목록을 파악한다. 서사가 빈약하면 collect-source 가 가리킨 소스 문서(docs/*, README, CLAUDE.md)를 Read 로 더 읽는다. (소스 파일은 읽기만, 포트폴리오로 복사 금지.)
 
 ## 2. 선별 & 서사화
 - 신규 활동에서 **포트폴리오에 보일 만한 성과**만 고른다(릴리즈/기능/개선/자동화). 사소한 설정·버그수정은 제외.
 - 각 성과를 "문제 → 해결 → 인사이트" 또는 "아키텍처" 관점으로 재구성한다. 기존 blogData/codeData 의 톤·구조(필드: blog=problem/solution/insight/arch, code=label/lang/desc/code)에 맞춘다.
+- **backlog 갱신 원칙**: 이번에 검토한 성과는 하나도 빠뜨리지 말고 `.claude/sync/backlog.md` 에 상태와 함께 남긴다 — 카드화=`carded`, 기존 카드가 커버=`covered`, 포트폴리오감이나 미반영=`deferred`, 사소=`skip`. (요약은 **익명 표기**로만 — 이 파일은 커밋되어 check-anon 대상.)
 
 ## 3. 익명화 (필수)
 - 초안 텍스트를 `bash .claude/sync/anonymize.sh` 에 통과시켜 매핑을 적용한다(파이프).
@@ -32,5 +34,7 @@
 
 ## 6. 커서 갱신 & 커밋
 - `.claude/sync/source-cursor.json` 의 `last_synced_sha`/`last_synced_version`/`last_synced_date`(오늘) 를 collect-source 의 NEXT_SHA/NEXT_VERSION 으로 갱신.
+- 2단계에서 반영/보류로 표시한 backlog(`.claude/sync/backlog.md`) 최신화 상태를 커밋에 함께 포함한다.
+- `bash .claude/sync/check-anon.sh .claude/sync/backlog.md` 로 backlog 도 익명 검사(exit 0).
 - 커밋 제안: `[콘텐츠] 개발내용 최신화 — <요약> (소스 v<버전> 반영)`. (check-commit-tag + check-secrets 가 자동 검증.)
 - main 머지 시 배포되므로, 푸시/배포 여부는 사용자에게 확인.
