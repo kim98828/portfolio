@@ -36,5 +36,9 @@ __tmp_*
 # 내부 익명화 가이드(실제 명칭 포함) — 로컬 전용, 공개 금지
 .claude/sync/image-regen-guide.md
 
+# 역량 지식 베이스(실제 소스 유래 raw craft 노트) — 로컬 전용, 공개 금지.
+# collect-only: 여기 모으고 /sync-dev 가 익명화 카드로만 승격.
+.claude/sync/capabilities/
+
 # 이력서 등 개인 문서(실명·연락처 포함) — 로컬 전용, 공개 금지
 .private/
