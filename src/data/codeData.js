@@ -348,7 +348,14 @@ Confirm Form (이미지 업로드)
 <span class="code-comment">[4] 위반 알림</span>
 SVN post-commit → 경로 룰 검사
   → 파트별 구글챗 방 라우팅
-  → 신규 / 재발 / 해결 · 방치 에스컬레이션`
+  → 신규 / 재발 / 해결 · 방치 에스컬레이션
+
+<span class="code-comment">[5] 작업목록 ↔ 팀 보드 양방향 sync + 즉시 배정</span>
+요청 접수 → 즉시 씨딩+배정 알림 (&lt;1분, 크론 대기 제거)
+작업목록 → 팀 보드 자동 등록 · 상태 push
+팀 보드  → 작업일자 pull 회수 (양방향)
+미러 그룹 훅: 이중 구현(n8n ↔ Python) 한쪽만 수정 시 커밋 차단
+전 연산 멱등 — 재실행 · 중복 등록 안전`
     },
     reconcile: {
         label: 'DNABLE — Engine Reconcile (svnlook)',
