@@ -10,7 +10,7 @@
 - `bash .claude/sync/collect-source.sh` 실행.
 - 출력에 `CURSOR_UPTODATE` 가 있으면 "이미 최신입니다" 보고 후 종료.
 - `bash .claude/sync/coverage-report.sh` 로 **현재 커버리지**(카테고리별 카드 수 + 지난 backlog 의 미반영 `deferred` 항목)를 먼저 확인한다 — 이번에 새로 카드화할 후보에 지난 deferred 도 포함해 검토한다.
-- 커밋에 안 잡히는 **손으로 짠 craft**(애니메이션·IK/FK·모캡·OSC·사운드 등)는 `.claude/sync/capabilities/`(비공개 로컬)에 수집돼 있다. 카드 후보를 고를 때 여기 **노출 후보** 항목도 함께 검토한다. (이 폴더는 gitignore — 승격 시 반드시 익명화 게이트 통과분만.)
+- 커밋에 안 잡히는 **손으로 짠 craft**(애니메이션·IK/FK·모캡·OSC·사운드·렌더링·방송·카메라·엔진포크·툴 등)는 `.claude/sync/capabilities/`(비공개 로컬, 16영역)에 수집돼 있다. `bash .claude/sync/capabilities/collect-capabilities.sh` 로 **소스 변경 대비 수집 상태**(⟳=소스 변경, ⚠=미수집)를 확인하고, 변경/미수집 영역이 있으면 해당 소스를 다시 읽어 capability 파일을 갱신한다. 카드 후보를 고를 때 각 파일의 **노출 후보** + `INDEX.md` 를 함께 본다. (이 폴더는 gitignore — 승격 시 반드시 익명화 게이트 통과분만.)
 - 신규 커밋/성과단위/변경영역, 그리고 참고 문서 목록을 파악한다. 서사가 빈약하면 collect-source 가 가리킨 소스 문서(docs/*, README, CLAUDE.md)를 Read 로 더 읽는다. (소스 파일은 읽기만, 포트폴리오로 복사 금지.)
 
 ## 2. 선별 & 서사화
