@@ -146,7 +146,7 @@ export function initUI() {
     // Vite splits each dynamic import() into its own chunk, so the data is
     // fetched on demand rather than bundled into the initial payload.
     lazyLoadOnView(document.getElementById('blog-grid'), () =>
-        import('../data/blogData.js').then(m => initBlogCards(observer, m.blogData)).catch(() => {}));
+        import('../data/blogData.js').then(m => initBlogCards(observer, m.blogData, m.blogCategories)).catch(() => {}));
 
     lazyLoadOnView(document.getElementById('skills'), () =>
         import('../data/codeData.js').then(m => initCodePopup(observer, m.codeData)).catch(() => {}));
@@ -253,14 +253,18 @@ function initCodePopup(observer, codeData) {
     });
 }
 
-// --- Blog Cards (role-lens aware) ---
-function initBlogCards(observer, blogData) {
+// --- Blog Cards (role-lens filter × category sections) ---
+function initBlogCards(observer, blogData, blogCategories) {
     const blogGrid = document.getElementById('blog-grid');
     if (!blogGrid || !blogData) return;
 
-    const FEATURED_COUNT = 3;
+    const INITIAL_PER_CAT = 3;      // cards shown before "+N more"
     const parent = blogGrid.parentElement;
     const lensFilter = document.getElementById('blog-lens-filter');
+    const cats = Array.isArray(blogCategories) ? blogCategories : [];
+
+    // Switch the grid container into a vertical stack of category sections.
+    blogGrid.classList.add('blog-grid--sections');
 
     const cardsForLens = (lens) => {
         if (lens === 'all') return blogData;
@@ -273,8 +277,26 @@ function initBlogCards(observer, blogData) {
         ];
     };
 
-    const featuredHTML = (card) => `
-        <div class="blog-card reveal" data-tag="${card.tag}" data-id="${card.id}">
+    // Group a card pool into ordered category buckets. Any card whose tag is
+    // unmapped falls into a trailing '기타' bucket so nothing silently drops.
+    const tagToCat = new Map();
+    cats.forEach(c => c.tags.forEach(t => tagToCat.set(t, c.id)));
+    function groupByCategory(pool) {
+        const buckets = new Map(cats.map(c => [c.id, []]));
+        const misc = [];
+        pool.forEach(card => {
+            const cid = tagToCat.get(card.tag);
+            (cid ? buckets.get(cid) : misc).push(card);
+        });
+        const out = cats
+            .map(c => ({ id: c.id, name: c.name, cards: buckets.get(c.id) }))
+            .filter(g => g.cards.length > 0);
+        if (misc.length) out.push({ id: 'misc', name: '기타', cards: misc });
+        return out;
+    }
+
+    const cardHTML = (card, extraClass = '') => `
+        <div class="blog-card reveal${extraClass}" data-tag="${card.tag}" data-id="${card.id}">
             <div class="blog-card-header">
                 <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
                 <h4 class="blog-card-title">${card.title}</h4>
@@ -294,6 +316,28 @@ function initBlogCards(observer, blogData) {
         </div>
     `;
 
+    const sectionHTML = (group) => {
+        const cards = group.cards
+            .map((card, i) => cardHTML(card, i >= INITIAL_PER_CAT ? ' blog-cat-hidden' : ''))
+            .join('');
+        const rest = Math.max(0, group.cards.length - INITIAL_PER_CAT);
+        const more = rest > 0
+            ? `<button class="blog-category-more" type="button"><span class="more-label">+${rest} more</span></button>`
+            : '';
+        return `
+            <section class="blog-category" data-cat="${group.id}">
+                <header class="blog-category-head">
+                    <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    <span class="blog-category-name">${group.name}</span>
+                    <span class="blog-category-count">${group.cards.length}</span>
+                </header>
+                <div class="blog-category-body">
+                    <div class="blog-category-grid">${cards}</div>
+                    ${more}
+                </div>
+            </section>`;
+    };
+
     // reveal: on initial load animate via observer; on lens switch show immediately (already in view)
     function reveal(el, immediate) {
         if (immediate) el.classList.add('visible');
@@ -301,36 +345,17 @@ function initBlogCards(observer, blogData) {
     }
 
     function render(lens, immediate) {
-        // clear previously appended siblings from an earlier render
-        parent.querySelectorAll('.blog-preview-list, .blog-cta-overlay').forEach(el => el.remove());
+        parent.querySelectorAll('.blog-cta-overlay').forEach(el => el.remove());
 
         const pool = cardsForLens(lens);
-        const featured = pool.slice(0, FEATURED_COUNT);
-        const rest = pool.slice(FEATURED_COUNT);
+        blogGrid.innerHTML = groupByCategory(pool).map(sectionHTML).join('');
 
-        blogGrid.innerHTML = featured.map(featuredHTML).join('');
-        blogGrid.querySelectorAll('.reveal').forEach(el => reveal(el, immediate));
-
-        if (rest.length > 0) {
-            const listEl = document.createElement('div');
-            listEl.className = 'blog-preview-list reveal';
-            listEl.innerHTML = `
-                <div class="blog-preview-header">
-                    <span class="blog-preview-plus">+${rest.length}</span>
-                    <span>more Problem Solving cards</span>
-                </div>
-                <div class="blog-preview-grid">
-                    ${rest.map(card => `
-                        <div class="blog-preview-item">
-                            <span class="blog-tag" data-tag="${card.tag}">${card.tag}</span>
-                            <span class="blog-preview-title">${card.title}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            parent.appendChild(listEl);
-            reveal(listEl, immediate);
-        }
+        // Visible cards animate in; cards behind "+N more" are pre-shown
+        // (hidden by CSS) so they appear instantly when the section expands.
+        blogGrid.querySelectorAll('.blog-card').forEach(el => {
+            if (el.classList.contains('blog-cat-hidden')) el.classList.add('visible');
+            else reveal(el, immediate);
+        });
 
         const total = pool.length;
         const countText = (lens === 'all')
@@ -345,7 +370,7 @@ function initBlogCards(observer, blogData) {
                 <a href="#contact" class="btn btn-primary blog-cta-btn">Contact Me</a>
             </div>
         `;
-        parent.appendChild(cta);
+        blogGrid.insertAdjacentElement('afterend', cta);
         reveal(cta, immediate);
     }
 
@@ -360,8 +385,21 @@ function initBlogCards(observer, blogData) {
         });
     }
 
-    // delegated expand toggle (attached once — blogGrid persists across re-renders)
+    // Delegated clicks (attached once — blogGrid persists across re-renders):
+    // category collapse, "+N more" expand, and per-card detail toggle.
     blogGrid.addEventListener('click', (e) => {
+        const head = e.target.closest('.blog-category-head');
+        if (head) { head.parentElement.classList.toggle('collapsed'); return; }
+
+        const more = e.target.closest('.blog-category-more');
+        if (more) {
+            const cat = more.closest('.blog-category');
+            const expanded = cat.classList.toggle('expanded-all');
+            const hiddenCount = cat.querySelectorAll('.blog-cat-hidden').length;
+            more.querySelector('.more-label').textContent = expanded ? '접기' : `+${hiddenCount} more`;
+            return;
+        }
+
         const card = e.target.closest('.blog-card');
         if (card) card.classList.toggle('expanded');
     });

@@ -1,6 +1,20 @@
 // ============================================
 // Blog Card Data — Problem-Solving Cards
 // ============================================
+
+// ── 카테고리 분류 (태그 → 상위 카테고리, 단일 소스) ──
+// 새 카드는 tag 만 맞으면 자동으로 해당 카테고리 섹션에 꽂힌다.
+// 어떤 카테고리에도 안 잡히는 tag 는 '기타'로 폴백(카드가 사라지지 않게).
+// 순서 = 화면 노출 순서.
+export const blogCategories = [
+    { id: 'rendering', name: '실시간 렌더링 · TA',  tags: ['Rendering', 'Compositing', 'Camera', 'Animation', 'Character', 'Optimization'] },
+    { id: 'pipeline',  name: '파이프라인 · 자동화',  tags: ['Pipeline', 'DevOps'] },
+    { id: 'broadcast', name: '방송 · 스트리밍',      tags: ['Broadcast', 'Streaming'] },
+    { id: 'tool',      name: '툴 · 프로덕트',        tags: ['Tool'] },
+    { id: 'delivery',  name: '배포 · 네트워킹',      tags: ['Delivery', 'Networking', 'SaveLoad'] },
+    { id: 'mocap',     name: '모션캡처',            tags: ['MoCap'] },
+];
+
 export const blogData = [
     // ── Featured 3 ──
     {
