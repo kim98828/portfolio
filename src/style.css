@@ -1750,16 +1750,25 @@ img {
     transition: var(--transition);
 }
 
-.blog-category-head:hover { border-bottom-color: var(--border-light); }
+.blog-category-head:hover {
+    border-bottom-color: color-mix(in srgb, var(--cat-accent, var(--accent)) 40%, var(--border));
+}
 .blog-category-head:hover .blog-category-name { color: var(--text-primary); }
 
 .blog-category-head .chevron {
-    color: var(--accent);
+    color: var(--cat-accent, var(--accent));
     flex-shrink: 0;
     transition: transform 0.25s ease;
 }
 
 .blog-category.collapsed .chevron { transform: rotate(-90deg); }
+
+.blog-category-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--cat-accent, var(--accent));
+    flex-shrink: 0;
+}
 
 .blog-category-name {
     font-size: 1.05rem;
@@ -1773,9 +1782,9 @@ img {
     font-family: 'Fira Code', monospace;
     font-size: 0.72rem;
     font-weight: 600;
-    color: var(--accent);
-    background: rgba(99, 102, 241, 0.12);
-    border: 1px solid rgba(99, 102, 241, 0.25);
+    color: var(--cat-accent, var(--accent));
+    background: color-mix(in srgb, var(--cat-accent, var(--accent)) 13%, transparent);
+    border: 1px solid color-mix(in srgb, var(--cat-accent, var(--accent)) 28%, transparent);
     border-radius: 999px;
     padding: 0.1rem 0.55rem;
     line-height: 1.5;
@@ -1808,8 +1817,8 @@ img {
 }
 
 .blog-category-more:hover {
-    color: var(--accent);
-    border-color: var(--accent);
+    color: var(--cat-accent, var(--accent));
+    border-color: var(--cat-accent, var(--accent));
     border-style: solid;
 }
 

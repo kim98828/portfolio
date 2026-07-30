@@ -6,13 +6,14 @@
 // 새 카드는 tag 만 맞으면 자동으로 해당 카테고리 섹션에 꽂힌다.
 // 어떤 카테고리에도 안 잡히는 tag 는 '기타'로 폴백(카드가 사라지지 않게).
 // 순서 = 화면 노출 순서.
+// accent = 섹션 강조색(--cat-accent), icon = ui.js 아이콘 사전 키.
 export const blogCategories = [
-    { id: 'rendering', name: '실시간 렌더링 · TA',  tags: ['Rendering', 'Compositing', 'Camera', 'Animation', 'Character', 'Optimization'] },
-    { id: 'pipeline',  name: '파이프라인 · 자동화',  tags: ['Pipeline', 'DevOps'] },
-    { id: 'broadcast', name: '방송 · 스트리밍',      tags: ['Broadcast', 'Streaming'] },
-    { id: 'tool',      name: '툴 · 프로덕트',        tags: ['Tool'] },
-    { id: 'delivery',  name: '배포 · 네트워킹',      tags: ['Delivery', 'Networking', 'SaveLoad'] },
-    { id: 'mocap',     name: '모션캡처',            tags: ['MoCap'] },
+    { id: 'rendering', name: '실시간 렌더링 · TA',  accent: '#8b5cf6', tags: ['Rendering', 'Compositing', 'Camera', 'Animation', 'Character', 'Optimization'] },
+    { id: 'pipeline',  name: '파이프라인 · 자동화',  accent: '#06b6d4', tags: ['Pipeline', 'DevOps'] },
+    { id: 'broadcast', name: '방송 · 스트리밍',      accent: '#6366f1', tags: ['Broadcast', 'Streaming'] },
+    { id: 'tool',      name: '툴 · 프로덕트',        accent: '#10b981', tags: ['Tool'] },
+    { id: 'delivery',  name: '배포 · 네트워킹',      accent: '#f59e0b', tags: ['Delivery', 'Networking', 'SaveLoad'] },
+    { id: 'mocap',     name: '모션캡처',            accent: '#ec4899', tags: ['MoCap'] },
 ];
 
 export const blogData = [
