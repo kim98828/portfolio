@@ -20,6 +20,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         resume: resolve(__dirname, 'resume.html'),
+        resumeProduct: resolve(__dirname, 'resume-product.html'),
       },
     },
     // Keep the lazy data chunks (blogData / codeData) split out — they are
