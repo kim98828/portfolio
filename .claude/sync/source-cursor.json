@@ -1,6 +1,6 @@
 {
-  "last_synced_sha": "699a50dab22aeed737daa7a73583a4875a847f84",
-  "last_synced_version": "1.38.3",
-  "last_synced_date": "2026-07-30",
+  "last_synced_sha": "04679ee1a292f90b208b0bde793683f484671e93",
+  "last_synced_version": "1.39.1",
+  "last_synced_date": "2026-09-07",
   "_note": "동기화 커서. /sync-dev 완료 시 collect-source 의 NEXT_SHA/NEXT_VERSION 으로 갱신. SHA만 저장(내부 커밋 메시지/명칭 비저장)."
 }

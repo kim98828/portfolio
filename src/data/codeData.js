@@ -1062,5 +1062,74 @@ _ORM 의 G채널          → Roughness 아님, Rim 데이터
 <span class="code-comment"># SOP 강제: 네이밍/유닛/축 검증 후에만 익스포트</span>
 <span class="code-key">if</span> <span class="code-fn">validate_sop</span>(target):
     <span class="code-fn">auto_retarget</span>(src, char)`
+    },
+    oscbus: {
+        label: 'Broadcast — One-Way Switching Bus (PVW → CUT)',
+        lang: 'TypeScript',
+        desc: '카메라 키는 PVW arm 전용, 송출은 CUT 키만. 빈 PVW는 CUT 거부. 탈리는 소스 ID 정체 비교 + 전역 1회 구독 리페인트',
+        code: `<span class="code-comment">// 카메라 · BLACK — 어떤 키도 프로그램을 직접 바꾸지 않는다</span>
+<span class="code-key">function</span> <span class="code-fn">armPreview</span>(sourceId: <span class="code-type">string</span>) {
+    <span class="code-fn">sendOSC</span>(<span class="code-str">'/bus/pvw/source'</span>, sourceId);
+    <span class="code-fn">noteArmedSource</span>(sourceId);   <span class="code-comment">// 로컬 arm — 엔진 피드백이 없어도 CUT 이 살아있게</span>
+}
+
+<span class="code-key">class</span> <span class="code-type">CutAction</span> <span class="code-key">extends</span> <span class="code-type">SingletonAction</span> {
+    <span class="code-fn">onKeyDown</span>() {
+        <span class="code-key">if</span> (!<span class="code-fn">isPreviewArmed</span>()) <span class="code-key">return</span>;   <span class="code-comment">// 빈 PVW → 컷 거부</span>
+        <span class="code-fn">sendOSC</span>(<span class="code-str">'/bus/program/take'</span>);
     }
+}
+
+<span class="code-comment">// 탈리 — 소스별 플래그(잔상 발생) 대신 "지금 나가는 건 누구인가" 하나를 비교</span>
+<span class="code-fn">subscribeOnce</span>(<span class="code-str">'/bus/program/source'</span>, (programId) =&gt; {
+    <span class="code-fn">repaintAll</span>((key) =&gt; key.id === programId ? <span class="code-type">PGM_RED</span>
+                         : key.id === previewId ? <span class="code-type">PVW_GREEN</span>
+                         : <span class="code-type">IDLE</span>);
+});
+
+<span class="code-comment">// 전송단 한 곳에만 fan-out — 기존 액션 전부가 자동 미러링</span>
+<span class="code-key">function</span> <span class="code-fn">sendOSC</span>(addr: <span class="code-type">string</span>, ...args: <span class="code-type">OSCArg</span>[]) {
+    <span class="code-fn">sendToHost</span>(primary, addr, args);
+    <span class="code-key">for</span> (<span class="code-key">const</span> host <span class="code-key">of</span> <span class="code-type">SECONDARY_TARGETS</span>)
+        <span class="code-key">try</span> { <span class="code-fn">sendToHost</span>(host, addr, args); } <span class="code-key">catch</span> (e) { <span class="code-fn">log</span>(e); }
+    <span class="code-comment">// 세컨더리 실패는 primary 를 막지 않는다</span>
+}`
+    },
+    teamserver: {
+        label: 'Team Server — Atomic Conf Write',
+        lang: 'PHP',
+        desc: '계정 등록이 권한 파일을 파손하지 못하게: 읽기 실패·빈 파일 중단, 콜백 치환, 섹션 소실 검사, tmp → rename 원자 교체',
+        code: `<span class="code-comment">// 읽기 — 실패(false)와 빈 파일은 "쓰지 않는다"</span>
+<span class="code-key">function</span> <span class="code-fn">read_conf</span>(<span class="code-type">$path</span>) {
+    <span class="code-type">$raw</span> = <span class="code-fn">file_get_contents</span>(<span class="code-type">$path</span>);
+    <span class="code-key">if</span> (<span class="code-type">$raw</span> === <span class="code-key">false</span> || <span class="code-fn">trim</span>(<span class="code-type">$raw</span>) === <span class="code-str">''</span>) <span class="code-key">return</span> <span class="code-key">null</span>;
+    <span class="code-key">return</span> <span class="code-type">$raw</span>;   <span class="code-comment">// null 이면 호출부가 즉시 중단 (원본 소실 방지)</span>
+}
+
+<span class="code-comment">// 삽입 — 정규식은 상단 주석의 "[users]" 문장에도 매치된다</span>
+<span class="code-key">function</span> <span class="code-fn">insert_into_section</span>(<span class="code-type">$lines</span>, <span class="code-type">$section</span>, <span class="code-type">$entry</span>) {
+    <span class="code-key">foreach</span> (<span class="code-type">$lines</span> <span class="code-key">as</span> <span class="code-type">$i</span> =&gt; <span class="code-type">$line</span>) {
+        <span class="code-comment">// 줄 전체가 섹션 헤더일 때만 인정 — 주석 매치 원천 차단</span>
+        <span class="code-key">if</span> (<span class="code-fn">rtrim</span>(<span class="code-type">$line</span>) === <span class="code-str">"[{$section}]"</span>) { <span class="code-type">$at</span> = <span class="code-fn">section_end</span>(<span class="code-type">$lines</span>, <span class="code-type">$i</span>); <span class="code-key">break</span>; }
+    }
+    <span class="code-key">return</span> <span class="code-fn">array_splice_preserve_eol</span>(<span class="code-type">$lines</span>, <span class="code-type">$at</span>, <span class="code-type">$entry</span>);
+}
+
+<span class="code-comment">// 치환 — 사용자 값이 역참조로 해석되지 않도록 콜백으로만</span>
+<span class="code-type">$out</span> = <span class="code-fn">preg_replace_callback</span>(<span class="code-type">$pattern</span>,
+    <span class="code-key">fn</span>(<span class="code-type">$m</span>) =&gt; <span class="code-type">$m</span>[<span class="code-num">1</span>] . <span class="code-type">$userValue</span>, <span class="code-type">$conf</span>);
+
+<span class="code-comment">// 쓰기 — 백업 → 섹션 소실 검사 → tmp → rename(원자적)</span>
+<span class="code-key">function</span> <span class="code-fn">write_conf</span>(<span class="code-type">$path</span>, <span class="code-type">$new</span>, <span class="code-type">$sections</span>) {
+    <span class="code-fn">copy</span>(<span class="code-type">$path</span>, <span class="code-type">$path</span> . <span class="code-str">'.bak'</span>);
+    <span class="code-key">foreach</span> (<span class="code-type">$sections</span> <span class="code-key">as</span> <span class="code-type">$s</span>)
+        <span class="code-key">if</span> (<span class="code-fn">strpos</span>(<span class="code-type">$new</span>, <span class="code-str">"[{$s}]"</span>) === <span class="code-key">false</span>) <span class="code-key">return</span> <span class="code-key">false</span>;  <span class="code-comment">// 섹션 소실 → abort</span>
+
+    <span class="code-type">$tmp</span> = <span class="code-type">$path</span> . <span class="code-str">'.tmp'</span>;
+    <span class="code-fn">file_put_contents</span>(<span class="code-type">$tmp</span>, <span class="code-type">$new</span>);
+    <span class="code-key">if</span> (@<span class="code-fn">rename</span>(<span class="code-type">$tmp</span>, <span class="code-type">$path</span>)) <span class="code-key">return</span> <span class="code-key">true</span>;
+    <span class="code-comment">// rename 은 디렉토리 쓰기 권한이 필요 — 실패 시에만 직접 쓰기로 폴백</span>
+    <span class="code-key">return</span> <span class="code-fn">file_put_contents</span>(<span class="code-type">$path</span>, <span class="code-type">$new</span>) !== <span class="code-key">false</span>;
+}`
+    },
 };
