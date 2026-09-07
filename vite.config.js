@@ -1,4 +1,8 @@
 import { defineConfig } from 'vite';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Base path depends on the host:
 //   - Cloudflare Pages / local dev → domain root '/'
@@ -11,6 +15,13 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    // Multi-page: index (portfolio) + resume (one-page CV, self-contained).
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        resume: resolve(__dirname, 'resume.html'),
+      },
+    },
     // Keep the lazy data chunks (blogData / codeData) split out — they are
     // dynamically imported in src/modules/ui.js on section entry.
     chunkSizeWarningLimit: 700,

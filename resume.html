@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>kim98828 — Resume</title>
+<meta name="description" content="Real-time Rendering &amp; Systems Architect — 한 장 요약 이력서">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f; --panel:#12121a; --line:#1e1e2a; --line2:#27273a;
+  --tx:#e4e4e7; --tx2:#a1a1aa; --tx3:#71717a;
+  --ac:#6366f1; --ac2:#06b6d4; --ac-l:#818cf8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--tx);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif;
+  font-size:13px; line-height:1.45; letter-spacing:-.01em;
+  padding:24px 16px;
+}
+.sheet{
+  max-width:1000px; margin:0 auto; background:var(--panel);
+  border:1px solid var(--line); border-radius:14px; padding:26px 30px 24px;
+  box-shadow:0 4px 40px rgba(0,0,0,.35);
+}
+
+/* ── header ── */
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    padding-bottom:14px;border-bottom:2px solid var(--line2)}
+.hd h1{font-size:27px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.hd .role{
+  font-size:13px;font-weight:600;margin-top:5px;
+  background:linear-gradient(135deg,var(--ac-l),var(--ac2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hd .tag{font-size:11.5px;color:var(--tx2);margin-top:6px;max-width:56ch;line-height:1.5}
+.meta{text-align:right;font-size:11.5px;color:var(--tx2);white-space:nowrap;line-height:1.7}
+.meta a{color:var(--tx2);text-decoration:none;border-bottom:1px dotted var(--line2)}
+.meta b{color:var(--tx);font-weight:600}
+
+/* ── stat strip ── */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);
+       border:1px solid var(--line);border-radius:9px;overflow:hidden;margin:13px 0 15px}
+.stats div{background:var(--panel);padding:8px 6px;text-align:center}
+.stats .n{font-size:16px;font-weight:800;color:var(--ac-l);letter-spacing:-.02em}
+.stats .l{font-size:9.5px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+
+/* ── layout ── */
+.cols{display:grid;grid-template-columns:1.62fr 1fr;gap:22px}
+h2{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;
+   color:var(--ac2);padding-bottom:4px;margin-bottom:8px;border-bottom:1px solid var(--line2)}
+section{margin-bottom:14px}
+section:last-child{margin-bottom:0}
+
+/* ── experience ── */
+.job{margin-bottom:11px;break-inside:avoid}
+.job:last-child{margin-bottom:0}
+.job-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.job-c{font-size:14px;font-weight:700;letter-spacing:-.02em}
+.job-c span{font-size:11px;font-weight:500;color:var(--tx2);margin-left:7px}
+.job-d{font-size:10.5px;color:var(--tx3);white-space:nowrap;font-variant-numeric:tabular-nums}
+.job ul{list-style:none;margin-top:5px}
+.job li{position:relative;padding-left:11px;margin-bottom:2.5px;font-size:11.8px;
+        color:var(--tx2);line-height:1.5}
+.job li::before{content:'';position:absolute;left:0;top:7px;width:4px;height:4px;
+                border-radius:50%;background:var(--ac);opacity:.7}
+.job li b{color:var(--tx);font-weight:600}
+
+/* ── skills ── */
+.sk{margin-bottom:7px}
+.sk-l{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;
+      letter-spacing:.07em;margin-bottom:3px}
+.sk-v{font-size:11.3px;color:var(--tx2);line-height:1.55}
+.sk-v b{color:var(--tx);font-weight:600}
+
+/* ── highlight list ── */
+.hl{list-style:none}
+.hl li{position:relative;padding-left:12px;margin-bottom:4px;font-size:11.4px;
+       color:var(--tx2);line-height:1.5}
+.hl li::before{content:'▸';position:absolute;left:0;top:0;color:var(--ac2);font-size:9px;line-height:1.75}
+.hl li b{color:var(--tx);font-weight:600}
+.hl li em{font-style:normal;color:var(--ac-l);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ── misc rows ── */
+.row{display:flex;justify-content:space-between;gap:10px;font-size:11.3px;
+     color:var(--tx2);padding:2.5px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:0}
+.row b{color:var(--tx);font-weight:600}
+.row span{color:var(--tx3);white-space:nowrap;font-variant-numeric:tabular-nums}
+.foot{margin-top:14px;padding-top:9px;border-top:1px solid var(--line);
+      font-size:10px;color:var(--tx3);display:flex;justify-content:space-between;gap:12px}
+.foot a{color:var(--tx3)}
+
+/* ── print: A4 한 장 ── */
+@page{size:A4 portrait;margin:9mm}
+@media print{
+  :root{--tx:#111318;--tx2:#3f4450;--tx3:#767c8a;--line:#dfe2e8;--line2:#c9ced8;
+        --ac:#4b4fd6;--ac2:#0a7ea4;--ac-l:#4b4fd6}
+  html,body{background:#fff!important;color:#111318;padding:0;font-size:9.1pt;line-height:1.34}
+  .sheet{max-width:none;margin:0;background:#fff;border:0;border-radius:0;padding:0;box-shadow:none}
+  .hd{padding-bottom:7px;border-bottom:1.6pt solid #111318}
+  .hd h1{font-size:19pt}
+  .hd .role{font-size:9.6pt;color:#4b4fd6;background:none;-webkit-text-fill-color:#4b4fd6}
+  .hd .tag{font-size:8.2pt;margin-top:4px}
+  .meta{font-size:8.2pt;line-height:1.55}
+  .stats{margin:8px 0 9px;background:#e6e8ee;border-color:#c9ced8}
+  .stats div{background:#fff;padding:5px 4px}
+  .stats .n{font-size:11.6pt;color:#4b4fd6}
+  .stats .l{font-size:6.4pt}
+  .cols{gap:14px}
+  h2{font-size:7.4pt;color:#0a7ea4;margin-bottom:5px;padding-bottom:2px}
+  section{margin-bottom:9px}
+  .job{margin-bottom:7px}
+  .job-c{font-size:10pt}.job-c span{font-size:7.8pt}.job-d{font-size:7.4pt}
+  .job li{font-size:8.3pt;margin-bottom:1px;line-height:1.36}
+  .job li::before{top:4.5px;width:2.6px;height:2.6px}
+  .hl li{font-size:8.1pt;margin-bottom:2px;line-height:1.36}
+  .sk-l{font-size:7pt}.sk-v{font-size:8.1pt;line-height:1.4}.sk{margin-bottom:4px}
+  .row{font-size:8.1pt;padding:1px 0}
+  .foot{margin-top:8px;padding-top:5px;font-size:6.8pt}
+  a{color:inherit;text-decoration:none}
+}
+@media screen and (max-width:760px){
+  .cols{grid-template-columns:1fr;gap:14px}
+  .hd{flex-direction:column;gap:8px}
+  .meta{text-align:left}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .sheet{padding:20px 18px}
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+
+  <header class="hd">
+    <div>
+      <h1>kim98828</h1>
+      <div class="role">Real-time Rendering &amp; Systems Architect</div>
+      <p class="tag">엔진 소스 레벨 NPR 렌더링 · 실시간 방송 아키텍처 · 프로덕션 파이프라인 자동화.
+         "어떻게 구현하느냐"보다 "왜 이 구조여야 하는가"를 먼저 묻고 실시간 환경에서 검증합니다.</p>
+    </div>
+    <div class="meta">
+      <div><b>Engineer</b> · 6년+</div>
+      <div><a href="mailto:kim98828@gmail.com">kim98828@gmail.com</a></div>
+      <div><a href="https://github.com/kim98828">github.com/kim98828</a></div>
+      <div>동원대학교 게임콘텐츠과 · GPA 4.0/4.5</div>
+      <div>정보처리산업기사</div>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div><div class="n">6+</div><div class="l">Years</div></div>
+    <div><div class="n">1,760+</div><div class="l">Commits</div></div>
+    <div><div class="n">2</div><div class="l">Awards</div></div>
+    <div><div class="n">475</div><div class="l">Engine Patches</div></div>
+    <div><div class="n">97%</div><div class="l">Port Auto-apply</div></div>
+  </div>
+
+  <div class="cols">
+    <!-- ══ LEFT ══ -->
+    <div>
+      <section>
+        <h2>Experience</h2>
+
+        <article class="job">
+          <div class="job-h">
+            <div class="job-c">DNABLE<span>리드 개발자 · 렌더링 엔지니어 겸 테크니컬 리드</span></div>
+            <div class="job-d">2025.07 ~ 현재</div>
+          </div>
+          <ul>
+            <li><b>UE5 커스텀 엔진 포크 단독 구축·운영</b> — 플러그인이 아닌 엔진 소스 인트리 개조로
+                160개 파일에 475개 수정 블록, 레지스트리(215파일/299행)로 vanilla 대비 분기 전량 추적</li>
+            <li><b>NPR 디퍼드 셰이딩 모델 신규 등록</b> — 셰이딩 모델 열거형·머티리얼 HLSL 이미터·BxDF
+                디스패치까지 개조하고 <b>전용 9번째 MRT</b>를 새로 할당해 Toon 전용 데이터 경로 확보</li>
+            <li><b>메이저 엔진 업그레이드를 1주에 완료</b> — merge 대신 "clean base + 패치 재적용" 전략으로
+                패치 459건을 마커에서 자동 추출, 3-way 적용 성공률 <b>97%(446/459)</b></li>
+            <li>레이트레이싱 파트별 그림자 제어 · Toon GI 평탄화 · 역헐 아웃라인 · per-pixel 톤매퍼 3종 ·
+                셀 엣지 소프트 섀도우 블러 구현 (렌더링 설계 문서 6종 / 43 Phase)</li>
+            <li><b>4채널 SDI + NDI + OSC 실시간 방송 아키텍처</b> — 채널별 Output Profile, 30대 카메라
+                라운드로빈 모자이크 합성, 생방송 직전 프리플라이트 검사, 물리 컨트롤러 원웨이 스위칭</li>
+            <li><b>5인 동시 모캡</b> — LiveLink 10개 동시 운용, 캐릭터별 ARKit 리매핑, 리타겟 세션 자동화</li>
+            <li><b>30인 조직 DevOps 파이프라인</b> — 역할별 10단계 라우팅, 재개형 빌드 오케스트레이션,
+                Git 3 + SVN 4 = 7개 저장소 통합, 프리빌트 엔진 델타 배포로 아티스트는 빌드 시스템 무접촉</li>
+            <li><b>3소스(커밋·NAS·엔진) 무인 에셋 검증 시스템</b> — SOP 위반 자동 검출·방치 추적,
+                요청→작업→컨펌→리테이크 라이프사이클을 폼과 게이트로 자동화 (워크플로 8종)</li>
+            <li><b>AI 하네스 구축</b> — 슬래시 커맨드 30종 + 가드레일 훅 4종으로 3개 저장소를 지휘,
+                직접 작성 코드 41,000줄+ · 기술 문서 169편/46,000줄+ 큐레이션 (7개월 1,010커밋)</li>
+          </ul>
+        </article>
+
+        <article class="job">
+          <div class="job-h">
+            <div class="job-c">SoulX<span>기술개발팀 팀장</span></div>
+            <div class="job-d">2022.05 ~ 2025.08 (3년 4개월)</div>
+          </div>
+          <ul>
+            <li><b>메인 프로덕트 XROOM을 연구개발 계획서부터 핵심 시스템 전체까지 1인 개발</b> (960+ 커밋)</li>
+            <li><b>CES 혁신상</b>(라스베이거스 직접 참가) · <b>에디슨 어워드</b> 수상</li>
+            <li>3D 씬 전체 직렬화 Save/Load, Composure 크로마키 합성, NDI 비동기 이중 버퍼 1080p60 송출,
+                UE 내 FFmpeg 프로세스 분리, Pixel Streaming 인프라</li>
+            <li>Electron/React 런처 CI/CD + Steam·Electron·AWS <b>3채널 동시 배포</b> 버전 동기화</li>
+            <li><b>파라과이 방송 시스템 납품</b>(현지 교육 포함) · GS인증 · Steam 런칭 후 2년 운영</li>
+            <li>클래스를 400줄 이내로 분리하고 컨텍스트 단위로 모듈을 설계해 <b>초기 LLM을 프로덕션에 도입</b></li>
+          </ul>
+        </article>
+
+        <article class="job">
+          <div class="job-h">
+            <div class="job-c">한영시스텍<span>삼성 SDS 서비스 운영</span></div>
+            <div class="job-d">2020.11 ~ 2021.12 (1년 2개월)</div>
+          </div>
+          <ul>
+            <li>삼성페이·패스·뮤직 등 주요 서비스 인프라 운영, 네트워크 관리 및 장애 대응</li>
+          </ul>
+        </article>
+      </section>
+    </div>
+
+    <!-- ══ RIGHT ══ -->
+    <div>
+      <section>
+        <h2>Core Skills</h2>
+        <div class="sk"><div class="sk-l">Engine / Rendering</div>
+          <div class="sk-v"><b>C++</b>, <b>HLSL</b>, UE5 엔진 소스 개조, Deferred Rendering,
+            Custom Shading Model, DirectX 12, Lumen, Ray Tracing, Post Process</div></div>
+        <div class="sk"><div class="sk-l">Broadcast / Realtime</div>
+          <div class="sk-v"><b>SDI(DeckLink)</b>, <b>NDI</b>, SRT, OSC, WebRTC, FFmpeg,
+            Pixel Streaming, Timecode 동기화</div></div>
+        <div class="sk"><div class="sk-l">MoCap / Animation</div>
+          <div class="sk-v">LiveLink, VICON, ARKit, MotionBuilder, 리타겟 자동화, Custom AnimGraph Node</div></div>
+        <div class="sk"><div class="sk-l">Pipeline / DevOps</div>
+          <div class="sk-v"><b>Python</b>, Git, SVN, Docker, GitHub Actions, FastAPI, n8n,
+            Notion API, 델타 프리빌트 배포</div></div>
+        <div class="sk"><div class="sk-l">Web / Product</div>
+          <div class="sk-v">React, Redux, Three.js, Electron, Node/TypeScript, AWS, PHP, Steam 배포</div></div>
+        <div class="sk"><div class="sk-l">AI Engineering</div>
+          <div class="sk-v">LLM 하네스 설계(커맨드·훅·가드레일), ComfyUI, Stable Diffusion, 워크플로 자동화</div></div>
+      </section>
+
+      <section>
+        <h2>Selected Impact</h2>
+        <ul class="hl">
+          <li><b>메이저 엔진 포팅 <em>1주</em></b> — 통상 수주~수개월 소요, 3-way 자동 적용 <em>97%</em></li>
+          <li><b>엔진 개조 <em>475</em>블록 / <em>160</em>파일</b> — 레지스트리로 전량 추적, 마커 규약을 머지 충돌 해결 규칙으로 정립</li>
+          <li><b>NPR 렌더링 도메인 신규 흡수</b> — 셰이딩 모델·MRT·GI·아웃라인·톤매퍼를 소스 레벨에서 직접 구현</li>
+          <li><b>수상 <em>2</em>건</b> — CES 혁신상 · 에디슨 어워드 (1인 개발 프로덕트)</li>
+          <li><b>글로벌 딜리버리</b> — 파라과이 납품 + 현지 교육, GS인증, Steam 2년 운영</li>
+          <li><b>무인 운영 레이어</b> — 위반·마감·리포트를 파트별로 자동 배포, 알림 정의를 상태 기반으로 재설계</li>
+          <li><b>범위</b> — 통상 여러 기술 직군이 나눠 맡는 영역을 단독 설계·구축·운영</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Awards &amp; Education</h2>
+        <div class="row"><b>CES Innovation Award</b><span>XROOM</span></div>
+        <div class="row"><b>Edison Award</b><span>XROOM</span></div>
+        <div class="row"><b>동원대학교 게임콘텐츠과</b><span>GPA 4.0 / 4.5</span></div>
+        <div class="row"><b>정보처리산업기사</b><span>자격</span></div>
+      </section>
+
+      <section>
+        <h2>Domains</h2>
+        <div class="sk-v">버추얼 아이돌 프로덕션 · XR 웨비나/방송 플랫폼 · 스마트 팩토리 시각화 ·
+          XR 교육(제주·대구 메인 강사) · 키오스크/인터랙티브 설치</div>
+      </section>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>사내 시스템·코드네임은 익명 표기. 상세 사례는 포트폴리오 참조.</span>
+    <span><a href="./">Portfolio →</a></span>
+  </div>
+
+</main>
+</body>
+</html>
