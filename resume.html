@@ -192,8 +192,8 @@ section:last-child{margin-bottom:0}
   <div class="stats">
     <div><div class="n">475</div><div class="l">Engine Patches</div></div>
     <div><div class="n">160</div><div class="l">Engine Files</div></div>
-    <div><div class="n">97%</div><div class="l">Port 3-way</div></div>
-    <div><div class="n">1주</div><div class="l">Major Port</div></div>
+    <div><div class="n">43</div><div class="l">Render Phases</div></div>
+    <div><div class="n">1,010</div><div class="l">Commits · 7개월</div></div>
     <div><div class="n">30인</div><div class="l">Studio Ops</div></div>
   </div>
 
@@ -210,8 +210,8 @@ section:last-child{margin-bottom:0}
                 레지스트리(215파일/299행)로 vanilla 대비 분기 전량 추적</li>
             <li>날짜 마커 규약을 <b>머지 충돌 해결 규칙</b>("마커 내부=커스텀 유지, 외부=upstream")으로
                 삼는 vanilla 동기화 워크플로 정립</li>
-            <li><b>메이저 업그레이드를 1주에 완료</b> — merge 대신 "clean base + 패치 재적용" 전략,
-                마커에서 패치 459건 자동 추출, 3-way 적용 <b>97%(446/459)</b></li>
+            <li><b>메이저 버전 업그레이드</b> — merge 대신 "clean base + 패치 재적용" 전략을 세우고
+                마커에서 패치 459건을 자동 추출해 의존 순서대로 재적용</li>
             <li>엔진 기능 확장 — 에디터 Tick 허용, 머티리얼별 커스텀 스텐실, DMX 콘솔→시퀀서 키프레임</li>
             <li>프리빌트 엔진 배포 채널 — 아티스트·뷰어는 git·컴파일러 없이 18GB 포크 환경 사용,
                 델타 인코딩으로 변경분만 전송</li>
@@ -246,6 +246,8 @@ section:last-child{margin-bottom:0}
             <li>관제 대시보드 + 팀 서버 API 9모듈(인증·감사·릴리즈·SVN·검증) — 역할 기반 접근제어</li>
             <li><b>AI 하네스</b> — 슬래시 커맨드 30종 + 가드레일 훅 4종으로 3개 저장소를 지휘.
                 직접 작성 코드 41,000줄+ · 기술 문서 169편/46,000줄+ (7개월 1,010커밋)</li>
+            <li>엔진 업그레이드 패치 <b>459건을 하네스로 재적용</b> — 3-way 자동 적용 97%(446/459),
+                남은 13건만 수동 처리</li>
           </ul>
         </article>
 
@@ -283,7 +285,8 @@ section:last-child{margin-bottom:0}
       <section>
         <h2>Selected Impact</h2>
         <ul class="hl">
-          <li><b>메이저 엔진 포팅 <em>1주</em></b> — 통상 수주~수개월 소요, 3-way 자동 적용 <em>97%</em></li>
+          <li><b>AI 하네스 운영</b> — 커맨드 <em>30</em>종·훅 <em>4</em>종으로 3개 저장소를 지휘,
+              엔진 패치 재적용 자동화율 <em>97%</em></li>
           <li><b>엔진 개조 <em>475</em>블록 / <em>160</em>파일</b> — 마커 규약을 머지 충돌 해결 규칙으로 정립</li>
           <li><b>NPR 도메인 신규 흡수</b> — 셰이딩 모델·MRT·GI·아웃라인·톤매퍼를 소스 레벨에서 직접 구현</li>
           <li><b>무인 운영 레이어</b> — 위반·마감·리포트 자동 배포, 알림 정의를 상태 기반으로 재설계</li>
@@ -295,7 +298,7 @@ section:last-child{margin-bottom:0}
         <h2>Previous</h2>
         <div class="prev"><b>SoulX</b> · 기술개발팀 팀장 <span>2022.05 ~ 2025.08</span><br>
           XR 프로덕트 XROOM을 연구개발 계획서부터 1인 개발(960+ 커밋). <b>CES 혁신상 · 에디슨 어워드</b>,
-          파라과이 납품 · GS인증 · Steam 런칭. 납품·인증·자체 프로덕트 등 14개 프로젝트 수행.</div>
+          파라과이 납품 · GS인증 · Steam 런칭 후 2년 운영. 납품·인증·자체 프로덕트 등 14개 프로젝트 수행.</div>
         <div class="prev"><b>한영시스텍</b> · 삼성 SDS 서비스 운영 <span>2020.11 ~ 2021.12</span><br>
           삼성페이·패스·뮤직 등 주요 서비스 인프라 운영, 네트워크 관리 및 장애 대응.</div>
       </section>
