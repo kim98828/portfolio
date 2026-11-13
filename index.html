@@ -138,6 +138,8 @@
                     <p>
                         AI·팀원·외부 리소스를 하나의 파이프라인으로 조율하고,
                         기술 트렌드를 즉각 테스트하되 잔파동은 걸러내고 <strong>킬링 피처만 선별</strong>합니다.
+                        코드를 쓰는 일은 빠르게 싸지고 있지만, <strong>무엇이 맞는지 판단하고, 그럴듯하게 틀린 것을 잡아내고,
+                        시스템 전체의 제약을 머리에 들고 있는 일</strong>은 그렇지 않습니다.
                         <strong>문제 정의부터 해결까지의 사이클을 최단으로 압축</strong>하는 것 — 그것이 제가 가진 가장 실질적인 역량입니다.
                     </p>
                     <img width="1408" height="768" src="/images/about-growth-map.webp" alt="Foundation → Architectural Maturity → Engineering Lead 성장 도식화" class="about-image" loading="lazy">
@@ -857,6 +859,30 @@
                         </div>
                     </div>
                 </div>
+                <div class="insight-card reveal" data-domain="ai">
+                    <div class="insight-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    </div>
+                    <h3 class="insight-title">AI가 코드를 쓰는 시대 — 개발자에게 남는 일은 "판단"이다</h3>
+                    <div class="insight-body">
+                        <p>생성 비용이 싸질수록 병목은 <strong>검증</strong>으로 옮겨간다. AI는 틀릴 때 조용히 틀리지 않고 <strong>그럴듯하게</strong> 틀린다. 그래서 "돌아간다"와 "맞다"를 구분하는 일이 사람 몫으로 남는다. 최근 엔진에 MCP를 물려 작업하면서 그 몫이 정확히 세 가지였다.</p>
+                        <p><strong>① AI 판단을 필터링한다.</strong> 엔진 기본 AI 툴셋은 Fur 마스터 하나를 <strong>노드 156개 조립</strong>으로 만들어냈다. 동작은 했지만 우리 마스터 체계·네이밍 SOP·섞으면 안 되는 조합은 전혀 몰랐다. 범용 툴을 더 쓰는 대신, 조직 규칙이 박힌 상위 툴 6개로 다시 설계했다. AI에게 필요한 건 더 많은 기능이 아니라 더 높은 단위였다.</p>
+                        <p><strong>② 오류를 찾아낸다.</strong> 파라미터 설정이 전부 "실패"로 보고됐다. 내 코드를 의심하는 게 자연스러운 순간이었지만, 실제 원인은 <strong>엔진 라이브러리가 값을 정상 적용하고도 항상 false를 반환</strong>하는 버그였다. 보고를 믿었으면 멀쩡한 코드를 뜯었을 것이다. 직접 세터 호출 + 재조회 검증으로 우회했다.</p>
+                        <p><strong>③ 시스템 전체를 머리에 들고 있는다.</strong> 메이저 업그레이드 첫 기동에서 셀 셰이딩이 통째로 꺼졌다. 원인은 고친 코드 어디에도 없었다 — <strong>"셰이딩 모델 열거형의 서수가 그대로 셰이더 ID로 방출된다"</strong>는 전역 제약이었다. 로컬 컨텍스트만 보면 영원히 못 찾는 종류의 버그다. 비워진 자리에 Hidden 예약 항목을 끼워 서수와 ID를 일치시켰다.</p>
+                        <p>그래서 나는 AI의 출력을 <strong>리뷰가 아니라 구조로</strong> 막는다. 마커 없는 엔진 수정은 저장 시점에 차단되고, <code>가설만으로 해결됐다고 보고하지 말 것</code> 같은 교정은 신뢰도로 축적돼 규칙으로 승격된다. 사람이 매번 기억하는 대신 <strong>틀릴 수 있는 지점을 구조가 기억하게</strong> 만드는 것 — 지금 개발자의 일은 거기로 옮겨갔다고 생각한다.</p>
+                        <div class="insight-comparison">
+                            <div class="comparison-item con">
+                                <span class="comparison-label">생성만 빨라지면</span>
+                                <span>맞는 것과 틀린 것이 같은 속도로 쌓인다 → 검증이 병목</span>
+                            </div>
+                            <div class="comparison-item pro">
+                                <span class="comparison-label">판단 + 구조 강제</span>
+                                <span>필터링·오류 탐지·전역 제약 이해 → 속도가 품질을 깎지 않는다</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="insight-card reveal" data-domain="ai">
                     <div class="insight-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
