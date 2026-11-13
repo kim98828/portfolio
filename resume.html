@@ -211,8 +211,9 @@ section:last-child{margin-bottom:0}
                 레지스트리(215파일/299행)로 vanilla 대비 분기 전량 추적</li>
             <li>날짜 마커 규약을 <b>머지 충돌 해결 규칙</b>("마커 내부=커스텀 유지, 외부=upstream")으로
                 삼는 vanilla 동기화 워크플로 정립</li>
-            <li><b>메이저 버전 업그레이드</b> — merge 대신 "clean base + 패치 재적용" 전략을 세우고
-                마커에서 패치 459건을 자동 추출해 의존 순서대로 재적용</li>
+            <li><b>메이저 버전 업그레이드 2회</b> — 1차 "clean base + 패치 459건 재적용"(자동 97%),
+                2차는 포크를 upstream에 graft로 접붙인 <b>3-way 머지</b>(자동 89,777파일 · 충돌 44 · 재구현 0)
+                — 셰이딩 이관 포함 <b>2주</b></li>
             <li>엔진 기능 확장 — 에디터 Tick 허용, 머티리얼별 커스텀 스텐실, DMX 콘솔→시퀀서 키프레임</li>
             <li>프리빌트 엔진 배포 채널 — 아티스트·뷰어는 git·컴파일러 없이 18GB 포크 환경 사용,
                 델타 인코딩으로 변경분만 전송</li>
@@ -228,6 +229,8 @@ section:last-child{margin-bottom:0}
                 스펙큘러로 커스텀 BxDF 구현. 광원별 파라미터 25종 + BP 세터 17종으로 시퀀서 연출 지원</li>
             <li>레이트레이싱 <b>파트별 그림자 제어</b>(G-Buffer 채널 비교로 캐스터/리시버 매칭),
                 Toon Lumen GI 평탄화(디퓨즈 노멀만, 스펙큘러 보존)</li>
+            <li><b>Toon 셰이딩 Substrate 이관</b> — 엔진 기본 Toon은 vanilla 보존, 커스텀 BSDF를 별도 타입으로
+                병렬 등록(하드코딩 셰이딩 ID 전량 심볼화 · 전용 GBuffer 1장 제거)</li>
             <li>LUT 아틀라스 셀 포스트프로세스 · 역헐 아웃라인(SM/SkM/ISM/HISM) ·
                 per-pixel 톤매퍼 3종 · 셀 엣지 소프트 섀도우 블러</li>
             <li>Coordinator 패턴 <b>LookDev 액터</b> — undo/redo 히스토리, 프리셋 명시 Save,
@@ -245,10 +248,10 @@ section:last-child{margin-bottom:0}
                 요청→작업→컨펌→리테이크 라이프사이클을 폼과 게이트로 자동화(워크플로 8종)</li>
             <li>Python 8 서브시스템 / 72 파일, 파이프라인 스텝 35 모듈로 bat·ps1 스크립트 전량 대체</li>
             <li>관제 대시보드 + 팀 서버 API 9모듈(인증·감사·릴리즈·SVN·검증) — 역할 기반 접근제어</li>
+            <li><b>자체 MCP 툴셋</b> — 조직 규칙(마스터 파생·네이밍 SOP·금지 조합)을 아는 상위 툴 6종 + 검사 룰 7종.
+                구두 지시로 머티리얼·Fur·VFX 생성과 규칙 검사를 한 흐름에</li>
             <li><b>AI 하네스</b> — 슬래시 커맨드 30종 + 가드레일 훅 4종으로 3개 저장소를 지휘.
                 직접 작성 코드 41,000줄+ · 기술 문서 169편/46,000줄+ (7개월 1,010커밋)</li>
-            <li>엔진 업그레이드 패치 <b>459건을 하네스로 재적용</b> — 3-way 자동 적용 97%(446/459),
-                남은 13건만 수동 처리</li>
           </ul>
         </article>
 
@@ -280,7 +283,8 @@ section:last-child{margin-bottom:0}
           <div class="sk-v"><b>Python</b>, Git, SVN, Docker, GitHub Actions, FastAPI, n8n, Notion API,
             델타 프리빌트 배포</div></div>
         <div class="sk"><div class="sk-l">AI Engineering</div>
-          <div class="sk-v">LLM 하네스 설계(커맨드·훅·가드레일), ComfyUI, Stable Diffusion, 워크플로 자동화</div></div>
+          <div class="sk-v">LLM 하네스 설계(커맨드·훅·가드레일), <b>MCP 툴셋 직접 구현</b>(엔진 플러그인),
+            ComfyUI, Stable Diffusion, 워크플로 자동화</div></div>
       </section>
 
       <section>
